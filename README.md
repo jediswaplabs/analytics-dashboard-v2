@@ -14,7 +14,6 @@ Analytics site for the [JediSwap Protocol](https://jediswap.xyz).
 ```bash
 yarn
 ```
-
 ### Running locally
 
 ```bash
