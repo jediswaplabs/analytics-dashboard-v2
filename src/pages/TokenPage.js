@@ -35,6 +35,7 @@ import { UNTRACKED_COPY, BLOCKED_WARNINGS } from '../constants'
 import QuestionHelper from '../components/QuestionHelper'
 import Checkbox from '../components/Checkbox'
 import { shortenStraknetAddress } from '../utils'
+import starIcon from '../../src/assets/star.svg'
 
 const DashboardWrapper = styled.div`
   width: 100%;
@@ -191,14 +192,15 @@ function TokenPage({ address, history }) {
       <ContentWrapper>
         <RowBetween style={{ flexWrap: 'wrap', alingItems: 'start' }}>
           <AutoRow align="flex-end" style={{ width: 'fit-content' }}>
-            <TYPE.body>
-              <BasicLink to="/tokens">{'Tokens '}</BasicLink>→ {symbol}
-            </TYPE.body>
-            <Link style={{ width: 'fit-content' }} color={backgroundColor} external href={urls.showAddress(address)}>
+            <TYPE.breadCrumbs>
+              <BasicLink to="/tokens">{'Home > Tokens '}</BasicLink>
+              <span style={{ color: 'white' }}> {'>'} {symbol}</span>
+            </TYPE.breadCrumbs>
+            {/* <Link style={{ width: 'fit-content' }} color={backgroundColor} external href={urls.showAddress(address)}>
               <Text style={{ marginLeft: '.15rem' }} fontSize={'14px'} fontWeight={400}>
                 ({shortenStraknetAddress(address)})
               </Text>
-            </Link>
+            </Link> */}
           </AutoRow>
           {!below600 && <Search small={true} />}
         </RowBetween>
@@ -212,30 +214,33 @@ function TokenPage({ address, history }) {
               }}
             >
               <RowFixed style={{ flexWrap: 'wrap' }}>
-                <RowFixed style={{ alignItems: 'baseline' }}>
-                  <TokenLogo address={address} symbol={symbol} size="32px" style={{ alignSelf: 'center' }} />
-                  <TYPE.main fontSize={below1080 ? '1.5rem' : '2rem'} fontWeight={500} style={{ margin: '0 1rem' }}>
-                    <RowFixed gap="6px">
-                      <FormattedName text={name ? name + ' ' : ''} maxCharacters={16} style={{ marginRight: '6px' }} />{' '}
-                      {formattedSymbol ? `(${formattedSymbol})` : ''}
-                    </RowFixed>
-                  </TYPE.main>{' '}
+                <div>
+                  <RowFixed style={{ alignItems: 'baseline' }}>
+                    <TokenLogo address={address} symbol={symbol} size="32px" style={{ alignSelf: 'center' }} />
+                    <TYPE.main fontSize={below1080 ? '1.0rem' : '1.0rem'} fontWeight={500} style={{ margin: '0.5rem 0.3rem' }}>
+                      <RowFixed gap="6px">
+                        {/* <FormattedName text={name ? name + ' ' : ''} maxCharacters={16} style={{ marginRight: '6px' }} />{' '} */}
+                        {formattedSymbol ? `${formattedSymbol}` : ''}
+                      </RowFixed>
+                    </TYPE.main>{' '}
+
+                  </RowFixed>
                   {!below1080 && (
                     <>
-                      <TYPE.main fontSize={'1.5rem'} fontWeight={500} style={{ marginRight: '1rem' }}>
-                        {price}
+                      <TYPE.main fontSize={'1.0rem'} fontWeight={500} style={{ marginRight: '1rem' }}>
+                        US{price}
                       </TYPE.main>
                       {priceChange}
                     </>
                   )}
-                </RowFixed>
+                </div>
               </RowFixed>
               <span>
                 <RowFixed ml={below500 ? '0' : '2.5rem'} mt={below500 ? '1rem' : '0'}>
                   {!!!savedTokens[address] && !below800 ? (
                     <Hover onClick={() => addToken(address, symbol)}>
                       <StyledIcon>
-                        <PlusCircle style={{ marginRight: '0.5rem' }} />
+                        <img src={starIcon} style={{ marginRight: '0.5rem' }} />
                       </StyledIcon>
                     </Hover>
                   ) : !below1080 ? (
@@ -246,10 +251,10 @@ function TokenPage({ address, history }) {
                     <></>
                   )}
                   <Link href={getPoolLink(address)} target="_blank">
-                    <ButtonLight color={backgroundColor}>+ Add Liquidity</ButtonLight>
+                    <ButtonDark color={backgroundColor}>+ Add Liquidity</ButtonDark>
                   </Link>
                   <Link href={getSwapLink(address)} target="_blank">
-                    <ButtonDark ml={'.5rem'} mr={below1080 && '.5rem'} color={backgroundColor}>
+                    <ButtonDark ml={'.5rem'} mr={below1080 && '.5rem'} style={{ padding: '9px 36px' }} color={backgroundColor}>
                       Trade
                     </ButtonDark>
                   </Link>
@@ -258,19 +263,7 @@ function TokenPage({ address, history }) {
             </RowBetween>
 
             <>
-              {!below1080 && (
-                <RowFixed>
-                  <TYPE.main fontSize={'1.125rem'} mr="6px">
-                    Token Stats
-                  </TYPE.main>
-                  {usingUtVolume && (
-                    <HoverText text={UNTRACKED_COPY}>
-                      <WarningIcon />
-                    </HoverText>
-                  )}
-                </RowFixed>
-              )}
-              <PanelWrapper style={{ marginTop: below1080 ? '0' : '1rem' }}>
+              <PanelWrapper>
                 {below1080 && price && (
                   <Panel>
                     <AutoColumn gap="20px">
@@ -291,12 +284,12 @@ function TokenPage({ address, history }) {
                 <Panel>
                   <AutoColumn gap="20px">
                     <RowBetween>
-                      <TYPE.main>Total Liquidity</TYPE.main>
+                      <TYPE.subHeader>Total Liquidity</TYPE.subHeader>
                       <div />
                     </RowBetween>
                     <RowBetween align="flex-end">
-                      <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
-                        {liquidity}
+                      <TYPE.main fontSize={'1.0rem'} lineHeight={1} fontWeight={500}>
+                        US{liquidity}
                       </TYPE.main>
                       <TYPE.main>{liquidityChange}</TYPE.main>
                     </RowBetween>
@@ -305,12 +298,12 @@ function TokenPage({ address, history }) {
                 <Panel>
                   <AutoColumn gap="20px">
                     <RowBetween>
-                      <TYPE.main>Volume (24hrs)</TYPE.main>
+                      <TYPE.subHeader>Volume (24hr)</TYPE.subHeader>
                       <div />
                     </RowBetween>
                     <RowBetween align="flex-end">
-                      <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
-                        {volume}
+                      <TYPE.main fontSize={'1.0rem'} lineHeight={1} fontWeight={500}>
+                        US{volume}
                       </TYPE.main>
                       <TYPE.main>{volumeChange}</TYPE.main>
                     </RowBetween>
@@ -320,39 +313,32 @@ function TokenPage({ address, history }) {
                 <Panel>
                   <AutoColumn gap="20px">
                     <RowBetween>
-                      <TYPE.main>Transactions (24hrs)</TYPE.main>
+                      <TYPE.subHeader>Total fees (24hr)</TYPE.subHeader>
                       <div />
                     </RowBetween>
                     <RowBetween align="flex-end">
-                      <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
-                        {oneDayTxns ? localNumber(oneDayTxns) : 0}
+                      <TYPE.main fontSize={'1.0rem'} lineHeight={1} fontWeight={500}>
+                        {/* {oneDayTxns ? localNumber(oneDayTxns) : 0} */}
+                        TODO!
                       </TYPE.main>
                       <TYPE.main>{txnChangeFormatted}</TYPE.main>
                     </RowBetween>
                   </AutoColumn>
                 </Panel>
-                <Panel
-                  style={{
-                    gridColumn: below1080 ? '1' : '2/4',
-                    gridRow: below1080 ? '' : '1/4',
-                  }}
-                >
-                  <TokenChart address={address} color={backgroundColor} base={priceUSD} />
-                </Panel>
               </PanelWrapper>
             </>
 
             <RowBetween style={{ marginTop: '3rem' }}>
-              <TYPE.main fontSize={'1.125rem'}>Top Pairs</TYPE.main>
-              <AutoRow gap="4px" style={{ width: 'fit-content' }}>
+              <TYPE.subHeader>Available Pools</TYPE.subHeader>
+              {/* <AutoRow gap="4px" style={{ width: 'fit-content' }}>
                 <Checkbox checked={useTracked} setChecked={() => setUseTracked(!useTracked)} text={'Hide untracked pairs'} />
                 <QuestionHelper text="USD amounts may be inaccurate in low liquiidty pairs or pairs without ETH or stablecoins." />
-              </AutoRow>
+              </AutoRow> */}
             </RowBetween>
             <Panel
               rounded
               style={{
-                marginTop: '1.5rem',
+                marginTop: '1.0rem',
                 padding: '0rem 0 ',
               }}
             >
@@ -362,59 +348,6 @@ function TokenPage({ address, history }) {
                 <Loader />
               )}
             </Panel>
-            <RowBetween mt={40} mb={'1rem'}>
-              <TYPE.main fontSize={'1.125rem'}>Transactions</TYPE.main> <div />
-            </RowBetween>
-            <Panel
-              rounded
-              style={{
-                padding: '0rem 0',
-                borderRadius: '5px',
-              }}
-            >
-              {transactions ? <TxnList color={backgroundColor} transactions={transactions} /> : <Loader />}
-            </Panel>
-            <>
-              <RowBetween style={{ marginTop: '3rem' }}>
-                <TYPE.main fontSize={'1.125rem'}>Token Information</TYPE.main>{' '}
-              </RowBetween>
-              <Panel
-                rounded
-                style={{
-                  marginTop: '1.5rem',
-                }}
-                p={20}
-              >
-                <TokenDetailsLayout>
-                  <Column>
-                    <TYPE.main>Symbol</TYPE.main>
-                    <Text style={{ marginTop: '.5rem' }} fontSize={24} fontWeight="500">
-                      <FormattedName text={symbol} maxCharacters={12} />
-                    </Text>
-                  </Column>
-                  <Column>
-                    <TYPE.main>Name</TYPE.main>
-                    <TYPE.main style={{ marginTop: '.5rem' }} fontSize={24} fontWeight="500">
-                      <FormattedName text={name} maxCharacters={16} />
-                    </TYPE.main>
-                  </Column>
-                  <Column>
-                    <TYPE.main>Address</TYPE.main>
-                    <AutoRow align="flex-end">
-                      <TYPE.main style={{ marginTop: '.5rem' }} fontSize={24} fontWeight="500">
-                        {shortenStraknetAddress(address)}
-                      </TYPE.main>
-                      <CopyHelper toCopy={address} />
-                    </AutoRow>
-                  </Column>
-                  <ButtonLight color={backgroundColor}>
-                    <Link color={backgroundColor} external href={urls.showAddress(address)}>
-                      View on Starkscan ↗
-                    </Link>
-                  </ButtonLight>
-                </TokenDetailsLayout>
-              </Panel>
-            </>
           </DashboardWrapper>
         </WarningGrouping>
       </ContentWrapper>

@@ -73,7 +73,7 @@ export const ButtonLight = styled(Base)`
 
   :hover {
     background-color: ${({ color, theme }) =>
-      color ? transparentize(0.8, color) : transparentize(0.8, theme.primary1)};
+    color ? transparentize(0.8, color) : transparentize(0.8, theme.primary1)};
   }
 `
 
@@ -97,11 +97,21 @@ export function ButtonDropdown({ disabled = false, children, open, ...rest }) {
 }
 
 export const ButtonDark = styled(Base)`
-  background-color: ${({ color, theme }) => (color ? color : theme.primary1)};
   color: white;
   width: fit-content;
-  border-radius: 12px;
   white-space: nowrap;
+  padding: 9px 21px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: var(--jedi-gradient,linear-gradient(151deg,#29AAFD 0%,#FF00E9 100%));
+  text-align: center;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 750;
+  line-height: 20px;
+  border: unset;
+  cursor: pointer;
+  font-family: 'Avenir LT Std';
 
     ${(props) => !props.disabled && `
           :hover {

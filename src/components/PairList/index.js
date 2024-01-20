@@ -28,10 +28,11 @@ const PageButtons = styled.div`
 `
 
 const Arrow = styled.div`
-  color: ${({ theme }) => theme.primary1};
+  color: ${({ theme }) => theme.jediGrey};
   opacity: ${(props) => (props.faded ? 0.3 : 1)};
   padding: 0 20px;
   user-select: none;
+  font-size: 30px;
   :hover {
     cursor: pointer;
   }
@@ -294,7 +295,7 @@ function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = fals
               setSortDirection(sortedColumn !== SORT_FIELD.VOL ? true : !sortDirection)
             }}
           >
-            Volume (24hrs)
+            Volume (24H)
             {sortedColumn === SORT_FIELD.VOL ? (!sortDirection ? '↑' : '↓') : ''}
           </ClickableText>
         </Flex>
@@ -307,7 +308,7 @@ function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = fals
                 setSortDirection(sortedColumn !== SORT_FIELD.VOL_7DAYS ? true : !sortDirection)
               }}
             >
-              Volume (7d) {sortedColumn === SORT_FIELD.VOL_7DAYS ? (!sortDirection ? '↑' : '↓') : ''}
+              Volume (7D) {sortedColumn === SORT_FIELD.VOL_7DAYS ? (!sortDirection ? '↑' : '↓') : ''}
             </ClickableText>
           </Flex>
         )}
@@ -320,7 +321,7 @@ function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = fals
                 setSortDirection(sortedColumn !== SORT_FIELD.FEES ? true : !sortDirection)
               }}
             >
-              Fees (24hr) {sortedColumn === SORT_FIELD.FEES ? (!sortDirection ? '↑' : '↓') : ''}
+              Fees (24H) {sortedColumn === SORT_FIELD.FEES ? (!sortDirection ? '↑' : '↓') : ''}
             </ClickableText>
           </Flex>
         )}
@@ -333,7 +334,7 @@ function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = fals
                 setSortDirection(sortedColumn !== SORT_FIELD.APY ? true : !sortDirection)
               }}
             >
-              APY {sortedColumn === SORT_FIELD.APY ? (!sortDirection ? '↑' : '↓') : ''}
+              1 yr Fee/Liquidity {sortedColumn === SORT_FIELD.APY ? (!sortDirection ? '↑' : '↓') : ''}
             </ClickableText>
             <QuestionHelper text={'Based on 24hr fee compounded'} />
           </Flex>
@@ -347,15 +348,15 @@ function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = fals
             setPage(page === 1 ? page : page - 1)
           }}
         >
-          <Arrow faded={page === 1 ? true : false}>←</Arrow>
+          <Arrow faded={page === 1 ? true : false}>{'<'}</Arrow>
         </div>
-        <TYPE.body>{page + ' of ' + maxPage}</TYPE.body>
+        <TYPE.body style={{ display: 'flex', alignItems: 'center' }}>{page + ' of ' + maxPage}</TYPE.body>
         <div
           onClick={(e) => {
             setPage(page === maxPage ? page : page + 1)
           }}
         >
-          <Arrow faded={page === maxPage ? true : false}>→</Arrow>
+          <Arrow faded={page === maxPage ? true : false}>{'>'}</Arrow>
         </div>
       </PageButtons>
     </ListWrapper>
