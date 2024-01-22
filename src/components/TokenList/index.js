@@ -77,7 +77,7 @@ const DashGrid = styled.div`
   @media screen and (min-width: 1080px) {
     display: grid;
     grid-gap: 0.5em;
-    grid-template-columns: 1.5fr 0.6fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr;
     grid-template-areas: 'name symbol liq vol price change';
   }
 `
@@ -183,15 +183,15 @@ function TopTokenList({ tokens, itemMax = 10, useTracked = false }) {
             {!below680 && <div style={{ marginRight: '1rem', width: '10px' }}>{index}</div>}
             <TokenLogo address={item.id} symbol={item.symbol} />
             <CustomLink style={{ marginLeft: '16px', whiteSpace: 'nowrap' }} to={'/token/' + item.id}>
-              <FormattedName text={below680 ? item.symbol : item.name} maxCharacters={below600 ? 8 : 16} adjustSize={true} link={true} />
+              <FormattedName text={item.symbol} maxCharacters={below600 ? 8 : 16} adjustSize={true} link={true} />
             </CustomLink>
           </Row>
         </DataText>
-        {!below680 && (
+        {/* {!below680 && (
           <DataText area="symbol" color="text" fontWeight="500">
             <FormattedName text={item.symbol} maxCharacters={8} />
           </DataText>
-        )}
+        )} */}
         <DataText area="liq">{formattedNum(item.totalLiquidityUSD, true)}</DataText>
         <DataText area="vol">{formattedNum(item.oneDayVolumeUSD, true)}</DataText>
         {!below1080 && (
@@ -216,7 +216,7 @@ function TopTokenList({ tokens, itemMax = 10, useTracked = false }) {
           height: 'fit-content',
           padding: '1rem 1.125rem 1rem 1.125rem',
           backgroundColor: '#ffffff33',
-          borderRadius: '5px',
+          borderRadius: '8px 8px 0px 0px',
         }}
       >
         <Flex alignItems="center" justifyContent="flexStart">
@@ -232,7 +232,7 @@ function TopTokenList({ tokens, itemMax = 10, useTracked = false }) {
             {below680 ? 'Symbol' : 'Name'} {sortedColumn === SORT_FIELD.NAME ? (!sortDirection ? '↑' : '↓') : ''}
           </ClickableText>
         </Flex>
-        {!below680 && (
+        {/* {!below680 && (
           <Flex alignItems="center">
             <ClickableText
               area="symbol"
@@ -244,7 +244,7 @@ function TopTokenList({ tokens, itemMax = 10, useTracked = false }) {
               Symbol {sortedColumn === SORT_FIELD.SYMBOL ? (!sortDirection ? '↑' : '↓') : ''}
             </ClickableText>
           </Flex>
-        )}
+        )} */}
 
         <Flex alignItems="center">
           <ClickableText
@@ -265,7 +265,7 @@ function TopTokenList({ tokens, itemMax = 10, useTracked = false }) {
               setSortDirection(sortedColumn !== (useTracked ? SORT_FIELD.VOL_UT : SORT_FIELD.VOL) ? true : !sortDirection)
             }}
           >
-            Volume (24hrs)
+            Volume(24H)
             {sortedColumn === (useTracked ? SORT_FIELD.VOL_UT : SORT_FIELD.VOL) ? (!sortDirection ? '↑' : '↓') : ''}
           </ClickableText>
         </Flex>
@@ -291,7 +291,7 @@ function TopTokenList({ tokens, itemMax = 10, useTracked = false }) {
                 setSortDirection(sortedColumn !== SORT_FIELD.CHANGE ? true : !sortDirection)
               }}
             >
-              Price Change (24hrs)
+              Price Change
               {sortedColumn === SORT_FIELD.CHANGE ? (!sortDirection ? '↑' : '↓') : ''}
             </ClickableText>
           </Flex>
