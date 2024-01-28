@@ -36,6 +36,7 @@ import QuestionHelper from '../components/QuestionHelper'
 import Checkbox from '../components/Checkbox'
 import { shortenStraknetAddress } from '../utils'
 import starIcon from '../../src/assets/star.svg'
+import backArrow from '../../src/assets/back_arrow.svg'
 
 const DashboardWrapper = styled.div`
   width: 100%;
@@ -172,6 +173,7 @@ function TokenPage({ address, history }) {
 
   const [useTracked, setUseTracked] = useState(true)
 
+  const firstRowStyle = below1080 ? { display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', minWidth: '90vw' } : {};
   if (!whitelistedTokens[address]) {
     return (
       <BlockedWrapper>
@@ -192,15 +194,16 @@ function TokenPage({ address, history }) {
       <ContentWrapper>
         <RowBetween style={{ flexWrap: 'wrap', alingItems: 'start' }}>
           <AutoRow align="flex-end" style={{ width: 'fit-content' }}>
-            <TYPE.breadCrumbs>
+            {!below1080 && <TYPE.breadCrumbs>
               <BasicLink to="/tokens">{'Home > Tokens '}</BasicLink>
               <span style={{ color: 'white' }}> {'>'} {symbol}</span>
             </TYPE.breadCrumbs>
-            {/* <Link style={{ width: 'fit-content' }} color={backgroundColor} external href={urls.showAddress(address)}>
-              <Text style={{ marginLeft: '.15rem' }} fontSize={'14px'} fontWeight={400}>
-                ({shortenStraknetAddress(address)})
-              </Text>
-            </Link> */}
+            }
+            {below1080 && <div style={{ color: '#50D5FF', fontSize: '0.67rem', display: 'flex' }}>
+              <img src={backArrow} style={{ marginRight: '0.3rem' }} />
+              Back to tokens
+            </div>
+            }
           </AutoRow>
           {!below600 && <Search small={true} />}
         </RowBetween>
@@ -213,74 +216,67 @@ function TokenPage({ address, history }) {
                 alignItems: 'flex-start',
               }}
             >
-              <RowFixed style={{ flexWrap: 'wrap' }}>
-                <div>
-                  <RowFixed style={{ alignItems: 'baseline' }}>
-                    <TokenLogo address={address} symbol={symbol} size="32px" style={{ alignSelf: 'center' }} />
-                    <TYPE.main fontSize={below1080 ? '1.0rem' : '1.0rem'} fontWeight={500} style={{ margin: '0.5rem 0.3rem' }}>
-                      <RowFixed gap="6px">
-                        {/* <FormattedName text={name ? name + ' ' : ''} maxCharacters={16} style={{ marginRight: '6px' }} />{' '} */}
-                        {formattedSymbol ? `${formattedSymbol}` : ''}
-                      </RowFixed>
-                    </TYPE.main>{' '}
+              <RowFixed style={firstRowStyle} style1={{ flexWrap: 'wrap' }}>
+                <RowFixed style={{ alignItems: 'baseline', flexWrap: below1080 ? 'no-wrap' : 'wrap' }}>
+                  <TokenLogo address={address} symbol={symbol} size="24px" style={{ alignSelf: 'center' }} />
+                  <TYPE.main fontSize={below1080 ? '0.67rem' : '0.83rem'} fontWeight={500} style={{ margin: '0.5rem 1.5rem 0.5rem 0.3rem', width: '50%' }}>
+                    <RowFixed gap="6px">
+                      {formattedSymbol ? `${formattedSymbol}` : ''}
+                    </RowFixed>
+                  </TYPE.main>{' '}
 
-                  </RowFixed>
-                  {!below1080 && (
-                    <>
-                      <TYPE.main fontSize={'1.0rem'} fontWeight={500} style={{ marginRight: '1rem' }}>
+                  {(
+                    <div style={{ display: 'flex', alignItems: 'center', fontSize: below1080 ? '0.67rem' : '1.0rem' }}>
+                      <TYPE.main fontSize={below1080 ? '0.67rem' : '1.0rem'} fontWeight={500} style={{ marginRight: '0.5rem' }}>
                         US{price}
                       </TYPE.main>
-                      {priceChange}
-                    </>
+                      <div style={{ fontSize: below1080 ? '0.58rem' : '0.67rem' }}>
+                        {priceChange}
+                      </div>
+                    </div>
                   )}
-                </div>
-              </RowFixed>
-              <span>
-                <RowFixed ml={below500 ? '0' : '2.5rem'} mt={below500 ? '1rem' : '0'}>
-                  {!!!savedTokens[address] && !below800 ? (
-                    <Hover onClick={() => addToken(address, symbol)}>
-                      <StyledIcon>
-                        <img src={starIcon} style={{ marginRight: '0.5rem' }} />
-                      </StyledIcon>
-                    </Hover>
-                  ) : !below1080 ? (
-                    <StyledIcon>
-                      <Bookmark style={{ marginRight: '0.5rem', opacity: 0.4 }} />
-                    </StyledIcon>
-                  ) : (
-                    <></>
-                  )}
-                  <Link href={getPoolLink(address)} target="_blank">
-                    <ButtonDark color={backgroundColor}>+ Add Liquidity</ButtonDark>
-                  </Link>
-                  <Link href={getSwapLink(address)} target="_blank">
-                    <ButtonDark ml={'.5rem'} mr={below1080 && '.5rem'} style={{ padding: '9px 36px' }} color={backgroundColor}>
-                      Trade
-                    </ButtonDark>
-                  </Link>
                 </RowFixed>
-              </span>
+                {!!!savedTokens[address] && below800 ? (
+                  <Hover onClick={() => addToken(address, symbol)}>
+                    <StyledIcon>
+                      <img src={starIcon} style={{ marginRight: '0.5rem' }} />
+                    </StyledIcon>
+                  </Hover>
+                ) : below1080 ? (
+                  <StyledIcon>
+                    <Bookmark style={{ marginRight: '0.5rem', opacity: 0.4 }} />
+                  </StyledIcon>
+                ) : (
+                  <></>
+                )}
+              </RowFixed>
+              <RowFixed ml={below1080 ? 'auto' : '2.5rem'} mr={below1080 ? 'auto' : '0'} mt={below1080 ? '1rem' : '0'}>
+                {!!!savedTokens[address] && !below800 ? (
+                  <Hover onClick={() => addToken(address, symbol)}>
+                    <StyledIcon>
+                      <img src={starIcon} style={{ marginRight: '0.5rem' }} />
+                    </StyledIcon>
+                  </Hover>
+                ) : !below1080 ? (
+                  <StyledIcon>
+                    <Bookmark style={{ marginRight: '0.5rem', opacity: 0.4 }} />
+                  </StyledIcon>
+                ) : (
+                  <></>
+                )}
+                <Link href={getPoolLink(address)} target="_blank">
+                  <ButtonDark color={backgroundColor}>+ Add Liquidity</ButtonDark>
+                </Link>
+                <Link href={getSwapLink(address)} target="_blank">
+                  <ButtonDark ml={'.5rem'} mr={below1080 && '.5rem'} style={{ padding: '9px 36px' }} color={backgroundColor}>
+                    Trade
+                  </ButtonDark>
+                </Link>
+              </RowFixed>
             </RowBetween>
 
             <>
               <PanelWrapper>
-                {below1080 && price && (
-                  <Panel>
-                    <AutoColumn gap="20px">
-                      <RowBetween>
-                        <TYPE.main>Price</TYPE.main>
-                        <div />
-                      </RowBetween>
-                      <RowBetween align="flex-end">
-                        {' '}
-                        <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
-                          {price}
-                        </TYPE.main>
-                        <TYPE.main>{priceChange}</TYPE.main>
-                      </RowBetween>
-                    </AutoColumn>
-                  </Panel>
-                )}
                 <Panel>
                   <AutoColumn gap="20px">
                     <RowBetween>
@@ -291,7 +287,7 @@ function TokenPage({ address, history }) {
                       <TYPE.main fontSize={'1.0rem'} lineHeight={1} fontWeight={500}>
                         US{liquidity}
                       </TYPE.main>
-                      <TYPE.main>{liquidityChange}</TYPE.main>
+                      <TYPE.main fontSize="0.67rem">{liquidityChange}</TYPE.main>
                     </RowBetween>
                   </AutoColumn>
                 </Panel>
@@ -305,7 +301,7 @@ function TokenPage({ address, history }) {
                       <TYPE.main fontSize={'1.0rem'} lineHeight={1} fontWeight={500}>
                         US{volume}
                       </TYPE.main>
-                      <TYPE.main>{volumeChange}</TYPE.main>
+                      <TYPE.main fontSize="0.67rem">{volumeChange}</TYPE.main>
                     </RowBetween>
                   </AutoColumn>
                 </Panel>
@@ -321,19 +317,15 @@ function TokenPage({ address, history }) {
                         {/* {oneDayTxns ? localNumber(oneDayTxns) : 0} */}
                         TODO!
                       </TYPE.main>
-                      <TYPE.main>{txnChangeFormatted}</TYPE.main>
+                      <TYPE.main fontSize="0.67rem">{txnChangeFormatted}</TYPE.main>
                     </RowBetween>
                   </AutoColumn>
                 </Panel>
               </PanelWrapper>
             </>
 
-            <RowBetween style={{ marginTop: '3rem' }}>
+            <RowBetween style={{ marginTop: '2rem' }}>
               <TYPE.subHeader>Available Pools</TYPE.subHeader>
-              {/* <AutoRow gap="4px" style={{ width: 'fit-content' }}>
-                <Checkbox checked={useTracked} setChecked={() => setUseTracked(!useTracked)} text={'Hide untracked pairs'} />
-                <QuestionHelper text="USD amounts may be inaccurate in low liquiidty pairs or pairs without ETH or stablecoins." />
-              </AutoRow> */}
             </RowBetween>
             <Panel
               rounded

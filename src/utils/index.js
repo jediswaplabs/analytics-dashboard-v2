@@ -73,8 +73,7 @@ export function getPoolLink(token0Address, token1Address = null, remove = false)
     return (
       `https://app.jediswap.xyz/#/` +
       (remove ? `remove` : `add`) +
-      `/${token0Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token0Address}/${
-        token1Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token1Address
+      `/${token0Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token0Address}/${token1Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token1Address
       }`
     )
   }
@@ -84,9 +83,8 @@ export function getSwapLink(token0Address, token1Address = null) {
   if (!token1Address) {
     return `https://app.jediswap.xyz/#/swap?inputCurrency=${token0Address}`
   } else {
-    return `https://app.jediswap.xyz/#/swap?inputCurrency=${
-      token0Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token0Address
-    }&outputCurrency=${token1Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token1Address}`
+    return `https://app.jediswap.xyz/#/swap?inputCurrency=${token0Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token0Address
+      }&outputCurrency=${token1Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token1Address}`
   }
 }
 
@@ -466,6 +464,8 @@ export function rawPercent(percentRaw) {
 }
 
 export function formattedPercent(percent, useAbs = false) {
+  const green = '#21E70F';
+  const red = '#FC4D4D';
   percent = parseFloat(percent)
   if (!percent || percent === 0) {
     return <Text fontWeight={500}>0%</Text>
@@ -473,7 +473,7 @@ export function formattedPercent(percent, useAbs = false) {
 
   if (percent < 0.0001 && percent > 0) {
     return (
-      <Text fontWeight={500} color="green">
+      <Text fontWeight={500} color={green}>
         {'< 0.0001%'}
       </Text>
     )
@@ -481,7 +481,7 @@ export function formattedPercent(percent, useAbs = false) {
 
   if (percent < 0 && percent > -0.0001) {
     return (
-      <Text fontWeight={500} color="red">
+      <Text fontWeight={500} color={red}>
         {'< 0.0001%'}
       </Text>
     )
@@ -493,12 +493,12 @@ export function formattedPercent(percent, useAbs = false) {
   }
   if (fixedPercent > 0) {
     if (fixedPercent > 100) {
-      return <Text fontWeight={500} color="green">{`${useAbs ? '' : '+'}${percent?.toFixed(0).toLocaleString()}%`}</Text>
+      return <Text fontWeight={500} color={green}>{`${useAbs ? '' : '+'}${percent?.toFixed(0).toLocaleString()}%`}</Text>
     } else {
-      return <Text fontWeight={500} color="green">{`${useAbs ? '' : '+'}${fixedPercent}%`}</Text>
+      return <Text fontWeight={500} color={green}>{`${useAbs ? '' : '+'}${fixedPercent}%`}</Text>
     }
   } else {
-    return <Text fontWeight={500} color="red">{`${fixedPercent}%`}</Text>
+    return <Text fontWeight={500} color={red}>{`${fixedPercent}%`}</Text>
   }
 }
 
