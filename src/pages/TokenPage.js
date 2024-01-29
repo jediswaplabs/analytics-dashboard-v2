@@ -199,10 +199,11 @@ function TokenPage({ address, history }) {
               <span style={{ color: 'white' }}> {'>'} {symbol}</span>
             </TYPE.breadCrumbs>
             }
-            {below1080 && <div style={{ color: '#50D5FF', fontSize: '0.67rem', display: 'flex' }}>
-              <img src={backArrow} style={{ marginRight: '0.3rem' }} />
-              Back to tokens
-            </div>
+            {below1080 &&
+              <BasicLink to="/tokens" style={{ color: '#50D5FF', fontSize: '0.67rem', display: 'flex' }}>
+                <img src={backArrow} style={{ marginRight: '0.3rem' }} />
+                Back to tokens
+              </BasicLink>
             }
           </AutoRow>
           {!below600 && <Search small={true} />}
@@ -332,6 +333,8 @@ function TokenPage({ address, history }) {
               style={{
                 marginTop: '1.0rem',
                 padding: '0rem 0 ',
+                border: below1080 ? 0 : '',
+                boxShadow: below1080 ? 'unset' : ''
               }}
             >
               {address && fetchedPairsList ? (
