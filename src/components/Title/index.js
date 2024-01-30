@@ -5,8 +5,7 @@ import styled from 'styled-components'
 import { Flex } from 'rebass'
 import Link from '../Link'
 import { RowFixed } from '../Row'
-import Logo from '../../assets/jediswap-logo.png'
-import Wordmark from '../../assets/wordmark.png'
+import Wordmark from '../../assets/wordmark.svg'
 
 import { BasicLink } from '../Link'
 import { useMedia } from 'react-use'
@@ -20,12 +19,7 @@ const TitleWrapper = styled.div`
   }
 `
 
-const UniIcon = styled(Link)`
-  transition: transform 0.3s ease;
-  :hover {
-    transform: rotate(-5deg);
-  }
-`
+const UniIcon = styled(Link)``
 
 const Option = styled.div`
   font-weight: 500;
@@ -56,11 +50,8 @@ export default function Title() {
       <Flex alignItems="center" style={{ justifyContent: 'space-between' }}>
         <RowFixed>
           <UniIcon id="link" onClick={() => history.push('/')}>
-            <img width={'24px'} src={Logo} alt="logo" />
-          </UniIcon>
-          {!below1080 && (
             <img width={'110px'} style={{ marginLeft: '8px', marginTop: '-4px' }} src={Wordmark} alt="logo" onClick={() => history.push('/')} />
-          )}
+          </UniIcon>
         </RowFixed>
         {below1080 && (
           <RowFixed style={{ alignItems: 'flex-end' }}>

@@ -24,11 +24,7 @@ if (typeof GOOGLE_ANALYTICS_ID === 'string') {
   })
   ReactGA.set({
     anonymizeIp: true,
-    customBrowserType: !isMobile
-      ? 'desktop'
-      : 'web3' in window || 'ethereum' in window
-      ? 'mobileWeb3'
-      : 'mobileRegular',
+    customBrowserType: !isMobile ? 'desktop' : 'web3' in window || 'ethereum' in window ? 'mobileWeb3' : 'mobileRegular',
   })
 } else {
   ReactGA.initialize('test', { testMode: true, debug: true })
@@ -41,9 +37,9 @@ function ContextProviders({ children }) {
         <TokenDataContextProvider>
           <GlobalDataContextProvider>
             <PairDataContextProvider>
-                <LpContestDataProvider>
-                    <UserContextProvider>{children}</UserContextProvider>
-                </LpContestDataProvider>
+              <LpContestDataProvider>
+                <UserContextProvider>{children}</UserContextProvider>
+              </LpContestDataProvider>
             </PairDataContextProvider>
           </GlobalDataContextProvider>
         </TokenDataContextProvider>

@@ -15,11 +15,12 @@ import confettiFiatGif from './confetti-flat.webp'
 import confettiFiatGif_x2 from './confetti-flat@x2.webp'
 
 const Wrapper = styled.div`
-  height: ${({ isMobile }) => (isMobile ? 'initial' : '100vh')};
-  padding: ${({ isMobile }) => (isMobile ? '16px' : 'calc(17px * 1.3) 40px 40px')};
+  min-height: ${({ isMobile }) => (isMobile ? 'initial' : 'calc(100vh - 48px)')};
+  padding: ${({ isMobile }) => (isMobile ? '16px' : 'calc(17px * 1.3) 40px 100px')};
   position: sticky;
   top: 0px;
   z-index: 9999;
+  padding-top: 28px;
 
   @media screen and (max-width: 800px) {
     grid-template-columns: 1fr;
@@ -38,8 +39,8 @@ const OptionContent = styled.span`
 
 const Option = styled.div`
   font-weight: 500;
-  font-size: 14px;
-  opacity: ${({ activeText }) => (activeText ? 1 : 0.6)};
+  font-size: 16px;
+  opacity: ${({ activeText }) => (activeText ? 1 : 0.8)};
   color: ${({ theme }) => theme.white};
   position: relative;
 
@@ -74,6 +75,7 @@ const DesktopWrapper = styled.div`
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
+  gap: 3rem;
 `
 
 const MobileWrapper = styled.div`
@@ -83,7 +85,7 @@ const MobileWrapper = styled.div`
 `
 
 const HeaderText = styled.div`
-  margin-right: 0.75rem;
+  margin-right: 0.5rem;
   font-size: 0.825rem;
   font-weight: 500;
   display: inline;
@@ -129,10 +131,10 @@ const AccentText = styled.span`
 `
 
 const Separator = styled.hr`
-  color: #fff;
-  width: 75%;
-  margin: 0;
+  width: 60%;
   border-top: 0;
+  margin: 2px 0;
+  border-color: rgba(217, 217, 217, 0.2);
 `
 
 function SideNav({ history }) {
@@ -146,14 +148,14 @@ function SideNav({ history }) {
     <Wrapper isMobile={below1080}>
       {!below1080 ? (
         <DesktopWrapper>
-          <AutoColumn gap="2rem">
+          <AutoColumn gap="3.375rem">
             <Title />
             {!below1080 && (
-              <AutoColumn gap="2.5rem">
+              <AutoColumn gap="1.5rem">
                 <BasicLink to="/home">
                   <Option activeText={history.location.pathname === '/home' ?? undefined}>
                     <OptionContent>
-                      <TrendingUp size={20} style={{ marginRight: '.75rem' }} />
+                      <TrendingUp size={20} style={{ marginRight: '.5rem' }} />
                       Overview
                     </OptionContent>
                   </Option>
@@ -166,7 +168,7 @@ function SideNav({ history }) {
                     }
                   >
                     <OptionContent>
-                      <Disc size={20} style={{ marginRight: '.75rem' }} />
+                      <Disc size={20} style={{ marginRight: '.5rem' }} />
                       Tokens
                     </OptionContent>
                   </Option>
@@ -179,7 +181,7 @@ function SideNav({ history }) {
                     }
                   >
                     <OptionContent>
-                      <PieChart size={20} style={{ marginRight: '.75rem' }} />
+                      <PieChart size={20} style={{ marginRight: '.5rem' }} />
                       Pairs
                     </OptionContent>
                   </Option>
@@ -222,7 +224,7 @@ function SideNav({ history }) {
             )}
           </AutoColumn>
 
-          <AutoColumn gap="0.5rem">
+          <AutoColumn gap="1.5rem">
             <HeaderText>
               <Link href="https://jediswap.xyz/" target="_blank">
                 JediSwap.xyz

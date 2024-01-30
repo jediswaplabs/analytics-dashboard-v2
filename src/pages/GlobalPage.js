@@ -53,7 +53,7 @@ function GlobalPage() {
   return (
     <PageWrapper>
       <ContentWrapper>
-        <TYPE.largeHeader>Overview</TYPE.largeHeader>
+        <TYPE.largeHeader lineHeight={0.7}>Overview</TYPE.largeHeader>
 
         <PageSection>
           <Search />

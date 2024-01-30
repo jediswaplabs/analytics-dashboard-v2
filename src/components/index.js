@@ -115,9 +115,10 @@ export const SubNavEl = styled.li`
 export const PageWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  padding-top: 16px;
-  padding-bottom: 80px;
-  ${'' /* box-shadow: rgb(255 255 255 / 50%) 0px 30.0211px 43.1072px -27.7118px inset,
+  padding-top: 26px;
+  padding-bottom: 64px;
+  ${
+    '' /* box-shadow: rgb(255 255 255 / 50%) 0px 30.0211px 43.1072px -27.7118px inset,
     rgb(255 255 255) 0px 5.38841px 8.46749px -3.07909px inset,
     rgb(96 68 145 / 30%) 0px -63.1213px 52.3445px -49.2654px inset,
     rgb(202 172 255 / 30%) 0px 75.4377px 76.9772px -36.9491px inset,
