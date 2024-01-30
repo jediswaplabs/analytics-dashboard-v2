@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button as RebassButton } from 'rebass/styled-components'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { Plus, ChevronDown, ChevronUp } from 'react-feather'
 import { darken, transparentize } from 'polished'
 import { RowBetween } from '../Row'
@@ -72,8 +72,7 @@ export const ButtonLight = styled(Base)`
   }
 
   :hover {
-    background-color: ${({ color, theme }) =>
-    color ? transparentize(0.8, color) : transparentize(0.8, theme.primary1)};
+    background-color: ${({ color, theme }) => (color ? transparentize(0.8, color) : transparentize(0.8, theme.primary1))};
   }
 `
 
@@ -103,7 +102,7 @@ export const ButtonDark = styled(Base)`
   padding: 9px 21px;
   flex-shrink: 0;
   border-radius: 8px;
-  background: var(--jedi-gradient,linear-gradient(151deg,#29AAFD 0%,#FF00E9 100%));
+  background: linear-gradient(151deg, #29aafd 0%, #ff00e9 100%);
   text-align: center;
   font-size: 18px;
   font-style: normal;
@@ -113,13 +112,17 @@ export const ButtonDark = styled(Base)`
   cursor: pointer;
   font-family: 'Avenir LT Std';
 
-    ${(props) => !props.disabled && `
+  ${(props) =>
+    !props.disabled &&
+    `
           :hover {
             background-color: ${({ color, theme }) => (color ? darken(0.1, color) : darken(0.1, theme.primary1))};
           }
     `}
-    
-    ${(props) => props.disabled && `
+
+  ${(props) =>
+    props.disabled &&
+    `
         opacity: 0.5;
         cursor: default;
     `}
@@ -127,7 +130,7 @@ export const ButtonDark = styled(Base)`
 
 export const ButtonFaded = styled(Base)`
   background-color: ${({ theme }) => theme.bg2};
-  color: (255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.5);
   white-space: nowrap;
 
   :hover {
@@ -154,17 +157,40 @@ export function ButtonCustom({ children, bgColor, color, ...rest }) {
   )
 }
 
+const activeAndHoverOptionsButtonStyles = css`
+  cursor: ${({ disabled }) => !disabled && 'pointer'};
+  color: #ff00e9;
+  background: #fff;
+`
 export const OptionButton = styled.div`
-  font-weight: 500;
-  width: fit-content;
+  min-width: 45px;
   white-space: nowrap;
+  text-align: center;
   padding: 6px;
-  border-radius: 6px;
-  border: 1px solid ${({ theme }) => theme.bg4};
-  background-color: ${({ active, theme }) => active && theme.bg3};
-  color: ${({ theme }) => theme.text1};
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0px 0.77px 30.791px 0px rgba(227, 222, 255, 0.2) inset, 0px 3.079px 13.856px 0px rgba(154, 146, 210, 0.3) inset;
+  color: #fff;
+  font-weight: 500;
 
-  :hover {
-    cursor: ${({ disabled }) => !disabled && 'pointer'};
+  &:hover {
+    ${activeAndHoverOptionsButtonStyles}
+  }
+
+  ${(props) => props.active && activeAndHoverOptionsButtonStyles}
+`
+export const OptionButtonGroup = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1px;
+
+  ${OptionButton}:not(:only-child):not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  ${OptionButton} + ${OptionButton} {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
   }
 `

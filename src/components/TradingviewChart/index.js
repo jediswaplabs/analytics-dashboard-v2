@@ -21,23 +21,14 @@ const Wrapper = styled.div`
 `
 
 // constant height for charts
-const HEIGHT = 300
+const HEIGHT = 250
 
-const TradingViewChart = ({
-  type = CHART_TYPES.BAR,
-  data,
-  base,
-  baseChange,
-  field,
-  title,
-  width,
-  useWeekly = false,
-}) => {
+const TradingViewChart = ({ type = CHART_TYPES.BAR, data, base, baseChange, field, title, width, useWeekly = false }) => {
   // reference for DOM element to create with chart
   const ref = useRef()
 
   // pointer to the chart object
-  const [chartCreated, setChartCreated] = useState(false)
+  const [chartCreated, setChartCreated] = useState(null)
   const dataPrev = usePrevious(data)
 
   useEffect(() => {
@@ -52,35 +43,25 @@ const TradingViewChart = ({
   }, [chartCreated, data, dataPrev, type])
 
   // parese the data and format for tardingview consumption
-  const formattedData = data?.map((entry) => {
-    return {
-      time: dayjs.unix(entry.date).format('YYYY-MM-DD'),
-      value: parseFloat(entry[field]),
-    }
-  }).filter((i) => !Number.isNaN(i.value));
+  const formattedData = data
+    ?.map((entry) => {
+      return {
+        time: dayjs.unix(entry.date).format('YYYY-MM-DD'),
+        value: parseFloat(entry[field]),
+      }
+    })
+    .filter((i) => !Number.isNaN(i.value))
 
   // adjust the scale based on the type of chart
-  const topScale = type === CHART_TYPES.AREA ? 0.32 : 0.2
+  const topScale = type === CHART_TYPES.AREA ? 0.01 : 0.2
 
   const [darkMode] = useDarkModeManager()
   const textColor = darkMode ? 'white' : 'black'
-  const previousTheme = usePrevious(darkMode)
-
-  // reset the chart if them switches
-  useEffect(() => {
-    if (chartCreated && previousTheme !== darkMode) {
-      // remove the tooltip element
-      let tooltip = document.getElementById('tooltip-id' + type)
-      let node = document.getElementById('test-id' + type)
-      node.removeChild(tooltip)
-      chartCreated.resize(0, 0)
-      setChartCreated()
-    }
-  }, [chartCreated, darkMode, previousTheme, type])
 
   // if no chart created yet, create one with options and add to DOM manually
   useEffect(() => {
     if (!chartCreated && formattedData) {
+      ref.current.innerHTML = ''
       var chart = createChart(ref.current, {
         width: width,
         height: HEIGHT,
@@ -89,14 +70,21 @@ const TradingViewChart = ({
           textColor: textColor,
         },
         rightPriceScale: {
+          visible: false,
+        },
+        leftPriceScale: {
           scaleMargins: {
             top: topScale,
             bottom: 0,
           },
+          visible: false,
           borderVisible: false,
         },
         timeScale: {
           borderVisible: false,
+          fixLeftEdge: true,
+          fixRightEdge: true,
+          barSpacing: 6,
         },
         grid: {
           horzLines: {
@@ -132,6 +120,7 @@ const TradingViewChart = ({
               color: '#FF00E9',
               priceFormat: {
                 type: 'volume',
+                minMove: 0.02,
               },
               scaleMargins: {
                 top: 0.32,
@@ -150,41 +139,32 @@ const TradingViewChart = ({
       series.setData(formattedData)
       var toolTip = document.createElement('div')
       toolTip.setAttribute('id', 'tooltip-id' + type)
-      toolTip.className = darkMode ? 'three-line-legend-dark' : 'three-line-legend'
-      ref.current.appendChild(toolTip)
+      toolTip.className = 'three-line-legend-dark'
+      ref.current.prepend(toolTip)
       toolTip.style.display = 'block'
       toolTip.style.fontWeight = '500'
-      toolTip.style.left = -4 + 'px'
-      toolTip.style.top = '-' + 8 + 'px'
+      toolTip.style.marginBottom = '10px'
       toolTip.style.backgroundColor = 'transparent'
 
       // format numbers
-      let percentChange = baseChange?.toFixed(2)
+      let percentChange = baseChange?.toFixed(2) ?? 0
       let formattedPercentChange = (percentChange > 0 ? '+' : '') + percentChange + '%'
-      let color = percentChange >= 0 ? 'green' : 'red'
+      let color = percentChange >= 0 ? '#21E70F' : '#ff3257'
 
       // get the title of the chart
       function setLastBarText() {
         toolTip.innerHTML =
-          `<div style="font-size: 16px; margin: 4px 0px; color: ${textColor};">${title} ${
-            type === CHART_TYPES.BAR && !useWeekly ? '(24hr)' : ''
-          }</div>` +
-          `<div style="font-size: 22px; margin: 4px 0px; color:${textColor}" >` +
+          `<div style="font-size: 16px; color: ${textColor};">${title} ${type === CHART_TYPES.BAR && !useWeekly ? '(24hr)' : ''}</div>` +
+          `<div style="font-size: 30px; color:${textColor}" >` +
           formattedNum(base ?? 0, true) +
-          `<span style="margin-left: 10px; font-size: 16px; color: ${color};">${formattedPercentChange}</span>` +
+          `<span style="margin-left: 10px; font-size: 18px; color: ${color};">${formattedPercentChange}</span>` +
           '</div>'
       }
       setLastBarText()
 
       // update the title when hovering on the chart
       chart.subscribeCrosshairMove(function (param) {
-        if (
-          !param?.time ||
-          param.point.x < 0 ||
-          param.point.x > width ||
-          param.point.y < 0 ||
-          param.point.y > HEIGHT
-        ) {
+        if (!param?.time || param.point.x < 0 || param.point.x > width || param.point.y < 0 || param.point.y > HEIGHT) {
           setLastBarText()
         } else {
           let dateStr = useWeekly
@@ -199,8 +179,8 @@ const TradingViewChart = ({
           var price = param.seriesPrices.get(series)
 
           toolTip.innerHTML =
-            `<div style="font-size: 16px; margin: 4px 0px; color: ${textColor};">${title}</div>` +
-            `<div style="font-size: 22px; margin: 4px 0px; color: ${textColor}">` +
+            `<div style="font-size: 16px; color: ${textColor};">${title}</div>` +
+            `<div style="font-size: 30px; color: ${textColor}">` +
             formattedNum(price, true) +
             '</div>' +
             '<div>' +
@@ -208,25 +188,20 @@ const TradingViewChart = ({
             '</div>'
         }
       })
-
-      chart.timeScale().fitContent()
-
       setChartCreated(chart)
+
+      // const now = new Date()
+      // const nMonthsAgo = new Date(now.setMonth(now.getMonth() - 4))
+      //
+      // chart.timeScale().setVisibleRange({
+      //   from: nMonthsAgo.getTime() / 1000, // начальная дата в формате Unix Timestamp
+      //   to: Date.now() / 1000, // текущая дата в формате Unix Timestamp
+      // })
+      //
+      // chart.timeScale().scrollToPosition(-1, false)
+      chart.timeScale().fitContent()
     }
-  }, [
-    base,
-    baseChange,
-    chartCreated,
-    darkMode,
-    data,
-    formattedData,
-    textColor,
-    title,
-    topScale,
-    type,
-    useWeekly,
-    width,
-  ])
+  }, [base, baseChange, chartCreated, darkMode, data, formattedData, textColor, title, topScale, type, useWeekly, width])
 
   // responsiveness
   useEffect(() => {
@@ -239,13 +214,6 @@ const TradingViewChart = ({
   return (
     <Wrapper>
       <div ref={ref} id={'test-id' + type} />
-      <IconWrapper>
-        <Play
-          onClick={() => {
-            chartCreated && chartCreated.timeScale().fitContent()
-          }}
-        />
-      </IconWrapper>
     </Wrapper>
   )
 }

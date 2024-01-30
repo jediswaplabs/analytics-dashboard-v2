@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react'
+import classNames from 'classnames'
 import { ResponsiveContainer } from 'recharts'
 import { timeframeOptions } from '../../constants'
 import { useGlobalChartData, useGlobalData } from '../../contexts/GlobalData'
@@ -6,7 +7,7 @@ import { useMedia } from 'react-use'
 import DropdownSelect from '../DropdownSelect'
 import TradingViewChart, { CHART_TYPES } from '../TradingviewChart'
 import { RowFixed } from '../Row'
-import { OptionButton } from '../ButtonStyled'
+import { OptionButton, OptionButtonGroup } from '../ButtonStyled'
 import { getTimeframe } from '../../utils'
 import { TYPE } from '../../Theme'
 
@@ -29,8 +30,7 @@ const GlobalChart = ({ display }) => {
 
   // global historical data
   const [dailyData, weeklyData] = useGlobalChartData()
-  const { totalLiquidityUSD, oneDayVolumeUSD, volumeChangeUSD, liquidityChangeUSD, oneWeekVolume, weeklyVolumeChange } =
-    useGlobalData()
+  const { totalLiquidityUSD, oneDayVolumeUSD, volumeChangeUSD, liquidityChangeUSD, oneWeekVolume, weeklyVolumeChange } = useGlobalData()
 
   // based on window, get starttim
   let utcStartTime = getTimeframe(timeWindow)
@@ -72,10 +72,7 @@ const GlobalChart = ({ display }) => {
 
   return chartDataFiltered ? (
     <>
-      {below800 && (
-        <DropdownSelect options={CHART_VIEW} active={chartView} setActive={setChartView} color={'#ff007a'} />
-      )}
-
+      {below800 && <DropdownSelect options={CHART_VIEW} active={chartView} setActive={setChartView} color={'#ff007a'} />}
       {chartDataFiltered && chartView === CHART_VIEW.LIQUIDITY && (
         <ResponsiveContainer aspect={60 / 28} ref={ref}>
           <TradingViewChart
@@ -104,28 +101,14 @@ const GlobalChart = ({ display }) => {
         </ResponsiveContainer>
       )}
       {display === 'volume' && (
-        <RowFixed
-          style={{
-            bottom: '70px',
-            position: 'absolute',
-            left: '20px',
-            zIndex: 10,
-          }}
-        >
-          <OptionButton
-            active={volumeWindow === VOLUME_WINDOW.DAYS}
-            onClick={() => setVolumeWindow(VOLUME_WINDOW.DAYS)}
-          >
-            <TYPE.body>D</TYPE.body>
+        <OptionButtonGroup style={{ position: 'absolute', top: '20px', right: '20px', zIndex: 10 }}>
+          <OptionButton active={volumeWindow === VOLUME_WINDOW.DAYS} onClick={() => setVolumeWindow(VOLUME_WINDOW.DAYS)}>
+            D
           </OptionButton>
-          <OptionButton
-            style={{ marginLeft: '4px' }}
-            active={volumeWindow === VOLUME_WINDOW.WEEKLY}
-            onClick={() => setVolumeWindow(VOLUME_WINDOW.WEEKLY)}
-          >
-            <TYPE.body>W</TYPE.body>
+          <OptionButton active={volumeWindow === VOLUME_WINDOW.WEEKLY} onClick={() => setVolumeWindow(VOLUME_WINDOW.WEEKLY)}>
+            W
           </OptionButton>
-        </RowFixed>
+        </OptionButtonGroup>
       )}
     </>
   ) : (

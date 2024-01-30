@@ -209,16 +209,6 @@ function AccountPage({ account }) {
           {/*  )}*/}
           {/*</Panel>*/}
           <TYPE.main fontSize={'1.125rem'} style={{ marginTop: '3rem' }}>
-            Transactions
-          </TYPE.main>{' '}
-          <Panel
-            style={{
-              marginTop: '1.5rem',
-            }}
-          >
-            <TxnList transactions={transactions} account={account} />
-          </Panel>
-          <TYPE.main fontSize={'1.125rem'} style={{ marginTop: '3rem' }}>
             Wallet Stats
           </TYPE.main>{' '}
           <Panel

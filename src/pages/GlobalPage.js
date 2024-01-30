@@ -3,37 +3,23 @@ import { withRouter } from 'react-router-dom'
 import { Box } from 'rebass'
 import styled from 'styled-components'
 
-import { AutoRow, RowBetween } from '../components/Row'
+import { RowBetween } from '../components/Row'
 import { AutoColumn } from '../components/Column'
 import PairList from '../components/PairList'
 import TopTokenList from '../components/TokenList'
-import TxnList from '../components/TxnList'
 import GlobalChart from '../components/GlobalChart'
 import Search from '../components/Search'
-import GlobalStats from '../components/GlobalStats'
 
-import { useGlobalData, useGlobalTransactions } from '../contexts/GlobalData'
+import { useGlobalData } from '../contexts/GlobalData'
 import { useAllPairData } from '../contexts/PairData'
 import { useMedia } from 'react-use'
 import Panel from '../components/Panel'
 import { useAllTokenData } from '../contexts/TokenData'
 import { formattedNum, formattedPercent } from '../utils'
-import { TYPE, ThemedBackground } from '../Theme'
-import { transparentize } from 'polished'
+import { TYPE } from '../Theme'
 import { CustomLink } from '../components/Link'
 
-import { PageWrapper, ContentWrapper } from '../components'
-
-const ListOptions = styled(AutoRow)`
-  height: 40px;
-  width: 100%;
-  font-size: 1.25rem;
-  font-weight: 600;
-
-  @media screen and (max-width: 640px) {
-    font-size: 1rem;
-  }
-`
+import { PageWrapper, ContentWrapper, PageSection } from '../components'
 
 const GridRow = styled.div`
   display: grid;
@@ -48,7 +34,6 @@ function GlobalPage() {
   // get data for lists and totals
   const allPairs = useAllPairData()
   const allTokens = useAllTokenData()
-  const transactions = useGlobalTransactions()
   const { totalLiquidityUSD, oneDayVolumeUSD, volumeChangeUSD, liquidityChangeUSD } = useGlobalData()
 
   // breakpoints
@@ -67,25 +52,15 @@ function GlobalPage() {
 
   return (
     <PageWrapper>
-      <ThemedBackground backgroundColor={transparentize(0.6, '#ff007a')} />
       <ContentWrapper>
-        <TYPE.largeHeader>Dashboard</TYPE.largeHeader>
-        <Search />
-        <div
-          style={{
-            borderRadius: '15px',
-            padding: '1rem',
-            boxShadow: `rgb(255 255 255 / 50%) 0px 30.0211px 43.1072px -27.7118px inset,
-    rgb(255 255 255) 0px 5.38841px 8.46749px -3.07909px inset,
-    rgb(96 68 145 / 30%) 0px -63.1213px 52.3445px -49.2654px inset,
-    rgb(202 172 255 / 30%) 0px 75.4377px 76.9772px -36.9491px inset,
-    rgb(154 146 210 / 30%) 0px 3.07909px 13.8559px inset, rgb(227 222 255 / 20%) 0px 0.769772px 30.7909px inset`,
-          }}
-        >
-          <AutoColumn gap="24px" style={{ paddingBottom: below800 ? '0' : '24px' }}>
-            <GlobalStats />
-          </AutoColumn>
-          {below800 && ( // mobile card
+        <TYPE.largeHeader lineHeight={0.7}>Overview</TYPE.largeHeader>
+
+        <PageSection>
+          <Search />
+        </PageSection>
+
+        {below800 && ( // mobile card
+          <PageSection>
             <Box mb={20}>
               <Panel>
                 <Box>
@@ -118,8 +93,11 @@ function GlobalPage() {
                 </Box>
               </Panel>
             </Box>
-          )}
-          {!below800 && (
+          </PageSection>
+        )}
+
+        {!below800 && (
+          <PageSection>
             <GridRow>
               <Panel style={{ height: '100%', minHeight: '300px' }}>
                 <GlobalChart display="liquidity" />
@@ -128,53 +106,39 @@ function GlobalPage() {
                 <GlobalChart display="volume" />
               </Panel>
             </GridRow>
-          )}
-          {below800 && (
+          </PageSection>
+        )}
+
+        {below800 && (
+          <PageSection>
             <AutoColumn style={{ marginTop: '6px' }} gap="24px">
               <Panel style={{ height: '100%', minHeight: '300px' }}>
                 <GlobalChart display="liquidity" />
               </Panel>
             </AutoColumn>
-          )}
-          <ListOptions gap="10px" style={{ marginTop: '2rem', marginBottom: '.5rem' }}>
-            <RowBetween>
-              <TYPE.main fontSize={'1rem'} style={{ whiteSpace: 'nowrap' }}>
-                Top Pools
-              </TYPE.main>
-              {/*<AutoRow gap="4px" width="100%" justifyContent="flex-end">*/}
-              {/*  <CheckBox*/}
-              {/*    checked={useTracked}*/}
-              {/*    setChecked={() => setUseTracked(!useTracked)}*/}
-              {/*    text={'Hide untracked pairs'}*/}
-              {/*  />*/}
-              {/*  <QuestionHelper text="USD amounts may be inaccurate in low liquiidty pairs or pairs without ETH or stablecoins." />*/}
-              {/*  <CustomLink to={'/pairs'}>See All</CustomLink>*/}
-              {/*</AutoRow>*/}
-            </RowBetween>
-          </ListOptions>
-          <Panel style={{ marginTop: '6px', padding: '0rem 0 ' }}>
+          </PageSection>
+        )}
+
+        <PageSection>
+          <TYPE.main fontSize={'1rem'} style={{ whiteSpace: 'nowrap' }}>
+            Top Pairs
+          </TYPE.main>
+          <Panel style={{ padding: '0' }}>
             <PairList pairs={allPairs} useTracked={useTracked} />
           </Panel>
-          <ListOptions gap="10px" style={{ marginTop: '2rem', marginBottom: '.5rem' }}>
-            <RowBetween>
-              <TYPE.main fontSize={'1.125rem'} style={{ whiteSpace: 'nowrap' }}>
-                Top Tokens
-              </TYPE.main>
-              <CustomLink to={'/tokens'}>See All</CustomLink>
-            </RowBetween>
-          </ListOptions>
-          <Panel style={{ marginTop: '6px', padding: '0rem 0 ' }}>
+        </PageSection>
+
+        <PageSection>
+          <RowBetween>
+            <TYPE.main fontSize={'1rem'} style={{ whiteSpace: 'nowrap' }}>
+              Top Tokens
+            </TYPE.main>
+            <CustomLink to={'/tokens'}>See All</CustomLink>
+          </RowBetween>
+          <Panel style={{ padding: '0' }}>
             <TopTokenList tokens={allTokens} />
           </Panel>
-          <span>
-            <TYPE.main fontSize={'1.125rem'} style={{ marginTop: '2rem' }}>
-              Transactions
-            </TYPE.main>
-          </span>
-          <Panel style={{ margin: '1rem 0', padding: '0rem' }}>
-            <TxnList transactions={transactions} />
-          </Panel>
-        </div>
+        </PageSection>
       </ContentWrapper>
     </PageWrapper>
   )

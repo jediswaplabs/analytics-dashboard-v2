@@ -205,8 +205,6 @@ function PairPage({ pairAddress, history }) {
 
   return (
     <PageWrapper>
-      <ThemedBackground backgroundColor={transparentize(0.6, backgroundColor)} />
-      <span />
       <Warning
         type={'pair'}
         show={!dismissed && !isEmpty(whitelistedTokens) && !isTokenWhitelisted}
@@ -402,18 +400,6 @@ function PairPage({ pairAddress, history }) {
                   <PairChart address={pairAddress} color={backgroundColor} base0={reserve1 / reserve0} base1={reserve0 / reserve1} />
                 </Panel>
               </PanelWrapper>
-              <TYPE.main fontSize={'1.125rem'} style={{ marginTop: '3rem' }}>
-                Transactions
-              </TYPE.main>{' '}
-              <Panel
-                style={{
-                  marginTop: '1.5rem',
-                  padding: '0',
-                  borderRadius: '5px',
-                }}
-              >
-                {transactions ? <TxnList transactions={transactions} /> : <Loader />}
-              </Panel>
               <RowBetween style={{ marginTop: '3rem' }}>
                 <TYPE.main fontSize={'1.125rem'}>Pair Information</TYPE.main>{' '}
               </RowBetween>

@@ -20,17 +20,17 @@ const panelPseudo = css`
 const Panel = styled(RebassBox)`
   position: relative;
   background-color: ${({ theme }) => theme.advancedBG};
-  padding: 0.8rem;
+  border-radius: 8px;
+  padding: 1.25rem;
   width: 100%;
   height: 100%;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  border-radius: 8px;
   background: rgba(196, 196, 196, 0.01);
   box-shadow: 0px 0.77px 30.791px 0px rgba(227, 222, 255, 0.2) inset, 0px 3.079px 13.856px 0px rgba(154, 146, 210, 0.3) inset,
     0px 75.438px 76.977px -36.949px rgba(202, 172, 255, 0.3) inset, 0px -63.121px 52.345px -49.265px rgba(96, 68, 144, 0.3) inset;
-  // border: 1px solid ${({ theme }) => theme.bg3};
 
   :hover {
     cursor: ${({ hover }) => hover && 'pointer'};

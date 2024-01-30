@@ -13,8 +13,6 @@ import AllPairsPage from './pages/AllPairsPage'
 import { useGlobalData, useGlobalChartData } from './contexts/GlobalData'
 import { isStarknetAddress } from './utils'
 
-import PinnedData from './components/PinnedData'
-
 import SideNav from './components/SideNav'
 import AccountLookup from './pages/AccountLookup'
 import LpContestLookup from './pages/LpContestLookup'
@@ -23,18 +21,18 @@ import LocalLoader from './components/LocalLoader'
 import { useLatestBlocks, useWhitelistedTokens } from './contexts/Application'
 import GoogleAnalyticsReporter from './components/analytics/GoogleAnalyticsReporter'
 
-import dayjs from 'dayjs'
-
 const AppWrapper = styled.div`
   position: relative;
   width: 100%;
+  padding-top: 48px;
 `
+
 const ContentWrapper = styled.div`
   display: grid;
-  grid-template-columns: ${({ open }) => (open ? '220px 1fr 200px' : '220px 1fr 64px')};
+  grid-template-columns: ${({ open }) => (open ? '300px 1fr 200px' : '300px 1fr 64px')};
 
   @media screen and (max-width: 1400px) {
-    grid-template-columns: 220px 1fr;
+    grid-template-columns: 300px 1fr;
   }
 
   @media screen and (max-width: 1080px) {
@@ -45,41 +43,29 @@ const ContentWrapper = styled.div`
   }
 `
 
-const Right = styled.div`
-  position: fixed;
-  right: 0;
-  bottom: 0rem;
-  z-index: 99;
-  width: ${({ open }) => (open ? '220px' : '64px')};
-  height: ${({ open }) => (open ? 'fit-content' : '64px')};
-  overflow: auto;
-  background-color: ${({ theme }) => theme.bg1};
-  @media screen and (max-width: 1400px) {
-    display: none;
-  }
-`
-
 const Center = styled.div`
   height: 100%;
   z-index: 9999;
   transition: width 0.25s ease;
-  background-color: ${({ theme }) => theme.onlyLight};
-  background: linear-gradient(180deg, #03001e 0%, #2c045c 46.35%, #930bd3 100%);
 `
 
 const WarningWrapper = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
 `
 
 const WarningBanner = styled.div`
-  background-color: #ff6871;
-  padding: 1.5rem;
+  background-color: #ff3257;
+  padding: 0.85rem;
   color: white;
   width: 100%;
   text-align: center;
   font-weight: 500;
+  font-size: 16px;
 `
 
 /**
@@ -91,9 +77,6 @@ const LayoutWrapper = ({ children, savedOpen, setSavedOpen }) => {
       <ContentWrapper open={savedOpen}>
         <SideNav />
         <Center id="center">{children}</Center>
-        <Right open={savedOpen}>
-          <PinnedData open={savedOpen} setSavedOpen={setSavedOpen} />
-        </Right>
       </ContentWrapper>
     </>
   )
@@ -115,11 +98,7 @@ function App() {
       <AppWrapper>
         {showWarning && (
           <WarningWrapper>
-            <WarningBanner>
-              {`Warning: The data on this site has only synced to Starknet block ${latestBlock.number} (was produced on ${dayjs
-                .unix(latestBlock.timestamp)
-                .format('YYYY-MM-DDTHH:mm:ss')}). Please check back soon.`}
-            </WarningBanner>
+            <WarningBanner>{`Dashboard is not synced.`}</WarningBanner>
           </WarningWrapper>
         )}
         {globalData &&

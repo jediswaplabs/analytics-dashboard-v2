@@ -173,7 +173,9 @@ function TokenPage({ address, history }) {
 
   const [useTracked, setUseTracked] = useState(true)
 
-  const firstRowStyle = below1080 ? { display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', minWidth: '90vw' } : {};
+  const firstRowStyle = below1080
+    ? { display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', minWidth: '90vw' }
+    : {}
   if (!whitelistedTokens[address]) {
     return (
       <BlockedWrapper>
@@ -189,22 +191,25 @@ function TokenPage({ address, history }) {
 
   return (
     <PageWrapper>
-      <ThemedBackground backgroundColor={transparentize(0.6, backgroundColor)} />
       <Warning type={'token'} show={!dismissed && listedTokens && !listedTokens.includes(address)} setShow={markAsDismissed} address={address} />
       <ContentWrapper>
         <RowBetween style={{ flexWrap: 'wrap', alingItems: 'start' }}>
           <AutoRow align="flex-end" style={{ width: 'fit-content' }}>
-            {!below1080 && <TYPE.breadCrumbs>
-              <BasicLink to="/tokens">{'Home > Tokens '}</BasicLink>
-              <span style={{ color: 'white' }}> {'>'} {symbol}</span>
-            </TYPE.breadCrumbs>
-            }
-            {below1080 &&
+            {!below1080 && (
+              <TYPE.breadCrumbs>
+                <BasicLink to="/tokens">{'Home > Tokens '}</BasicLink>
+                <span style={{ color: 'white' }}>
+                  {' '}
+                  {'>'} {symbol}
+                </span>
+              </TYPE.breadCrumbs>
+            )}
+            {below1080 && (
               <BasicLink to="/tokens" style={{ color: '#50D5FF', fontSize: '0.67rem', display: 'flex' }}>
                 <img src={backArrow} style={{ marginRight: '0.3rem' }} />
                 Back to tokens
               </BasicLink>
-            }
+            )}
           </AutoRow>
           {!below600 && <Search small={true} />}
         </RowBetween>
@@ -220,22 +225,21 @@ function TokenPage({ address, history }) {
               <RowFixed style={firstRowStyle} style1={{ flexWrap: 'wrap' }}>
                 <RowFixed style={{ alignItems: 'baseline', flexWrap: below1080 ? 'no-wrap' : 'wrap' }}>
                   <TokenLogo address={address} symbol={symbol} size="24px" style={{ alignSelf: 'center' }} />
-                  <TYPE.main fontSize={below1080 ? '0.67rem' : '0.83rem'} fontWeight={500} style={{ margin: '0.5rem 1.5rem 0.5rem 0.3rem', width: '50%' }}>
-                    <RowFixed gap="6px">
-                      {formattedSymbol ? `${formattedSymbol}` : ''}
-                    </RowFixed>
+                  <TYPE.main
+                    fontSize={below1080 ? '0.67rem' : '0.83rem'}
+                    fontWeight={500}
+                    style={{ margin: '0.5rem 1.5rem 0.5rem 0.3rem', width: '50%' }}
+                  >
+                    <RowFixed gap="6px">{formattedSymbol ? `${formattedSymbol}` : ''}</RowFixed>
                   </TYPE.main>{' '}
-
-                  {(
+                  {
                     <div style={{ display: 'flex', alignItems: 'center', fontSize: below1080 ? '0.67rem' : '1.0rem' }}>
                       <TYPE.main fontSize={below1080 ? '0.67rem' : '1.0rem'} fontWeight={500} style={{ marginRight: '0.5rem' }}>
                         US{price}
                       </TYPE.main>
-                      <div style={{ fontSize: below1080 ? '0.58rem' : '0.67rem' }}>
-                        {priceChange}
-                      </div>
+                      <div style={{ fontSize: below1080 ? '0.58rem' : '0.67rem' }}>{priceChange}</div>
                     </div>
-                  )}
+                  }
                 </RowFixed>
                 {!!!savedTokens[address] && below800 ? (
                   <Hover onClick={() => addToken(address, symbol)}>
@@ -334,7 +338,7 @@ function TokenPage({ address, history }) {
                 marginTop: '1.0rem',
                 padding: '0rem 0 ',
                 border: below1080 ? 0 : '',
-                boxShadow: below1080 ? 'unset' : ''
+                boxShadow: below1080 ? 'unset' : '',
               }}
             >
               {address && fetchedPairsList ? (
@@ -343,6 +347,47 @@ function TokenPage({ address, history }) {
                 <Loader />
               )}
             </Panel>
+            <>
+              <RowBetween style={{ marginTop: '3rem' }}>
+                <TYPE.main fontSize={'1.125rem'}>Token Information</TYPE.main>{' '}
+              </RowBetween>
+              <Panel
+                rounded
+                style={{
+                  marginTop: '1.5rem',
+                }}
+                p={20}
+              >
+                <TokenDetailsLayout>
+                  <Column>
+                    <TYPE.main>Symbol</TYPE.main>
+                    <Text style={{ marginTop: '.5rem' }} fontSize={24} fontWeight="500">
+                      <FormattedName text={symbol} maxCharacters={12} />
+                    </Text>
+                  </Column>
+                  <Column>
+                    <TYPE.main>Name</TYPE.main>
+                    <TYPE.main style={{ marginTop: '.5rem' }} fontSize={24} fontWeight="500">
+                      <FormattedName text={name} maxCharacters={16} />
+                    </TYPE.main>
+                  </Column>
+                  <Column>
+                    <TYPE.main>Address</TYPE.main>
+                    <AutoRow align="flex-end">
+                      <TYPE.main style={{ marginTop: '.5rem' }} fontSize={24} fontWeight="500">
+                        {shortenStraknetAddress(address)}
+                      </TYPE.main>
+                      <CopyHelper toCopy={address} />
+                    </AutoRow>
+                  </Column>
+                  <ButtonLight color={backgroundColor}>
+                    <Link color={backgroundColor} external href={urls.showAddress(address)}>
+                      View on Starkscan ↗
+                    </Link>
+                  </ButtonLight>
+                </TokenDetailsLayout>
+              </Panel>
+            </>
           </DashboardWrapper>
         </WarningGrouping>
       </ContentWrapper>
