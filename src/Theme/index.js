@@ -48,6 +48,7 @@ const theme = (darkMode, color) => ({
   advancedBG: 'rgba(0,0,0,0.1)',
   onlyLight: '#252323',
   divider: 'rgba(255, 255, 255, 0.2)',
+  jediGrey: '#959595',
 
   //primary colors
   primary1: '#2172E5',
@@ -72,7 +73,8 @@ const theme = (darkMode, color) => ({
   green2: '#21E70F',
   yellow1: '#FFE270',
   yellow2: '#F3841E',
-  link: '#50D5FF',
+  // link: '#50D5FF',
+  link: '#FFF',
   blue: '#2f80ed',
 
   background: 'background: linear-gradient(180deg, #03001E 0%, #2C045C 46.35%, #930BD3 100%)',
@@ -109,6 +111,13 @@ export const TYPE = {
 
   pink(props) {
     return <TextWrapper fontWeight={props.faded ? 400 : 600} color={props.faded ? 'text1' : 'text1'} {...props} />
+  },
+
+  breadCrumbs(props) {
+    return <TextWrapper fontWeight={500} fontSize={14} color={'#959595'} {...props} />
+  },
+  subHeader(props) {
+    return <TextWrapper fontWeight={500} fontSize={16} color={'#F2F2F2'} {...props} />
   },
 }
 
@@ -230,7 +239,7 @@ export const GlobalStyle = createGlobalStyle`
   html {
     font-size: 1rem;
     font-variant: none;
-    color: 'black';
+    color: #000;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);

@@ -3,7 +3,7 @@ import { withRouter } from 'react-router-dom'
 import { Box } from 'rebass'
 import styled from 'styled-components'
 
-import { AutoRow, RowBetween } from '../components/Row'
+import { RowBetween } from '../components/Row'
 import { AutoColumn } from '../components/Column'
 import PairList from '../components/PairList'
 import TopTokenList from '../components/TokenList'

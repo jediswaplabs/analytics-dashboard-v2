@@ -28,6 +28,7 @@ const Panel = styled(RebassBox)`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  background: rgba(196, 196, 196, 0.01);
   box-shadow: 0px 0.77px 30.791px 0px rgba(227, 222, 255, 0.2) inset, 0px 3.079px 13.856px 0px rgba(154, 146, 210, 0.3) inset,
     0px 75.438px 76.977px -36.949px rgba(202, 172, 255, 0.3) inset, 0px -63.121px 52.345px -49.265px rgba(96, 68, 144, 0.3) inset;
 
