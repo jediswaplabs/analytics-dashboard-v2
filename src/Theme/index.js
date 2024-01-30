@@ -48,6 +48,7 @@ const theme = (darkMode, color) => ({
   advancedBG: darkMode ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.4)',
   onlyLight: darkMode ? '#252323' : 'transparent',
   divider: darkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.2)',
+  jediGrey: '#959595',
 
   //primary colors
   primary1: darkMode ? '#2172E5' : '#FF00E9',
@@ -72,7 +73,8 @@ const theme = (darkMode, color) => ({
   green2: '#21E70F',
   yellow1: '#FFE270',
   yellow2: '#F3841E',
-  link: '#50D5FF',
+  // link: '#50D5FF',
+  link: '#FFF',
   blue: '#2f80ed',
 
   background: darkMode ? 'black' : `radial-gradient(50% 50% at 50% 50%, #ff007a30 0%, #fff 0%)`,
@@ -109,6 +111,13 @@ export const TYPE = {
 
   pink(props) {
     return <TextWrapper fontWeight={props.faded ? 400 : 600} color={props.faded ? 'text1' : 'text1'} {...props} />
+  },
+
+  breadCrumbs(props) {
+    return <TextWrapper fontWeight={500} fontSize={14} color={'#959595'} {...props} />
+  },
+  subHeader(props) {
+    return <TextWrapper fontWeight={500} fontSize={16} color={'#F2F2F2'} {...props} />
   },
 }
 

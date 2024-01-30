@@ -139,7 +139,7 @@ function GlobalPage() {
           <ListOptions gap="10px" style={{ marginTop: '2rem', marginBottom: '.5rem' }}>
             <RowBetween>
               <TYPE.main fontSize={'1rem'} style={{ whiteSpace: 'nowrap' }}>
-                Top Pairs
+                Top Pools
               </TYPE.main>
               {/*<AutoRow gap="4px" width="100%" justifyContent="flex-end">*/}
               {/*  <CheckBox*/}
