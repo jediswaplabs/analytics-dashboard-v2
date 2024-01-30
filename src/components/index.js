@@ -55,13 +55,7 @@ const Hint = ({ children, ...rest }) => (
 )
 
 const Address = ({ address, token, ...rest }) => (
-  <Link
-    color="button"
-    href={token ? urls.showToken(address) : urls.showAddress(address)}
-    external
-    style={{ wordBreak: 'break-all' }}
-    {...rest}
-  >
+  <Link color="button" href={token ? urls.showToken(address) : urls.showAddress(address)} external style={{ wordBreak: 'break-all' }} {...rest}>
     {address}
   </Link>
 )
@@ -121,7 +115,7 @@ export const SubNavEl = styled.li`
 export const PageWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  padding-top: 36px;
+  padding-top: 16px;
   padding-bottom: 80px;
   ${
     '' /* box-shadow: rgb(255 255 255 / 50%) 0px 30.0211px 43.1072px -27.7118px inset,
@@ -137,13 +131,19 @@ export const PageWrapper = styled.div`
   }
 `
 
+export const PageSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`
+
 export const ContentWrapper = styled.div`
   display: grid;
   justify-content: start;
   align-items: start;
   grid-template-columns: 1fr;
-  grid-gap: 24px;
-  max-width: 1440px;
+  grid-gap: 32px;
+  max-width: calc(1440px + 2rem);
   width: 100%;
   margin: 0 auto;
   padding: 0 2rem;

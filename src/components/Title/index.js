@@ -59,7 +59,7 @@ export default function Title() {
             <img width={'24px'} src={Logo} alt="logo" />
           </UniIcon>
           {!below1080 && (
-            <img width={'110px'} style={{ marginLeft: '8px', marginTop: '-4px' }} src={Wordmark} alt="logo" />
+            <img width={'110px'} style={{ marginLeft: '8px', marginTop: '-4px' }} src={Wordmark} alt="logo" onClick={() => history.push('/')} />
           )}
         </RowFixed>
         {below1080 && (
@@ -70,9 +70,7 @@ export default function Title() {
             <BasicLink to="/tokens">
               <Option
                 activeText={
-                  (history.location.pathname.split('/')[1] === 'tokens' ||
-                    history.location.pathname.split('/')[1] === 'token') ??
-                  undefined
+                  (history.location.pathname.split('/')[1] === 'tokens' || history.location.pathname.split('/')[1] === 'token') ?? undefined
                 }
               >
                 Tokens
@@ -80,11 +78,7 @@ export default function Title() {
             </BasicLink>
             <BasicLink to="/pairs">
               <Option
-                activeText={
-                  (history.location.pathname.split('/')[1] === 'pairs' ||
-                    history.location.pathname.split('/')[1] === 'pair') ??
-                  undefined
-                }
+                activeText={(history.location.pathname.split('/')[1] === 'pairs' || history.location.pathname.split('/')[1] === 'pair') ?? undefined}
               >
                 Pairs
               </Option>
@@ -93,9 +87,7 @@ export default function Title() {
             <BasicLink to="/accounts">
               <Option
                 activeText={
-                  (history.location.pathname.split('/')[1] === 'accounts' ||
-                    history.location.pathname.split('/')[1] === 'account') ??
-                  undefined
+                  (history.location.pathname.split('/')[1] === 'accounts' || history.location.pathname.split('/')[1] === 'account') ?? undefined
                 }
               >
                 Accounts
@@ -103,10 +95,7 @@ export default function Title() {
             </BasicLink>
 
             <BasicLink to="/lp-contest">
-              <Option
-                activeText={history.location.pathname.split('/')[1] === 'lp-contest' ?? undefined}
-                style={{ opacity: 1 }}
-              >
+              <Option activeText={history.location.pathname.split('/')[1] === 'lp-contest' ?? undefined} style={{ opacity: 1 }}>
                 <AccentText>LP Contest</AccentText>
               </Option>
             </BasicLink>

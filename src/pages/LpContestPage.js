@@ -166,17 +166,6 @@ function LpContestAccountPage({ account }) {
               <LpContestUserChart account={account} />
             </Panel>
           </PanelWrapper> */}
-
-          <TYPE.main fontSize={'1'} style={{ marginTop: '3rem' }}>
-            Transactions
-          </TYPE.main>
-          <Panel
-            style={{
-              marginTop: '1.5rem',
-            }}
-          >
-            <TxnList transactions={transactions} account={account} />
-          </Panel>
         </DashboardWrapper>
       </ContentWrapper>
       <ReactTooltip anchorSelect=".eligibility-badge" style={{ backgroundColor: 'rgb(0, 0, 0)', color: '#fff' }} />

@@ -35,36 +35,36 @@ const theme = (darkMode, color) => ({
   white: '#FFFFFF',
 
   // backgrounds / greys
-  bg1: darkMode ? 'rgba(0, 9, 36, 1)' : '#FAFAFA',
-  bg2: darkMode ? '#2C2F36' : '#F7F8FA',
-  bg3: darkMode ? '#40444F' : '#EDEEF2',
-  bg4: darkMode ? '#565A69' : '#CED0D9',
-  bg5: darkMode ? '#565A69' : '#888D9B',
-  bg6: darkMode ? '#000508' : '#FFFFFF',
-  bg7: darkMode ? '#141451' : '#FFFFFF',
+  bg1: 'rgba(0, 9, 36, 1)',
+  bg2: '#2C2F36',
+  bg3: '#40444F',
+  bg4: '#565A69',
+  bg5: '#565A69',
+  bg6: '#000508',
+  bg7: '#141451',
 
   //specialty colors
-  modalBG: darkMode ? 'rgba(0,0,0,0.85)' : 'rgba(0,0,0,0.6)',
-  advancedBG: darkMode ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.4)',
-  onlyLight: darkMode ? '#252323' : 'transparent',
-  divider: darkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.2)',
+  modalBG: 'rgba(0,0,0,0.85)',
+  advancedBG: 'rgba(0,0,0,0.1)',
+  onlyLight: '#252323',
+  divider: 'rgba(255, 255, 255, 0.2)',
 
   //primary colors
-  primary1: darkMode ? '#2172E5' : '#FF00E9',
-  primary2: darkMode ? '#3680E7' : '#FF8CC3',
-  primary3: darkMode ? '#4D8FEA' : '#FF99C9',
-  primary4: darkMode ? '#376bad70' : '#F6DDE8',
-  primary5: darkMode ? '#153d6f70' : '#FDEAF1',
+  primary1: '#2172E5',
+  primary2: '#3680E7',
+  primary3: '#4D8FEA',
+  primary4: '#376bad70',
+  primary5: '#153d6f70',
 
   // color text
-  primaryText1: darkMode ? '#6da8ff' : '#FF00E9',
+  primaryText1: '#6da8ff',
 
   // secondary colors
-  secondary1: darkMode ? '#2172E5' : '#FF00E9',
-  secondary2: darkMode ? '#17000b26' : '#F6DDE8',
-  secondary3: darkMode ? '#17000b26' : '#FDEAF1',
+  secondary1: '#2172E5',
+  secondary2: '#17000b26',
+  secondary3: '#17000b26',
 
-  shadow1: darkMode ? '#000' : '#2F80ED',
+  shadow1: '#000',
 
   // other
   red1: '#FF6871',
@@ -75,7 +75,7 @@ const theme = (darkMode, color) => ({
   link: '#50D5FF',
   blue: '#2f80ed',
 
-  background: darkMode ? 'black' : `radial-gradient(50% 50% at 50% 50%, #ff007a30 0%, #fff 0%)`,
+  background: 'background: linear-gradient(180deg, #03001E 0%, #2C045C 46.35%, #930BD3 100%)',
 })
 
 const TextWrapper = styled(Text)`
@@ -147,8 +147,7 @@ export const ThemedBackground = styled.div`
   max-width: 100vw !important;
   height: 200vh;
   mix-blend-mode: color;
-  background: ${({ backgroundColor }) =>
-    `radial-gradient(50% 50% at 50% 50%, ${backgroundColor} 0%, rgba(255, 255, 255, 0) 100%)`};
+  background: ${({ backgroundColor }) => `radial-gradient(50% 50% at 50% 50%, ${backgroundColor} 0%, rgba(255, 255, 255, 0) 100%)`};
   position: absolute;
   top: 0px;
   left: 0px;
@@ -169,9 +168,9 @@ export const GlobalStyle = createGlobalStyle`
     margin: 0;
     padding: 0;
     width: 100%;
-    height: 100%;
+    min-height: 100%;
     font-size: 14px;
-    background-color: ${({ theme }) => theme.bg6};
+    background: linear-gradient(180deg, #03001E 0%, #2C045C 46.35%, #930BD3 100%);
   }
   
   * {
@@ -203,14 +202,13 @@ export const GlobalStyle = createGlobalStyle`
 .three-line-legend-dark {
 	width: 100%;
 	height: 70px;
-	position: absolute;
-	padding: 8px;
+
 	font-size: 12px;
 	color: white;
 	background-color: rgba(255, 255, 255, 0.23);
 	text-align: left;
 	z-index: 10;
-  pointer-events: none;
+    pointer-events: none;
 }
 
 @media screen and (max-width: 800px) {

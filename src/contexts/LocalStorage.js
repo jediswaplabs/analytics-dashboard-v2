@@ -71,11 +71,7 @@ export default function Provider({ children }) {
     dispatch({ type: UPDATE_KEY, payload: { key, value } })
   }, [])
 
-  return (
-    <LocalStorageContext.Provider value={useMemo(() => [state, { updateKey }], [state, updateKey])}>
-      {children}
-    </LocalStorageContext.Provider>
-  )
+  return <LocalStorageContext.Provider value={useMemo(() => [state, { updateKey }], [state, updateKey])}>{children}</LocalStorageContext.Provider>
 }
 
 export function Updater() {
@@ -127,10 +123,7 @@ export function useSavedAccounts() {
     (account) => {
       let index = savedAccounts?.indexOf(account) ?? -1
       if (index > -1) {
-        updateKey(SAVED_ACCOUNTS, [
-          ...savedAccounts.slice(0, index),
-          ...savedAccounts.slice(index + 1, savedAccounts.length),
-        ])
+        updateKey(SAVED_ACCOUNTS, [...savedAccounts.slice(0, index), ...savedAccounts.slice(index + 1, savedAccounts.length)])
       }
     },
     [savedAccounts, updateKey]

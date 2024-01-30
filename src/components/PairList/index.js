@@ -40,6 +40,9 @@ const Arrow = styled.div`
 const List = styled(Box)`
   -webkit-overflow-scrolling: touch;
 `
+const PlaceholderContainer = styled.div`
+  padding: 20px;
+`
 
 const DashGrid = styled.div`
   display: grid;
@@ -139,7 +142,9 @@ const formatDataText = (value, trackedValue, supressWarning = false) => {
   )
 }
 
-function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = false }) {
+const DEFAULT_NO_PAIRS_PLACEHOLDER_TEXT = 'Pairs will appear here'
+
+function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = false, noPairsPlaceholderText = DEFAULT_NO_PAIRS_PLACEHOLDER_TEXT }) {
   const below600 = useMedia('(max-width: 600px)')
   const below740 = useMedia('(max-width: 740px)')
   const below1080 = useMedia('(max-width: 1080px)')
@@ -261,8 +266,18 @@ function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = fals
         )
       })
 
-  if (!pairList || !pairList.length) {
+  if (!pairList) {
     return <LocalLoader />
+  }
+
+  if (!pairList.length) {
+    return (
+      <PlaceholderContainer>
+        <TYPE.main fontSize={'16px'} fontWeight={'400'}>
+          {noPairsPlaceholderText}
+        </TYPE.main>
+      </PlaceholderContainer>
+    )
   }
 
   return (

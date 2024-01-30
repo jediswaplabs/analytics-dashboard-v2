@@ -1,5 +1,5 @@
 import React from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { AutoColumn } from '../Column'
 import Title from '../Title'
 import { BasicLink } from '../Link'
@@ -16,16 +16,10 @@ import confettiFiatGif_x2 from './confetti-flat@x2.webp'
 
 const Wrapper = styled.div`
   height: ${({ isMobile }) => (isMobile ? 'initial' : '100vh')};
-  background-color: ${({ theme }) => transparentize(0.4, theme.bg1)};
-  color: ${({ theme }) => theme.text1};
-  padding: 0.5rem 0.5rem 0.5rem 0.75rem;
+  padding: ${({ isMobile }) => (isMobile ? '16px' : 'calc(17px * 1.3) 40px 40px')};
   position: sticky;
   top: 0px;
   z-index: 9999;
-  box-sizing: border-box;
-  /* background-color: #1b1c22; */
-  background: linear-gradient(193.68deg, #1b1c22 0.68%, #000000 100.48%);
-  color: ${({ theme }) => theme.bg2};
 
   @media screen and (max-width: 800px) {
     grid-template-columns: 1fr;
@@ -33,8 +27,13 @@ const Wrapper = styled.div`
   }
 
   @media screen and (max-width: 600px) {
-    padding: 1rem;
+    padding: 16px;
   }
+`
+
+const OptionContent = styled.span`
+  display: flex;
+  align-items: center;
 `
 
 const Option = styled.div`
@@ -42,18 +41,39 @@ const Option = styled.div`
   font-size: 14px;
   opacity: ${({ activeText }) => (activeText ? 1 : 0.6)};
   color: ${({ theme }) => theme.white};
-  display: flex;
-  align-items: center;
+  position: relative;
+
+  ${OptionContent} {
+    position: relative;
+    z-index: 1;
+  }
+
   :hover {
     opacity: 1;
   }
+
+  ${({ activeText }) =>
+    activeText &&
+    css`
+      :after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        right: 0;
+        transform: translate(0, -50%);
+        background: linear-gradient(270deg, #0a003a00 0%, #692bcb 100%);
+        width: 120%;
+        height: 200%;
+        z-index: 0;
+      }
+    `};
 `
 
 const DesktopWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 100vh;
+  height: 100%;
 `
 
 const MobileWrapper = styled.div`
@@ -66,8 +86,7 @@ const HeaderText = styled.div`
   margin-right: 0.75rem;
   font-size: 0.825rem;
   font-weight: 500;
-  display: inline-box;
-  display: -webkit-inline-box;
+  display: inline;
   opacity: 0.8;
   :hover {
     opacity: 1;
@@ -109,6 +128,13 @@ const AccentText = styled.span`
   text-fill-color: transparent;
 `
 
+const Separator = styled.hr`
+  color: #fff;
+  width: 75%;
+  margin: 0;
+  border-top: 0;
+`
+
 function SideNav({ history }) {
   const below1080 = useMedia('(max-width: 1080px)')
 
@@ -120,63 +146,83 @@ function SideNav({ history }) {
     <Wrapper isMobile={below1080}>
       {!below1080 ? (
         <DesktopWrapper>
-          <AutoColumn gap="1rem" style={{ marginLeft: '.75rem', marginTop: '1.5rem' }}>
+          <AutoColumn gap="2rem">
             <Title />
             {!below1080 && (
-              <AutoColumn gap="1.25rem" style={{ marginTop: '1rem' }}>
-                <BasicLink to="/lp-contest">
-                  <Option activeText={history.location.pathname.split('/')[1] === 'lp-contest' ?? undefined} style={{ opacity: 1 }}>
-                    <img
-                      src={confettiFiatGif}
-                      srcSet={confettiFiatGif + ' 1x,' + confettiFiatGif_x2 + ' 2x'}
-                      alt={''}
-                      style={{ marginRight: '-.1rem', marginTop: '-5px', width: '35px' }}
-                    />
-                    <AccentText>LP Contest</AccentText>
+              <AutoColumn gap="2.5rem">
+                <BasicLink to="/home">
+                  <Option activeText={history.location.pathname === '/home' ?? undefined}>
+                    <OptionContent>
+                      <TrendingUp size={20} style={{ marginRight: '.75rem' }} />
+                      Overview
+                    </OptionContent>
                   </Option>
                 </BasicLink>
 
-                <BasicLink to="/home">
-                  <Option activeText={history.location.pathname === '/home' ?? undefined}>
-                    <TrendingUp size={20} style={{ marginRight: '.75rem' }} />
-                    Overview
-                  </Option>
-                </BasicLink>
                 <BasicLink to="/tokens">
                   <Option
                     activeText={
                       (history.location.pathname.split('/')[1] === 'tokens' || history.location.pathname.split('/')[1] === 'token') ?? undefined
                     }
                   >
-                    <Disc size={20} style={{ marginRight: '.75rem' }} />
-                    Tokens
+                    <OptionContent>
+                      <Disc size={20} style={{ marginRight: '.75rem' }} />
+                      Tokens
+                    </OptionContent>
                   </Option>
                 </BasicLink>
+
                 <BasicLink to="/pairs">
                   <Option
                     activeText={
                       (history.location.pathname.split('/')[1] === 'pairs' || history.location.pathname.split('/')[1] === 'pair') ?? undefined
                     }
                   >
-                    <PieChart size={20} style={{ marginRight: '.75rem' }} />
-                    Pairs
+                    <OptionContent>
+                      <PieChart size={20} style={{ marginRight: '.75rem' }} />
+                      Pairs
+                    </OptionContent>
                   </Option>
                 </BasicLink>
 
+                <Separator />
+
+                <BasicLink to="/volume-leaderboarad">
+                  <Option
+                    activeText={
+                      (history.location.pathname.split('/')[1] === 'accounts' || history.location.pathname.split('/')[1] === 'volume-leaderboarad') ??
+                      undefined
+                    }
+                  >
+                    <OptionContent>Volume Leaderboard</OptionContent>
+                  </Option>
+                </BasicLink>
                 <BasicLink to="/accounts">
                   <Option
                     activeText={
-                      (history.location.pathname.split('/')[1] === 'accounts' || history.location.pathname.split('/')[1] === 'account') ?? undefined
+                      (history.location.pathname.split('/')[1] === 'lp-leaderboard' ||
+                        history.location.pathname.split('/')[1] === 'lp-leaderboard') ??
+                      undefined
                     }
                   >
-                    <List size={20} style={{ marginRight: '.75rem' }} />
-                    Accounts
+                    <OptionContent>LP Leaderboard</OptionContent>
+                  </Option>
+                </BasicLink>
+                <Separator />
+                <BasicLink to="/rewards">
+                  <Option
+                    activeText={
+                      (history.location.pathname.split('/')[1] === 'rewards' || history.location.pathname.split('/')[1] === 'rewards') ?? undefined
+                    }
+                  >
+                    <OptionContent>Rewards</OptionContent>
                   </Option>
                 </BasicLink>
               </AutoColumn>
             )}
           </AutoColumn>
-          <AutoColumn gap="0.5rem" style={{ marginLeft: '.75rem', marginBottom: '4rem' }}>
+
+          <AutoColumn gap="0.5rem">
             <HeaderText>
               <Link href="https://jediswap.xyz/" target="_blank">
                 JediSwap.xyz
