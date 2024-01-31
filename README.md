@@ -10,6 +10,7 @@ Analytics site for the [JediSwap Protocol](https://jediswap.xyz).
 
 >Use node v16.20.0
 
+
 ```bash
 yarn
 ```
