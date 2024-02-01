@@ -76,7 +76,7 @@
   },
   "scripts": {
     "start": "react-app-rewired start",
-    "build": "cross-env NODE_ENV=production GENERATE_SOURCEMAP=false react-app-rewired build",
+    "build": "cross-env NODE_ENV=production GENERATE_SOURCEMAP=false CI=false react-app-rewired build",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject"
   },
