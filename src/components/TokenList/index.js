@@ -110,6 +110,9 @@ const DataText = styled(Flex)`
     font-size: 12px;
   }
 `
+const PlaceholderContainer = styled.div`
+  padding: 20px;
+`
 
 const SORT_FIELD = {
   LIQ: 'totalLiquidityUSD',
@@ -121,8 +124,10 @@ const SORT_FIELD = {
   CHANGE: 'priceChangeUSD',
 }
 
+const DEFAULT_NO_TOKENS_PLACEHOLDER_TEXT = 'Tokens will appear here'
+
 // @TODO rework into virtualized list
-function TopTokenList({ tokens, itemMax = 10, useTracked = false }) {
+function TopTokenList({ tokens, itemMax = 10, useTracked = false, noTokensPlaceholderText = DEFAULT_NO_TOKENS_PLACEHOLDER_TEXT }) {
   // page state
   const [page, setPage] = useState(1)
   const [maxPage, setMaxPage] = useState(1)
@@ -204,8 +209,18 @@ function TopTokenList({ tokens, itemMax = 10, useTracked = false }) {
     )
   }
 
-  if (!filteredList || !filteredList.length) {
+  if (!filteredList) {
     return <LocalLoader />
+  }
+
+  if (!filteredList.length) {
+    return (
+      <PlaceholderContainer>
+        <TYPE.main fontSize={'16px'} fontWeight={'400'}>
+          {noTokensPlaceholderText}
+        </TYPE.main>
+      </PlaceholderContainer>
+    )
   }
 
   return (

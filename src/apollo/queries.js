@@ -801,6 +801,24 @@ export const TOKEN_DATA = (tokenAddress, block) => {
   return gql(queryString)
 }
 
+export const TOKENS_BULK = (tokens) => {
+  let tokensString = `[`
+  tokens.map((pair) => {
+    return (tokensString += `"${pair}"`)
+  })
+  tokensString += ']'
+
+  const queryString = `
+    ${TokenFields}
+    query tokens {
+      tokens(where: { idIn: ${tokensString} }, orderByDirection: "desc") {
+        ...TokenFields
+      }
+    }
+  `
+  return gql(queryString)
+}
+
 export const FILTERED_TRANSACTIONS = gql`
   query ($allPairs: [String!]) {
     mints(first: 20, where: { pairIn: $allPairs }, orderBy: "timestamp", orderByDirection: "desc") {

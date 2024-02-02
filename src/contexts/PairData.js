@@ -528,65 +528,7 @@ export function useHourlyRateData(pairAddress, timeWindow) {
   return chartData
 }
 
-/**
- * @todo
- * store these updates to reduce future redundant calls
- */
-export function useDataForList(pairList) {
-  const [state] = usePairDataContext()
-  const [ethPrice] = useEthPrice()
-
-  const [stale, setStale] = useState(false)
-  const [fetched, setFetched] = useState([])
-
-  // reset
-  useEffect(() => {
-    if (pairList) {
-      setStale(false)
-      setFetched()
-    }
-  }, [pairList])
-
-  useEffect(() => {
-    async function fetchNewPairData() {
-      let newFetched = []
-      let unfetched = []
-
-      pairList.map(async (pair) => {
-        let currentData = state?.[pair.id]
-        if (!currentData) {
-          unfetched.push(pair.id)
-        } else {
-          newFetched.push(currentData)
-        }
-      })
-
-      let newPairData = unfetched?.length
-        ? await getBulkPairData(
-            unfetched.map((pair) => {
-              return pair
-            }),
-            ethPrice
-          )
-        : []
-      setFetched(newFetched.concat(newPairData))
-    }
-    if (ethPrice && pairList && pairList.length > 0 && !fetched && !stale) {
-      setStale(true)
-      fetchNewPairData()
-    }
-  }, [ethPrice, state, pairList, stale, fetched])
-
-  let formattedFetch =
-    fetched &&
-    fetched.reduce((obj, cur) => {
-      return { ...obj, [cur?.id]: cur }
-    }, {})
-
-  return formattedFetch
-}
-
-export function useDataForListV2(poolAddresses) {
+export function usePairDataForList(poolAddresses) {
   const [state, { update }] = usePairDataContext()
   const [ethPrice] = useEthPrice()
   const allPoolData = useAllPairData()

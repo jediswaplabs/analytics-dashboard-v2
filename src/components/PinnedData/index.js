@@ -93,7 +93,6 @@ function PinnedData({ history, open, setSavedOpen }) {
               .filter((address) => !!savedAccounts[address])
               .map((address) => {
                 const account = savedAccounts[address]
-                console.log(account)
                 return (
                   <RowBetween key={account}>
                     <ButtonFaded onClick={() => history.push('/account/' + address)}>
