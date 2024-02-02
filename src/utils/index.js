@@ -73,7 +73,8 @@ export function getPoolLink(token0Address, token1Address = null, remove = false)
     return (
       `https://app.jediswap.xyz/#/` +
       (remove ? `remove` : `add`) +
-      `/${token0Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token0Address}/${token1Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token1Address
+      `/${token0Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token0Address}/${
+        token1Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token1Address
       }`
     )
   }
@@ -83,8 +84,9 @@ export function getSwapLink(token0Address, token1Address = null) {
   if (!token1Address) {
     return `https://app.jediswap.xyz/#/swap?inputCurrency=${token0Address}`
   } else {
-    return `https://app.jediswap.xyz/#/swap?inputCurrency=${token0Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token0Address
-      }&outputCurrency=${token1Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token1Address}`
+    return `https://app.jediswap.xyz/#/swap?inputCurrency=${
+      token0Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token0Address
+    }&outputCurrency=${token1Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token1Address}`
   }
 }
 
@@ -339,8 +341,8 @@ export const isStarknetAddress = (value, validateLength = false) => {
   if (!value) {
     return false
   }
-  const processedValue = value.toLowerCase()
   try {
+    const processedValue = value?.toLowerCase()
     if (!processedValue.startsWith('0x')) {
       return false
     }
@@ -464,8 +466,8 @@ export function rawPercent(percentRaw) {
 }
 
 export function formattedPercent(percent, useAbs = false) {
-  const green = '#21E70F';
-  const red = '#FC4D4D';
+  const green = '#21E70F'
+  const red = '#FC4D4D'
   percent = parseFloat(percent)
   if (!percent || percent === 0) {
     return <Text fontWeight={500}>0%</Text>

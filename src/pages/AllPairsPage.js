@@ -3,18 +3,16 @@ import 'feather-icons'
 
 import { TYPE } from '../Theme'
 import Panel from '../components/Panel'
-import { useAllPairData, useDataForList, useDataForListV2, usePairData } from '../contexts/PairData'
+import { useAllPairData, usePairDataForList } from '../contexts/PairData'
 import PairList from '../components/PairList'
-import { PageWrapper, FullWrapper, ContentWrapper, PageSection } from '../components'
-import { RowBetween } from '../components/Row'
+import { PageWrapper, ContentWrapper, PageSection } from '../components'
 import Search from '../components/Search'
-import { useMedia } from 'react-use'
 import { useSavedPairs } from '../contexts/LocalStorage'
 
 function AllPairsPage() {
   const allPoolData = useAllPairData()
   const [savedPools] = useSavedPairs()
-  const savedPairsData = useDataForListV2(Object.keys(savedPools))
+  const savedPairsData = usePairDataForList(Object.keys(savedPools))
 
   useEffect(() => {
     window.scrollTo(0, 0)

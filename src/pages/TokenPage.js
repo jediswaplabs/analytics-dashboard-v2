@@ -22,7 +22,7 @@ import { transparentize } from 'polished'
 import { useColor } from '../hooks'
 import CopyHelper from '../components/Copy'
 import { useMedia } from 'react-use'
-import { useDataForList } from '../contexts/PairData'
+import { usePairDataForList } from '../contexts/PairData'
 import { useEffect } from 'react'
 import Warning from '../components/Warning'
 import { usePathDismissed, useSavedTokens } from '../contexts/LocalStorage'
@@ -127,9 +127,10 @@ function TokenPage({ address, history }) {
   const backgroundColor = useColor(id, symbol)
 
   const allPairs = useTokenPairs(address)
+  const allPairsIds = allPairs?.map((p) => p.id) ?? []
 
   // pairs to show in pair list
-  const fetchedPairsList = useDataForList(allPairs)
+  const fetchedPairsList = usePairDataForList(allPairsIds)
 
   // all transactions with this token
   const transactions = useTokenTransactions(address)
