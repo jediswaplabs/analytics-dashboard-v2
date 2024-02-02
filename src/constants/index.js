@@ -43,6 +43,22 @@ export const DEFAULT_TOKENS_WHITELIST = {
     symbol: 'ETH',
     logoURI: require('../assets/tokens/0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7.png'),
   },
+  '0x3e85bfbb8e2a42b7bead9e88e9a1b19dbccf661471061807292120462396ec9': {
+    symbol: 'DAI',
+    logoURI: require('../assets/tokens/0x6B175474E89094C44Da98b954EedeAC495271d0F.png'),
+  },
+  '0x5a643907b9a4bc6a55e9069c4fd5fd1f5c79a22470690f75556c4736e34426': {
+    symbol: 'USDC',
+    logoURI: require('../assets/tokens/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48.png'),
+  },
+  '0x6a8f0e0d3bf9a6f049ce3fcbad7e26cbd0ceb3f0bfc6160f4ab7bdd7985b0e3': {
+    symbol: 'USDT',
+    logoURI: require('../assets/tokens/0xdAC17F958D2ee523a2206206994597C13D831ec7.png'),
+  },
+  '0x12d537dc323c439dc65c976fad242d5610d27cfb5f31689a0a319b8be7f3d56': {
+    symbol: 'WBTC',
+    logoURI: require('../assets/tokens/0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599.png'),
+  },
 }
 
 // warnings to display if page contains info about blocked token

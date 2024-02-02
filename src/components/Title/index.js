@@ -58,38 +58,38 @@ export default function Title() {
             <BasicLink to="/home">
               <Option activeText={history.location.pathname === '/home' ?? undefined}>Overview</Option>
             </BasicLink>
-            <BasicLink to="/tokens">
-              <Option
-                activeText={
-                  (history.location.pathname.split('/')[1] === 'tokens' || history.location.pathname.split('/')[1] === 'token') ?? undefined
-                }
-              >
-                Tokens
-              </Option>
-            </BasicLink>
-            <BasicLink to="/pairs">
-              <Option
-                activeText={(history.location.pathname.split('/')[1] === 'pairs' || history.location.pathname.split('/')[1] === 'pair') ?? undefined}
-              >
-                Pairs
-              </Option>
-            </BasicLink>
+            {/*<BasicLink to="/tokens">*/}
+            {/*  <Option*/}
+            {/*    activeText={*/}
+            {/*      (history.location.pathname.split('/')[1] === 'tokens' || history.location.pathname.split('/')[1] === 'token') ?? undefined*/}
+            {/*    }*/}
+            {/*  >*/}
+            {/*    Tokens*/}
+            {/*  </Option>*/}
+            {/*</BasicLink>*/}
+            {/*<BasicLink to="/pairs">*/}
+            {/*  <Option*/}
+            {/*    activeText={(history.location.pathname.split('/')[1] === 'pairs' || history.location.pathname.split('/')[1] === 'pair') ?? undefined}*/}
+            {/*  >*/}
+            {/*    Pairs*/}
+            {/*  </Option>*/}
+            {/*</BasicLink>*/}
 
-            <BasicLink to="/accounts">
-              <Option
-                activeText={
-                  (history.location.pathname.split('/')[1] === 'accounts' || history.location.pathname.split('/')[1] === 'account') ?? undefined
-                }
-              >
-                Accounts
-              </Option>
-            </BasicLink>
+            {/*<BasicLink to="/accounts">*/}
+            {/*  <Option*/}
+            {/*    activeText={*/}
+            {/*      (history.location.pathname.split('/')[1] === 'accounts' || history.location.pathname.split('/')[1] === 'account') ?? undefined*/}
+            {/*    }*/}
+            {/*  >*/}
+            {/*    Accounts*/}
+            {/*  </Option>*/}
+            {/*</BasicLink>*/}
 
-            <BasicLink to="/lp-contest">
-              <Option activeText={history.location.pathname.split('/')[1] === 'lp-contest' ?? undefined} style={{ opacity: 1 }}>
-                <AccentText>LP Contest</AccentText>
-              </Option>
-            </BasicLink>
+            {/*<BasicLink to="/lp-contest">*/}
+            {/*  <Option activeText={history.location.pathname.split('/')[1] === 'lp-contest' ?? undefined} style={{ opacity: 1 }}>*/}
+            {/*    <AccentText>LP Contest</AccentText>*/}
+            {/*  </Option>*/}
+            {/*</BasicLink>*/}
           </RowFixed>
         )}
       </Flex>

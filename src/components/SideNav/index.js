@@ -9,10 +9,7 @@ import { TYPE } from '../../Theme'
 import { withRouter } from 'react-router-dom'
 import { TrendingUp, List, PieChart, Disc, Flag } from 'react-feather'
 import Link from '../Link'
-import { useSessionStart } from '../../contexts/Application'
-
-import confettiFiatGif from './confetti-flat.webp'
-import confettiFiatGif_x2 from './confetti-flat@x2.webp'
+import { useSessionStart } from '../../contexts/v1/Application'
 
 const Wrapper = styled.div`
   min-height: ${({ isMobile }) => (isMobile ? 'initial' : 'calc(100vh - 48px)')};
@@ -161,65 +158,65 @@ function SideNav({ history }) {
                   </Option>
                 </BasicLink>
 
-                <BasicLink to="/tokens">
-                  <Option
-                    activeText={
-                      (history.location.pathname.split('/')[1] === 'tokens' || history.location.pathname.split('/')[1] === 'token') ?? undefined
-                    }
-                  >
-                    <OptionContent>
-                      <Disc size={20} style={{ marginRight: '.5rem' }} />
-                      Tokens
-                    </OptionContent>
-                  </Option>
-                </BasicLink>
+                {/*<BasicLink to="/tokens">*/}
+                {/*  <Option*/}
+                {/*    activeText={*/}
+                {/*      (history.location.pathname.split('/')[1] === 'tokens' || history.location.pathname.split('/')[1] === 'token') ?? undefined*/}
+                {/*    }*/}
+                {/*  >*/}
+                {/*    <OptionContent>*/}
+                {/*      <Disc size={20} style={{ marginRight: '.5rem' }} />*/}
+                {/*      Tokens*/}
+                {/*    </OptionContent>*/}
+                {/*  </Option>*/}
+                {/*</BasicLink>*/}
 
-                <BasicLink to="/pairs">
-                  <Option
-                    activeText={
-                      (history.location.pathname.split('/')[1] === 'pairs' || history.location.pathname.split('/')[1] === 'pair') ?? undefined
-                    }
-                  >
-                    <OptionContent>
-                      <PieChart size={20} style={{ marginRight: '.5rem' }} />
-                      Pairs
-                    </OptionContent>
-                  </Option>
-                </BasicLink>
+                {/*<BasicLink to="/pairs">*/}
+                {/*  <Option*/}
+                {/*    activeText={*/}
+                {/*      (history.location.pathname.split('/')[1] === 'pairs' || history.location.pathname.split('/')[1] === 'pair') ?? undefined*/}
+                {/*    }*/}
+                {/*  >*/}
+                {/*    <OptionContent>*/}
+                {/*      <PieChart size={20} style={{ marginRight: '.5rem' }} />*/}
+                {/*      Pairs*/}
+                {/*    </OptionContent>*/}
+                {/*  </Option>*/}
+                {/*</BasicLink>*/}
 
-                <Separator />
+                {/*<Separator />*/}
 
-                <BasicLink to="/volume-leaderboarad">
-                  <Option
-                    activeText={
-                      (history.location.pathname.split('/')[1] === 'accounts' || history.location.pathname.split('/')[1] === 'volume-leaderboarad') ??
-                      undefined
-                    }
-                  >
-                    <OptionContent>Volume Leaderboard</OptionContent>
-                  </Option>
-                </BasicLink>
-                <BasicLink to="/accounts">
-                  <Option
-                    activeText={
-                      (history.location.pathname.split('/')[1] === 'lp-leaderboard' ||
-                        history.location.pathname.split('/')[1] === 'lp-leaderboard') ??
-                      undefined
-                    }
-                  >
-                    <OptionContent>LP Leaderboard</OptionContent>
-                  </Option>
-                </BasicLink>
-                <Separator />
-                <BasicLink to="/rewards">
-                  <Option
-                    activeText={
-                      (history.location.pathname.split('/')[1] === 'rewards' || history.location.pathname.split('/')[1] === 'rewards') ?? undefined
-                    }
-                  >
-                    <OptionContent>Rewards</OptionContent>
-                  </Option>
-                </BasicLink>
+                {/*<BasicLink to="/volume-leaderboarad">*/}
+                {/*  <Option*/}
+                {/*    activeText={*/}
+                {/*      (history.location.pathname.split('/')[1] === 'accounts' || history.location.pathname.split('/')[1] === 'volume-leaderboarad') ??*/}
+                {/*      undefined*/}
+                {/*    }*/}
+                {/*  >*/}
+                {/*    <OptionContent>Volume Leaderboard</OptionContent>*/}
+                {/*  </Option>*/}
+                {/*</BasicLink>*/}
+                {/*<BasicLink to="/accounts">*/}
+                {/*  <Option*/}
+                {/*    activeText={*/}
+                {/*      (history.location.pathname.split('/')[1] === 'lp-leaderboard' ||*/}
+                {/*        history.location.pathname.split('/')[1] === 'lp-leaderboard') ??*/}
+                {/*      undefined*/}
+                {/*    }*/}
+                {/*  >*/}
+                {/*    <OptionContent>LP Leaderboard</OptionContent>*/}
+                {/*  </Option>*/}
+                {/*</BasicLink>*/}
+                {/*<Separator />*/}
+                {/*<BasicLink to="/rewards">*/}
+                {/*  <Option*/}
+                {/*    activeText={*/}
+                {/*      (history.location.pathname.split('/')[1] === 'rewards' || history.location.pathname.split('/')[1] === 'rewards') ?? undefined*/}
+                {/*    }*/}
+                {/*  >*/}
+                {/*    <OptionContent>Rewards</OptionContent>*/}
+                {/*  </Option>*/}
+                {/*</BasicLink>*/}
               </AutoColumn>
             )}
           </AutoColumn>

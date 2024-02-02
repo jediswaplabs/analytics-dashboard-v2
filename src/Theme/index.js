@@ -1,6 +1,6 @@
 import React from 'react'
 import { ThemeProvider as StyledComponentsThemeProvider, createGlobalStyle } from 'styled-components'
-import { useDarkModeManager } from '../contexts/LocalStorage'
+import { useDarkModeManager } from '../contexts/v1/LocalStorage'
 import styled from 'styled-components'
 import { Text } from 'rebass'
 
