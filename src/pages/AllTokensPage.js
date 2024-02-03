@@ -19,6 +19,7 @@ function AllTokensPage() {
   const allTokens = useAllTokenData()
   const [savedTokens] = useSavedTokens()
   const savedTokensData = useTokenDataForList(Object.keys(savedTokens))
+
   const formattedSavedTokensData =
     savedTokensData?.reduce((acc, v) => {
       acc[v.id] = v
@@ -41,7 +42,12 @@ function AllTokensPage() {
             Your Watchlist
           </TYPE.main>
           <Panel style={{ padding: '0' }}>
-            <TopTokenList tokens={formattedSavedTokensData} itemMax={50} noPairsPlaceholderText={'Saved tokens will appear here'} />
+            <TopTokenList
+              tokens={formattedSavedTokensData}
+              itemMax={50}
+              waitForData={false}
+              noTokensPlaceholderText={'Saved tokens will appear here'}
+            />
           </Panel>
         </PageSection>
 

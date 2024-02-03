@@ -11,9 +11,6 @@ import { TrendingUp, List, PieChart, Disc, Flag } from 'react-feather'
 import Link from '../Link'
 import { useSessionStart } from '../../contexts/Application'
 
-import confettiFiatGif from './confetti-flat.webp'
-import confettiFiatGif_x2 from './confetti-flat@x2.webp'
-
 const Wrapper = styled.div`
   min-height: ${({ isMobile }) => (isMobile ? 'initial' : 'calc(100vh - 48px)')};
   padding: ${({ isMobile }) => (isMobile ? '16px' : 'calc(17px * 1.3) 40px 100px')};
@@ -187,39 +184,39 @@ function SideNav({ history }) {
                   </Option>
                 </BasicLink>
 
-                <Separator />
+                {/*<Separator />*/}
 
-                <BasicLink to="/volume-leaderboarad">
-                  <Option
-                    activeText={
-                      (history.location.pathname.split('/')[1] === 'accounts' || history.location.pathname.split('/')[1] === 'volume-leaderboarad') ??
-                      undefined
-                    }
-                  >
-                    <OptionContent>Volume Leaderboard</OptionContent>
-                  </Option>
-                </BasicLink>
-                <BasicLink to="/accounts">
-                  <Option
-                    activeText={
-                      (history.location.pathname.split('/')[1] === 'lp-leaderboard' ||
-                        history.location.pathname.split('/')[1] === 'lp-leaderboard') ??
-                      undefined
-                    }
-                  >
-                    <OptionContent>LP Leaderboard</OptionContent>
-                  </Option>
-                </BasicLink>
-                <Separator />
-                <BasicLink to="/rewards">
-                  <Option
-                    activeText={
-                      (history.location.pathname.split('/')[1] === 'rewards' || history.location.pathname.split('/')[1] === 'rewards') ?? undefined
-                    }
-                  >
-                    <OptionContent>Rewards</OptionContent>
-                  </Option>
-                </BasicLink>
+                {/*<BasicLink to="/volume-leaderboarad">*/}
+                {/*  <Option*/}
+                {/*    activeText={*/}
+                {/*      (history.location.pathname.split('/')[1] === 'accounts' || history.location.pathname.split('/')[1] === 'volume-leaderboarad') ??*/}
+                {/*      undefined*/}
+                {/*    }*/}
+                {/*  >*/}
+                {/*    <OptionContent>Volume Leaderboard</OptionContent>*/}
+                {/*  </Option>*/}
+                {/*</BasicLink>*/}
+                {/*<BasicLink to="/accounts">*/}
+                {/*  <Option*/}
+                {/*    activeText={*/}
+                {/*      (history.location.pathname.split('/')[1] === 'lp-leaderboard' ||*/}
+                {/*        history.location.pathname.split('/')[1] === 'lp-leaderboard') ??*/}
+                {/*      undefined*/}
+                {/*    }*/}
+                {/*  >*/}
+                {/*    <OptionContent>LP Leaderboard</OptionContent>*/}
+                {/*  </Option>*/}
+                {/*</BasicLink>*/}
+                {/*<Separator />*/}
+                {/*<BasicLink to="/rewards">*/}
+                {/*  <Option*/}
+                {/*    activeText={*/}
+                {/*      (history.location.pathname.split('/')[1] === 'rewards' || history.location.pathname.split('/')[1] === 'rewards') ?? undefined*/}
+                {/*    }*/}
+                {/*  >*/}
+                {/*    <OptionContent>Rewards</OptionContent>*/}
+                {/*  </Option>*/}
+                {/*</BasicLink>*/}
               </AutoColumn>
             )}
           </AutoColumn>

@@ -32,7 +32,7 @@ function AllPairsPage() {
             Your Watchlist
           </TYPE.main>
           <Panel style={{ padding: '0' }}>
-            <PairList pairs={savedPairsData} disbaleLinks={true} noPairsPlaceholderText={'Saved pools will appear here'} />
+            <PairList pairs={savedPairsData} disbaleLinks={true} waitForData={false} noPairsPlaceholderText={'Saved pools will appear here'} />
           </Panel>
         </PageSection>
 

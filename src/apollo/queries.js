@@ -33,20 +33,6 @@ export const GET_BLOCKS = (timestamps) => {
   return gql(queryString)
 }
 
-export const TOP_LPS_PER_PAIRS = gql`
-  query lps($pair: String!) {
-    liquidityPositions(where: { pair: $pair }, orderBy: "liquidity_token_balance", orderByDirection: "desc", first: 10) {
-      user {
-        id
-      }
-      pair {
-        id
-      }
-      liquidityTokenBalance
-    }
-  }
-`
-
 export const HOURLY_PAIR_RATES = (pairAddress, blocks) => {
   let queryString = 'query blocks {'
   queryString += blocks.map(
@@ -99,10 +85,7 @@ export const ETH_PRICE = (block) => {
   const queryString = block
     ? `
     query price {
-      pairs(
-        first: 1
-        block: {number: ${block}}
-        where: {id: "${ETH_USDC_PAIR_ADDRESS}"}
+      pairs(first: 1block: {number: ${block}} where: {id: "${ETH_USDC_PAIR_ADDRESS}"}
       ) {
         id
         token1Price
@@ -111,9 +94,7 @@ export const ETH_PRICE = (block) => {
   `
     : `
     query price {
-      pairs(
-        first: 1
-        where: {id: "${ETH_USDC_PAIR_ADDRESS}"}
+      pairs(first: 1, where: {id: "${ETH_USDC_PAIR_ADDRESS}"}
       ) {
         id
         token1Price
@@ -408,9 +389,9 @@ export const GLOBAL_CHART = gql`
     exchangeDayDatas(first: 1000, skip: $skip, where: { dateGt: $startTime }, orderBy: "date", orderByDirection: "asc") {
       id
       date
-      totalVolumeUSD
       dailyVolumeUSD
       dailyVolumeETH
+      totalVolumeUSD
       totalLiquidityUSD
       totalLiquidityETH
     }
@@ -432,77 +413,6 @@ export const GLOBAL_DATA = (block) => {
     }`
   return gql(queryString)
 }
-
-export const GLOBAL_TXNS = gql`
-  query transactions($skip: Int!) {
-    transactions(first: 20, skip: $skip, orderBy: "block_timestamp", orderByDirection: "desc") {
-      mints {
-        transactionHash
-        timestamp
-        to
-        liquidity
-        amount0
-        amount1
-        amountUSD
-        pair {
-          token0 {
-            id
-            symbol
-            name
-          }
-          token1 {
-            id
-            symbol
-          }
-        }
-      }
-      swaps {
-        transactionHash
-        timestamp
-        pair {
-          token0 {
-            id
-            name
-            symbol
-          }
-          token1 {
-            id
-            name
-            symbol
-          }
-        }
-        amount0In
-        amount0Out
-        amount1In
-        amount1Out
-        amountUSD
-        to
-      }
-      burns {
-        transactionHash
-        timestamp
-        to
-        sender
-        liquidity
-        amount0
-        amount1
-        amountUSD
-        pair {
-          token0 {
-            id
-            name
-            symbol
-          }
-          token1 {
-            id
-            name
-            symbol
-          }
-        }
-      }
-    }
-  }
-`
 
 export const ALL_TOKENS = gql`
   query tokens($skip: Int!) {
@@ -640,36 +550,6 @@ export const PAIRS_CURRENT = gql`
   }
 `
 
-export const LP_CONTEST_DATA = gql`
-  query contest {
-    lpContests(orderBy: "contest_value", orderByDirection: "desc") {
-      contestValue
-      isEligible
-      user {
-        id
-      }
-      block
-    }
-  }
-`
-
-export const LP_CONTEST_NFT_RANK = gql`
-  query lpcontestnftrank {
-    lpContestNftRank {
-      L1P1Start
-      L1P1End
-      L1P2Start
-      L1P2End
-      L1P3Start
-      L1P3End
-      L1P4Start
-      L1P4End
-      L1P5Start
-      L1P5End
-    }
-  }
-`
-
 export const PAIR_DATA = (pairAddress, block) => {
   const queryString = `
     ${PairFields}
@@ -718,22 +598,6 @@ export const PAIRS_HISTORICAL_BULK = (block, pairs) => {
   `
   return gql(queryString)
 }
-
-export const TOKEN_CHART = gql`
-  query tokenDayDatas($tokenAddr: String!, $skip: Int!) {
-    tokenDayDatas(first: 1000, skip: $skip, orderBy: "date", orderByDirection: "asc", where: { token: $tokenAddr }) {
-      dayId
-      date
-      priceUSD
-      totalLiquidityToken
-      totalLiquidityUSD
-      totalLiquidityETH
-      dailyVolumeETH
-      dailyVolumeToken
-      dailyVolumeUSD
-    }
-  }
-`
 
 const TokenFields = `
   fragment TokenFields on Token {

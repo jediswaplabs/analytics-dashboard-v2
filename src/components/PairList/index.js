@@ -157,7 +157,15 @@ const formatDataText = (value, trackedValue, supressWarning = false, textAlign =
 
 const DEFAULT_NO_PAIRS_PLACEHOLDER_TEXT = 'Pairs will appear here'
 
-function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = false, noPairsPlaceholderText = DEFAULT_NO_PAIRS_PLACEHOLDER_TEXT }) {
+function PairList({
+  pairs,
+  color,
+  disbaleLinks,
+  maxItems = 10,
+  useTracked = false,
+  waitForData = true,
+  noPairsPlaceholderText = DEFAULT_NO_PAIRS_PLACEHOLDER_TEXT,
+}) {
   const below600 = useMedia('(max-width: 600px)')
   const below740 = useMedia('(max-width: 740px)')
   const below1080 = useMedia('(max-width: 1080px)')
@@ -226,9 +234,7 @@ function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = fals
               <CustomLink style={{ marginLeft: '20px', whiteSpace: 'nowrap', color: '#fff' }} to={'/pair/' + pairAddress} color={color}>
                 {pairData.token0.symbol + '-' + pairData.token1.symbol}
               </CustomLink>
-              <FeeBadge>
-                0.04%
-              </FeeBadge>
+              <FeeBadge>0.04%</FeeBadge>
             </div>
             <div style={{ color: 'white', display: 'flex', columnGap: '30px', marginTop: '10px' }}>
               <div>
@@ -267,9 +273,7 @@ function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = fals
                 link={true}
               />
             </CustomLink>
-            <FeeBadge>
-              0.04%
-            </FeeBadge>
+            <FeeBadge>0.04%</FeeBadge>
           </DataText>
           <DataText area="liq">{formatDataText(liquidity, pairData.trackedReserveUSD)}</DataText>
           <DataText area="vol">{formatDataText(volume, pairData.oneDayVolumeUSD)}</DataText>
@@ -311,9 +315,7 @@ function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = fals
           pairAddress && (
             <div key={index}>
               <ListItem key={index} index={(page - 1) * ITEMS_PER_PAGE + index + 1} pairAddress={pairAddress} />
-              {
-                !below1080 && <Divider />
-              }
+              {!below1080 && <Divider />}
             </div>
           )
         )
@@ -323,7 +325,11 @@ function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = fals
     return <LocalLoader />
   }
 
-  if (!pairList.length) {
+  if (waitForData && !pairList.length) {
+    return <LocalLoader />
+  }
+
+  if (!waitForData && !pairList.length) {
     return (
       <PlaceholderContainer>
         <TYPE.main fontSize={'16px'} fontWeight={'400'}>
@@ -335,8 +341,7 @@ function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = fals
 
   return (
     <ListWrapper>
-      {
-        !below1080 &&
+      {!below1080 && (
         <>
           <DashGrid
             center={true}
@@ -412,7 +417,7 @@ function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = fals
           </DashGrid>
           <Divider />
         </>
-      }
+      )}
       <List p={0}>{pairList}</List>
       <PageButtons>
         <div

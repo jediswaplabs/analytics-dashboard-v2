@@ -16,7 +16,7 @@ import TokenChart from '../components/TokenChart'
 import { BasicLink } from '../components/Link'
 import Search from '../components/Search'
 import { formattedNum, formattedPercent, getPoolLink, getSwapLink, localNumber, urls } from '../utils'
-import { useTokenData, useTokenTransactions, useTokenPairs } from '../contexts/TokenData'
+import { useTokenData, useTokenPairs } from '../contexts/TokenData'
 import { TYPE, ThemedBackground } from '../Theme'
 import { transparentize } from 'polished'
 import { useColor } from '../hooks'
@@ -131,9 +131,6 @@ function TokenPage({ address, history }) {
 
   // pairs to show in pair list
   const fetchedPairsList = usePairDataForList(allPairsIds)
-
-  // all transactions with this token
-  const transactions = useTokenTransactions(address)
 
   // price
   const price = priceUSD ? formattedNum(priceUSD, true) : ''

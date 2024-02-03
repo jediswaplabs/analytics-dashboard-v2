@@ -34,8 +34,8 @@ function GlobalPage() {
   // get data for lists and totals
   const allPairs = useAllPairData()
   const allTokens = useAllTokenData()
-  const { totalLiquidityUSD, oneDayVolumeUSD, volumeChangeUSD, liquidityChangeUSD } = useGlobalData()
-
+  const { totalValueLockedUSD: totalLiquidityUSD, oneDayVolumeUSD, volumeChangeUSD, liquidityChangeUSD } = useGlobalData()
+  console.log(useGlobalData())
   // breakpoints
   const below800 = useMedia('(max-width: 800px)')
 
@@ -96,28 +96,28 @@ function GlobalPage() {
           </PageSection>
         )}
 
-        {!below800 && (
-          <PageSection>
-            <GridRow>
-              <Panel style={{ height: '100%', minHeight: '300px' }}>
-                <GlobalChart display="liquidity" />
-              </Panel>
-              <Panel style={{ height: '100%' }}>
-                <GlobalChart display="volume" />
-              </Panel>
-            </GridRow>
-          </PageSection>
-        )}
+        {/*{!below800 && (*/}
+        {/*  <PageSection>*/}
+        {/*    <GridRow>*/}
+        {/*      <Panel style={{ height: '100%', minHeight: '300px' }}>*/}
+        {/*        <GlobalChart display="liquidity" />*/}
+        {/*      </Panel>*/}
+        {/*      <Panel style={{ height: '100%' }}>*/}
+        {/*        <GlobalChart display="volume" />*/}
+        {/*      </Panel>*/}
+        {/*    </GridRow>*/}
+        {/*  </PageSection>*/}
+        {/*)}*/}
 
-        {below800 && (
-          <PageSection>
-            <AutoColumn style={{ marginTop: '6px' }} gap="24px">
-              <Panel style={{ height: '100%', minHeight: '300px' }}>
-                <GlobalChart display="liquidity" />
-              </Panel>
-            </AutoColumn>
-          </PageSection>
-        )}
+        {/*{below800 && (*/}
+        {/*  <PageSection>*/}
+        {/*    <AutoColumn style={{ marginTop: '6px' }} gap="24px">*/}
+        {/*      <Panel style={{ height: '100%', minHeight: '300px' }}>*/}
+        {/*        <GlobalChart display="liquidity" />*/}
+        {/*      </Panel>*/}
+        {/*    </AutoColumn>*/}
+        {/*  </PageSection>*/}
+        {/*)}*/}
 
         <PageSection>
           <TYPE.main fontSize={'1rem'} style={{ whiteSpace: 'nowrap' }}>

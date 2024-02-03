@@ -374,39 +374,3 @@ export function useWhitelistedTokens() {
 
   return { ...DEFAULT_TOKENS_WHITELIST, ...whitelistedTokens }
 }
-
-export function useWhitelistedPairs() {
-  // const [state, { updateWhitelistedTokens }] = useApplicationContext()
-  // const whitelistedTokens = state?.[WHITELISTED_TOKENS] ?? []
-  //
-  // useEffect(() => {
-  //   async function fetchList() {
-  //     const allFetched = await SUPPORTED_LIST_URLS__NO_ENS.reduce(async (fetchedTokens, url) => {
-  //       const tokensSoFar = await fetchedTokens
-  //       const newTokens = await getTokenList(url)
-  //
-  //       if (newTokens?.tokens) {
-  //         return Promise.resolve([...(tokensSoFar ?? []), ...newTokens.tokens])
-  //       }
-  //     }, Promise.resolve([]))
-  //     let formatted = allFetched?.reduce((acc, { address, symbol, logoURI }) => {
-  //       acc[starknetNumberModule.cleanHex(address.toLowerCase())] = {
-  //         symbol,
-  //         logoURI,
-  //       }
-  //       return acc
-  //     }, {})
-  //
-  //     updateWhitelistedTokens(formatted)
-  //   }
-  //   if (isEmpty(whitelistedTokens)) {
-  //     try {
-  //       fetchList()
-  //     } catch {
-  //       console.log('Error fetching')
-  //     }
-  //   }
-  // }, [updateWhitelistedTokens, whitelistedTokens])
-  //
-  // return { ...DEFAULT_TOKENS_WHITELIST, ...whitelistedTokens }
-}
