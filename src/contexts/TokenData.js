@@ -4,8 +4,8 @@ import { useWhitelistedTokens } from './Application'
 import { jediSwapClient } from '../apollo/client'
 import { TOKEN_DATA, TOKENS_HISTORICAL_BULK } from '../apollo/queries'
 
-import { jediSwapClientV1 } from '../apollo/v1/client'
-import { TOKENS_DAY_DATA } from '../apollo/v1/queries'
+import { jediSwapClientV2 } from '../apollo/v2/client'
+import { TOKENS_DAY_DATA } from '../apollo/v2/queries'
 
 import { useEthPrice } from './GlobalData'
 
@@ -135,7 +135,7 @@ const getTopTokens = async (ethPrice, ethPriceOld, whitelistedIds = []) => {
     // need to get the top tokens by liquidity by need token day datas
     const currentDate = parseInt(Date.now() / 86400 / 1000) * 86400 - 86400
 
-    let tokenids = await jediSwapClientV1.query({
+    let tokenids = await jediSwapClientV2.query({
       query: TOKENS_DAY_DATA(whitelistedIds),
       fetchPolicy: 'network-only',
       variables: { date: currentDate - 1000000 },

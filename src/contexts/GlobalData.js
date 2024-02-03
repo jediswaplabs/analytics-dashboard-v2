@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, useMemo, useCallback, useEffect, useState } from 'react'
 import { jediSwapClient } from '../apollo/client'
-import { jediSwapClientV1 } from '../apollo/v1/client'
+import { jediSwapClientV2 } from '../apollo/v2/client'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import { useTimeframe, useWhitelistedTokens } from './Application'
@@ -14,7 +14,7 @@ import {
 } from '../utils'
 
 import { GLOBAL_CHART } from '../apollo/queries'
-import { GLOBAL_DATA, ALL_TOKENS, ALL_PAIRS, ETH_PRICE } from '../apollo/v1/queries'
+import { GLOBAL_DATA, ALL_TOKENS, ALL_PAIRS, ETH_PRICE } from '../apollo/v2/queries'
 
 import weekOfYear from 'dayjs/plugin/weekOfYear'
 const UPDATE = 'UPDATE'
@@ -209,7 +209,7 @@ async function getGlobalData() {
     // let [oneDayBlock] = await getBlocksFromTimestamps([utcOneDayBack])
 
     // fetch the global data
-    let result = await jediSwapClientV1.query({
+    let result = await jediSwapClientV2.query({
       query: GLOBAL_DATA(),
       fetchPolicy: 'cache-first',
     })
@@ -217,13 +217,13 @@ async function getGlobalData() {
 
     //TODO JEDISWAP replace with one day result
     // fetch the historical data
-    // let oneDayResult = await jediSwapClientV1.query({
+    // let oneDayResult = await jediSwapClientV2.query({
     //   query: GLOBAL_DATA(oneDayBlock?.number),
     //   fetchPolicy: 'cache-first',
     // })
     // oneDayData = oneDayResult.data.factories[0]
 
-    let oneDayResult = await jediSwapClientV1.query({
+    let oneDayResult = await jediSwapClientV2.query({
       query: GLOBAL_DATA(),
       fetchPolicy: 'cache-first',
     })
@@ -362,11 +362,11 @@ const getEthPrice = async () => {
 
   try {
     //TODO JEDISWAP replace with real data
-    // let result = await jediSwapClientV1.query({
+    // let result = await jediSwapClientV2.query({
     //   query: ETH_PRICE(),
     //   fetchPolicy: 'cache-first',
     // })
-    // let resultOneDay = await jediSwapClientV1.query({
+    // let resultOneDay = await jediSwapClientV2.query({
     //   query: ETH_PRICE(),
     //   fetchPolicy: 'cache-first',
     // })
@@ -396,7 +396,7 @@ async function getAllPairsOnJediswap(ids) {
   // }
 
   try {
-    let queryResult = await jediSwapClientV1.query({
+    let queryResult = await jediSwapClientV2.query({
       query: ALL_PAIRS(ids),
       fetchPolicy: 'cache-first',
     })
@@ -416,7 +416,7 @@ async function getAllTokensOnJediswap(ids = []) {
   }
 
   try {
-    let queryResult = await jediSwapClientV1.query({
+    let queryResult = await jediSwapClientV2.query({
       query: ALL_TOKENS(ids),
       fetchPolicy: 'cache-first',
     })

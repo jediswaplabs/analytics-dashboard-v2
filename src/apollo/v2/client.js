@@ -2,7 +2,7 @@ import { ApolloClient } from 'apollo-client'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { HttpLink } from 'apollo-link-http'
 
-export const jediSwapClientV1 = new ApolloClient({
+export const jediSwapClientV2 = new ApolloClient({
   link: new HttpLink({
     uri: 'https://api.v2.goerli.jediswap.xyz/graphql',
     headers: {
