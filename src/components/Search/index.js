@@ -19,6 +19,7 @@ import FormattedName from '../FormattedName'
 import { TYPE } from '../../Theme'
 import { updateNameData } from '../../utils/data'
 import { useWhitelistedTokens } from '../../contexts/Application'
+import CMDIcon from '../../assets/cmd.png'
 
 const Container = styled.div`
   height: 48px;
@@ -37,10 +38,10 @@ const Wrapper = styled.div`
   align-items: center;
   justify-content: flex-end;
   padding: 12px 16px;
-  border-radius: 12px;
+  border-radius: 4px;
   background: ${({ theme, small, open }) => (small ? (open ? theme.bg7 : 'none') : transparentize(0.4, theme.bg7))};
-  border-bottom-right-radius: ${({ open }) => (open ? '0px' : '12px')};
-  border-bottom-left-radius: ${({ open }) => (open ? '0px' : '12px')};
+  border-bottom-right-radius: ${({ open }) => (open ? '0px' : '4px')};
+  border-bottom-left-radius: ${({ open }) => (open ? '0px' : '4px')};
   z-index: 9999;
   width: 100%;
   min-width: 300px;
@@ -85,8 +86,6 @@ const SearchIconLarge = styled(SearchIcon)`
   height: 20px;
   width: 20px;
   margin-right: 0.5rem;
-  position: absolute;
-  right: 10px;
   pointer-events: none;
   color: ${({ theme }) => theme.text3};
 `
@@ -407,12 +406,21 @@ export const Search = ({ small = false }) => {
   return (
     <Container small={small}>
       <Wrapper open={showMenu} shadow={true} small={small}>
+        <SearchIconLarge />
         <Input
           large={!small}
           type={'text'}
           ref={wrapperRef}
           placeholder={
-            small ? '' : below410 ? 'Search...' : below470 ? 'Search for...' : below700 ? 'Search for tokens...' : 'Search for tokens and pools...'
+            small
+              ? ''
+              : below410
+              ? 'Search...'
+              : below470
+              ? 'Search for...'
+              : below700
+              ? 'Search by token name...'
+              : 'Search by token name, pool name, address'
           }
           value={value}
           onChange={(e) => {
@@ -424,7 +432,7 @@ export const Search = ({ small = false }) => {
             }
           }}
         />
-        {!showMenu ? <SearchIconLarge /> : <CloseIcon onClick={() => toggleMenu(false)} />}
+        <img src={CMDIcon}></img>
       </Wrapper>
       <Menu hide={!showMenu} ref={menuRef}>
         <Heading>
