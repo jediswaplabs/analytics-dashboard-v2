@@ -1,20 +1,15 @@
 import React, { createContext, useContext, useReducer, useMemo, useCallback, useEffect, useState } from 'react'
-import { jediSwapClient } from '../apollo/client'
-import { jediSwapClientV2 } from '../apollo/v2/client'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
+
+import { jediSwapClient } from '../apollo/client'
+import { jediSwapClientV2 } from '../apollo/v2/client'
+
 import { useTimeframe, useWhitelistedTokens } from './Application'
-import {
-  getPercentChange,
-  getBlockFromTimestamp,
-  getBlocksFromTimestamps,
-  get2DayPercentChange,
-  getTimeframe,
-  convertDateToUnixFormat,
-} from '../utils'
+import { getPercentChange, get2DayPercentChange, getTimeframe, convertDateToUnixFormat } from '../utils'
 
 import { GLOBAL_CHART } from '../apollo/queries'
-import { GLOBAL_DATA, ALL_TOKENS, ALL_PAIRS, ETH_PRICE } from '../apollo/v2/queries'
+import { GLOBAL_DATA, TOKENS_DATA, ALL_PAIRS, ETH_PRICE } from '../apollo/v2/queries'
 
 import weekOfYear from 'dayjs/plugin/weekOfYear'
 const UPDATE = 'UPDATE'
@@ -417,7 +412,7 @@ async function getAllTokensOnJediswap(ids = []) {
 
   try {
     let queryResult = await jediSwapClientV2.query({
-      query: ALL_TOKENS(ids),
+      query: TOKENS_DATA(ids),
       fetchPolicy: 'cache-first',
     })
 

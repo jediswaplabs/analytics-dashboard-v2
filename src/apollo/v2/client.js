@@ -4,7 +4,8 @@ import { HttpLink } from 'apollo-link-http'
 
 export const jediSwapClientV2 = new ApolloClient({
   link: new HttpLink({
-    uri: 'https://api.v2.goerli.jediswap.xyz/graphql',
+    // uri: 'https://api.v2.goerli.jediswap.xyz/graphql',
+    uri: 'https://31fe-106-51-167-171.ngrok-free.app/graphql',
     headers: {
       // 'm-color': 'blue',
     },
@@ -38,6 +39,9 @@ export const jediSwapClientV2 = new ApolloClient({
         // }
         case 'TokenDayData': {
           return `${object.tokenAddress}${object.datetime}`
+        }
+        case 'Token': {
+          return `${object.tokenAddress}${object.name}`
         }
         default: {
           return object.id || object._id

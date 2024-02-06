@@ -191,8 +191,8 @@ function TopTokenList({
         <DataText area="name" fontWeight="500">
           <Row>
             {!below680 && <div style={{ marginRight: '1rem', width: '10px' }}>{index}</div>}
-            <TokenLogo address={item.id} symbol={item.symbol} />
-            <CustomLink style={{ marginLeft: '16px', whiteSpace: 'nowrap' }} to={'/token/' + item.id}>
+            <TokenLogo address={item.tokenAddress} symbol={item.symbol} />
+            <CustomLink style={{ marginLeft: '16px', whiteSpace: 'nowrap' }} to={'/token/' + item.tokenAddress}>
               <FormattedName text={item.symbol} maxCharacters={below600 ? 8 : 16} adjustSize={true} link={true} />
             </CustomLink>
           </Row>

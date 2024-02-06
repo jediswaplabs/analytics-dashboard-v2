@@ -10,6 +10,13 @@ const getDefaultTokensListUrl = () => {
   return getUrl()
 }
 
+export const apiTimeframeOptions = {
+  oneDay: 'one_day',
+  twoDays: 'two_days',
+  oneWeek: 'one_week',
+  oneMonth: 'one_month',
+}
+
 export const timeframeOptions = {
   WEEK: '1 week',
   MONTH: '1 month',
