@@ -52,7 +52,7 @@ const StyledTabText = styled.div`
 export interface Tab {
   key: string
   label: string
-  content: ReactElement
+  content: ReactElement | string
 }
 
 export interface TabsProps {
@@ -66,32 +66,39 @@ export default function Tabs({ tabs }: TabsProps) {
     setActiveTab(tabKey)
   }
   return (
-    <TabWrapper>
-      {tabs.map((tab) =>
-        activeTab === tab.key ? (
-          <ActiveTab
-            onClick={(ev) => {
-              ev.preventDefault()
-              ev.stopPropagation()
-              ev.nativeEvent.stopImmediatePropagation()
-              onClickTabItem(tab.key)
-            }}
-          >
-            <ActiveTabText>{tab.label}</ActiveTabText>
-          </ActiveTab>
-        ) : (
-          <StyledTab
-            onClick={(ev) => {
-              ev.preventDefault()
-              ev.stopPropagation()
-              ev.nativeEvent.stopImmediatePropagation()
-              onClickTabItem(tab.key)
-            }}
-          >
-            <StyledTabText>{tab.label}</StyledTabText>
-          </StyledTab>
-        )
-      )}
-    </TabWrapper>
+    <>
+      <TabWrapper>
+        {tabs.map((tab) =>
+          activeTab === tab.key ? (
+            <ActiveTab
+              onClick={(ev) => {
+                ev.preventDefault()
+                ev.stopPropagation()
+                ev.nativeEvent.stopImmediatePropagation()
+                onClickTabItem(tab.key)
+              }}
+            >
+              <ActiveTabText>{tab.label}</ActiveTabText>
+            </ActiveTab>
+          ) : (
+            <StyledTab
+              onClick={(ev) => {
+                ev.preventDefault()
+                ev.stopPropagation()
+                ev.nativeEvent.stopImmediatePropagation()
+                onClickTabItem(tab.key)
+              }}
+            >
+              <StyledTabText>{tab.label}</StyledTabText>
+            </StyledTab>
+          )
+        )}
+      </TabWrapper>
+      {tabs.map((tab) => (
+        <div key={tab.key} style={{ display: activeTab === tab.key ? 'block' : 'none' }}>
+          {tab.content}
+        </div>
+      ))}{' '}
+    </>
   )
 }

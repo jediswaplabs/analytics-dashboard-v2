@@ -131,9 +131,30 @@ const MenuItem = styled(Row)`
   }
 `
 
+const List = styled.div`
+  padding-left: 1rem;
+`
+const Divider = styled.div`
+  width: 962px;
+  height: 1px;
+  flex-shrink: 0;
+  margin: 0px 32px;
+  background: rgba(217, 217, 217, 0.2);
+`
+
 const Heading = styled(Row)`
   padding: 1rem;
+  padding-left: 2rem;
   display: ${({ hide = false }) => hide && 'none'};
+`
+
+const HeadingText = styled.div`
+  color: rgba(242, 242, 242, 0.8);
+  font-family: 'DM Sans';
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 20px; /* 125% */
 `
 
 const Gray = styled.span`
@@ -403,16 +424,95 @@ export const Search = ({ small = false }) => {
     }
   })
 
+  const SearchMenuItemContent = () => (
+    <>
+      <Heading>
+        <HeadingText>All Tokens</HeadingText>
+      </Heading>
+      <List>
+        {Object.keys(filteredTokenList).length === 0 && (
+          <MenuItem>
+            <TYPE.body>No results</TYPE.body>
+          </MenuItem>
+        )}
+        {filteredTokenList.slice(0, tokensShown).map((token) => {
+          // update displayed names
+          updateNameData({ token0: token })
+          return (
+            <BasicLink to={'/token/' + token.id} key={token.id} onClick={onDismiss}>
+              <MenuItem>
+                <RowFixed>
+                  <TokenLogo address={token.id} style={{ marginRight: '10px' }} />
+                  <FormattedName text={token.name} maxCharacters={20} style={{ marginRight: '6px' }} />
+                  (<FormattedName text={token.symbol} maxCharacters={6} />)
+                </RowFixed>
+              </MenuItem>
+            </BasicLink>
+          )
+        })}
+
+        <Heading
+          hide={!(Object.keys(filteredTokenList).length > 3 && Object.keys(filteredTokenList).length >= tokensShown)}
+          style={{ paddingLeft: '16px' }}
+        >
+          <Blue
+            onClick={() => {
+              setTokensShown(tokensShown + 5)
+            }}
+          >
+            See more...
+          </Blue>
+        </Heading>
+      </List>
+      <Divider></Divider>
+      <Heading>
+        <HeadingText>Pools</HeadingText>
+      </Heading>
+      <List>
+        {filteredPairList && Object.keys(filteredPairList).length === 0 && (
+          <MenuItem>
+            <TYPE.body>No results</TYPE.body>
+          </MenuItem>
+        )}
+        {filteredPairList &&
+          filteredPairList.slice(0, pairsShown).map((pair) => {
+            //format incorrect names
+            updateNameData(pair)
+            return (
+              <BasicLink to={'/pair/' + pair.id} key={pair.id} onClick={onDismiss}>
+                <MenuItem>
+                  <DoubleTokenLogo a0={pair?.token0?.id} a1={pair?.token1?.id} margin={true} />
+                  <TYPE.body style={{ marginLeft: '10px' }}>{pair.token0.symbol + '-' + pair.token1.symbol} Pair</TYPE.body>
+                </MenuItem>
+              </BasicLink>
+            )
+          })}
+        <Heading
+          hide={!(Object.keys(filteredPairList).length > 3 && Object.keys(filteredPairList).length >= pairsShown)}
+          style={{ paddingLeft: '16px' }}
+        >
+          <Blue
+            onClick={() => {
+              setPairsShown(pairsShown + 5)
+            }}
+          >
+            See more...
+          </Blue>
+        </Heading>
+      </List>
+    </>
+  )
+
   const tabs = [
     {
       key: 'search',
       label: 'Search',
-      // content: <SearchMenuItemContent />,
+      content: <SearchMenuItemContent />,
     },
     {
       key: 'watchlist',
       label: 'Watchlist',
-      // content: <WatchlistMenuItemContent />,
+      content: '',
     },
   ]
 
@@ -449,73 +549,6 @@ export const Search = ({ small = false }) => {
       </Wrapper>
       <Menu hide={!showMenu} ref={menuRef}>
         <Tabs tabs={tabs}></Tabs>
-        <Heading>
-          <Gray>Pairs</Gray>
-        </Heading>
-        <div>
-          {filteredPairList && Object.keys(filteredPairList).length === 0 && (
-            <MenuItem>
-              <TYPE.body>No results</TYPE.body>
-            </MenuItem>
-          )}
-          {filteredPairList &&
-            filteredPairList.slice(0, pairsShown).map((pair) => {
-              //format incorrect names
-              updateNameData(pair)
-              return (
-                <BasicLink to={'/pair/' + pair.id} key={pair.id} onClick={onDismiss}>
-                  <MenuItem>
-                    <DoubleTokenLogo a0={pair?.token0?.id} a1={pair?.token1?.id} margin={true} />
-                    <TYPE.body style={{ marginLeft: '10px' }}>{pair.token0.symbol + '-' + pair.token1.symbol} Pair</TYPE.body>
-                  </MenuItem>
-                </BasicLink>
-              )
-            })}
-          <Heading hide={!(Object.keys(filteredPairList).length > 3 && Object.keys(filteredPairList).length >= pairsShown)}>
-            <Blue
-              onClick={() => {
-                setPairsShown(pairsShown + 5)
-              }}
-            >
-              See more...
-            </Blue>
-          </Heading>
-        </div>
-        <Heading>
-          <Gray>Tokens</Gray>
-        </Heading>
-        <div>
-          {Object.keys(filteredTokenList).length === 0 && (
-            <MenuItem>
-              <TYPE.body>No results</TYPE.body>
-            </MenuItem>
-          )}
-          {filteredTokenList.slice(0, tokensShown).map((token) => {
-            // update displayed names
-            updateNameData({ token0: token })
-            return (
-              <BasicLink to={'/token/' + token.id} key={token.id} onClick={onDismiss}>
-                <MenuItem>
-                  <RowFixed>
-                    <TokenLogo address={token.id} style={{ marginRight: '10px' }} />
-                    <FormattedName text={token.name} maxCharacters={20} style={{ marginRight: '6px' }} />
-                    (<FormattedName text={token.symbol} maxCharacters={6} />)
-                  </RowFixed>
-                </MenuItem>
-              </BasicLink>
-            )
-          })}
-
-          <Heading hide={!(Object.keys(filteredTokenList).length > 3 && Object.keys(filteredTokenList).length >= tokensShown)}>
-            <Blue
-              onClick={() => {
-                setTokensShown(tokensShown + 5)
-              }}
-            >
-              See more...
-            </Blue>
-          </Heading>
-        </div>
       </Menu>
     </Container>
   )
