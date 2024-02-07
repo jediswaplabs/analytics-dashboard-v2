@@ -20,6 +20,7 @@ import { TYPE } from '../../Theme'
 import { updateNameData } from '../../utils/data'
 import { useWhitelistedTokens } from '../../contexts/Application'
 import CMDIcon from '../../assets/cmd.png'
+import Tabs from '../Tabs'
 
 const Container = styled.div`
   height: 48px;
@@ -113,9 +114,8 @@ const Menu = styled.div`
   left: 0;
   padding-bottom: 20px;
   background: ${({ theme }) => theme.bg7};
-  border-bottom-right-radius: 12px;
-  border-bottom-left-radius: 12px;
-  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.04), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04), 0px 24px 32px rgba(0, 0, 0, 0.04);
+  border-radius: 8px;
+  border: 2px solid #7e3ee4;
   display: ${({ hide }) => hide && 'none'};
 `
 
@@ -403,6 +403,19 @@ export const Search = ({ small = false }) => {
     }
   })
 
+  const tabs = [
+    {
+      key: 'search',
+      label: 'Search',
+      // content: <SearchMenuItemContent />,
+    },
+    {
+      key: 'watchlist',
+      label: 'Watchlist',
+      // content: <WatchlistMenuItemContent />,
+    },
+  ]
+
   return (
     <Container small={small}>
       <Wrapper open={showMenu} shadow={true} small={small}>
@@ -435,6 +448,7 @@ export const Search = ({ small = false }) => {
         <img src={CMDIcon}></img>
       </Wrapper>
       <Menu hide={!showMenu} ref={menuRef}>
+        <Tabs tabs={tabs}></Tabs>
         <Heading>
           <Gray>Pairs</Gray>
         </Heading>
