@@ -183,7 +183,7 @@ function PairList({
     return (
       pairs &&
       Object.keys(pairs).filter((address) => {
-        return whitelistedTokens[pairs[address].token0.id] && whitelistedTokens[pairs[address].token1.id]
+        return whitelistedTokens[pairs[address].token0.tokenAddress] && whitelistedTokens[pairs[address].token1.tokenAddress]
       })
     )
   }, [pairs, whitelistedTokens])
@@ -205,28 +205,30 @@ function PairList({
 
   const ListItem = ({ pairAddress, index }) => {
     const pairData = pairs[pairAddress]
+    const feePercent = pairData ? parseFloat(pairData.fee) / 10000 : 0
 
     if (pairData && pairData.token0 && pairData.token1) {
+      const feeTier = pairData.fee / 10 ** 6;
       const liquidity = formattedNum(!!pairData.trackedReserveUSD ? pairData.trackedReserveUSD : pairData.reserveUSD, true)
 
       const volume = formattedNum(pairData.oneDayVolumeUSD ? pairData.oneDayVolumeUSD : pairData.oneDayVolumeUntracked, true)
 
       const feeRatio24H =
-        ((pairData.oneDayVolumeUSD ? pairData.oneDayVolumeUSD : pairData.oneDayVolumeUntracked) * 0.003) /
+        ((pairData.oneDayVolumeUSD ? pairData.oneDayVolumeUSD : pairData.oneDayVolumeUntracked) * feeTier) /
         (pairData.oneDayVolumeUSD ? pairData.trackedReserveUSD : pairData.reserveUSD)
       const apy = formattedPercent(((1 + feeRatio24H) ** 365 - 1) * 100, true)
 
       const weekVolume = formattedNum(pairData.oneWeekVolumeUSD ? pairData.oneWeekVolumeUSD : pairData.oneWeekVolumeUntracked, true)
 
-      const fees = formattedNum(pairData.oneDayVolumeUSD ? pairData.oneDayVolumeUSD * 0.003 : pairData.oneDayVolumeUntracked * 0.003, true)
+      const fees = formattedNum(pairData.oneDayVolumeUSD ? pairData.oneDayVolumeUSD * feeTier : pairData.oneDayVolumeUntracked * feeTier, true)
       if (below1080) {
         return (
           <div style={{ margin: '10px 0', padding: '20px', borderRadius: '8px', border: '1px solid #959595' }}>
             <div style={{ display: 'flex' }}>
               <DoubleTokenLogo
                 size={below600 ? 16 : 20}
-                a0={pairData.token0.id}
-                a1={pairData.token1.id}
+                a0={pairData.token0.tokenAddress}
+                a1={pairData.token1.tokenAddress}
                 s0={pairData.token0.symbol}
                 s1={pairData.token1.symbol}
                 margin={!below740}
@@ -234,7 +236,7 @@ function PairList({
               <CustomLink style={{ marginLeft: '20px', whiteSpace: 'nowrap', color: '#fff' }} to={'/pair/' + pairAddress} color={color}>
                 {pairData.token0.symbol + '-' + pairData.token1.symbol}
               </CustomLink>
-              <FeeBadge>0.04%</FeeBadge>
+              <FeeBadge>{feePercent}%</FeeBadge>
             </div>
             <div style={{ color: 'white', display: 'flex', columnGap: '30px', marginTop: '10px' }}>
               <div>
@@ -259,8 +261,8 @@ function PairList({
             {!below600 && <div style={{ marginRight: '20px', width: '10px' }}>{index}</div>}
             <DoubleTokenLogo
               size={below600 ? 16 : 20}
-              a0={pairData.token0.id}
-              a1={pairData.token1.id}
+              a0={pairData.token0.tokenAddress}
+              a1={pairData.token1.tokenAddress}
               s0={pairData.token0.symbol}
               s1={pairData.token1.symbol}
               margin={!below740}
@@ -273,7 +275,7 @@ function PairList({
                 link={true}
               />
             </CustomLink>
-            <FeeBadge>0.04%</FeeBadge>
+            <FeeBadge>{feePercent}%</FeeBadge>
           </DataText>
           <DataText area="liq">{formatDataText(liquidity, pairData.trackedReserveUSD)}</DataText>
           <DataText area="vol">{formatDataText(volume, pairData.oneDayVolumeUSD)}</DataText>

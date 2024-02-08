@@ -83,11 +83,19 @@ export const ALL_PAIRS = (ids = []) => {
 
   let queryString = `
     query pools {
-      pools {
-        id
+      pools(first: 100, orderBy: "totalValueLockedETH", orderByDirection: "desc") {
         poolAddress
-        token0
-        token1
+        fee
+        token0 {
+          name
+          symbol
+          tokenAddress
+        }
+        token1 {
+          name
+          symbol
+          tokenAddress
+        }
       }
     }
   `
@@ -110,6 +118,96 @@ export const TOKENS_DAY_DATA = (ids = []) => {
         datetime
       }
     }
+  `
+  return gql(queryString)
+}
+
+const PairFields = `
+  fragment PairFields on Pool {
+    poolAddress
+    txCount
+    token0 {
+      tokenAddress
+      symbol
+      name
+      totalValueLocked
+      derivedETH
+    }
+    token1 {
+      tokenAddress
+      symbol
+      name
+      totalValueLocked
+      derivedETH
+    }
+    volumeToken0
+    volumeToken1
+    totalValueLockedUSD
+    #totalSupply
+    #trackedReserveETH
+    totalValueLockedETH
+    #reserveETH
+    volumeUSD
+    untrackedVolumeUSD
+    token0Price
+    token1Price
+    fee
+    #createdAtTimestamp
+  }
+`
+
+export const PAIRS_CURRENT = gql`
+  query pools {
+    pools(first: 200, orderBy: "totalValueLockedUSD", orderByDirection: "desc") {
+      poolAddress
+    }
+  }
+`
+
+export const PAIRS_BULK = (pairs) => {
+  let pairsString = `[`
+  pairs.map((pair) => {
+    return (pairsString += `"${pair}"`)
+  })
+  pairsString += ']'
+
+  const queryString = `
+    ${PairFields}
+    query pools {
+      pools(first: 100, where: { poolAddressIn: ${pairsString} }, orderBy: "totalValueLockedETH", orderByDirection: "desc") {
+        ...PairFields
+      }
+    }
+  `
+  return gql(queryString)
+}
+
+//TODO replace block for periods
+export const PAIR_DATA = (pairAddress, block) => {
+  const queryString = `
+    ${PairFields}
+    query pools {
+      pools(${block ? `block: {number: ${block}}` : ``} where: { poolAddress: "${pairAddress}"} ) {
+        ...PairFields
+      }
+    }`
+  return gql(queryString)
+}
+
+export const PAIRS_HISTORICAL_BULK = (pairs, periods = []) => {
+  let pairsString = `[`
+  pairs.map((pair) => {
+    return (pairsString += `"${pair}"`)
+  })
+  pairsString += ']'
+  const periodString = `[${periods.map((period) => `"${period}"`).join(',')}]`
+  let queryString = `
+  query poolsData {
+    poolsData(first: 200, where: {poolAddressIn: ${pairsString}, periodIn: ${periodString}}, orderBy: "totalValueLockedETH", orderByDirection: "desc") {
+      period
+      poolAddress
+    }
+  }
   `
   return gql(queryString)
 }

@@ -1,7 +1,9 @@
 import React, { createContext, useContext, useReducer, useMemo, useCallback, useEffect, useState } from 'react'
 
 import { jediSwapClient } from '../apollo/client'
-import { PAIR_DATA, PAIR_CHART, FILTERED_TRANSACTIONS, PAIRS_CURRENT, PAIRS_BULK, PAIRS_HISTORICAL_BULK } from '../apollo/queries'
+import { jediSwapClientV2 } from '../apollo/v2/client'
+import { PAIR_CHART, FILTERED_TRANSACTIONS } from '../apollo/queries'
+import { PAIRS_CURRENT, PAIRS_BULK, PAIR_DATA, PAIRS_HISTORICAL_BULK } from '../apollo/v2/queries'
 
 import { useEthPrice } from './GlobalData'
 
@@ -59,7 +61,7 @@ function reducer(state, { type, payload }) {
       const { topPairs } = payload
       let added = {}
       topPairs.map((pair) => {
-        return (added[pair.id] = pair)
+        return (added[pair.poolAddress] = pair)
       })
       return {
         ...state,
@@ -185,63 +187,64 @@ async function getBulkPairData(pairList, ethPrice) {
   bWeek = bWeek ?? b2 ?? b1
 
   try {
-    let current = await jediSwapClient.query({
+    let current = await jediSwapClientV2.query({
       query: PAIRS_BULK(pairList),
       fetchPolicy: 'cache-first',
     })
     let [oneDayResult, twoDayResult, oneWeekResult] = await Promise.all(
       [b1, b2, bWeek].map(async (block) => {
-        let result = jediSwapClient.query({
-          query: PAIRS_HISTORICAL_BULK(block, pairList),
+        let result = jediSwapClientV2.query({
+          query: PAIRS_HISTORICAL_BULK(pairList, ['one_day', 'two_days', 'one_week']),
           fetchPolicy: 'cache-first',
         })
         return result
       })
     )
 
-    let oneDayData = oneDayResult?.data?.pairs.reduce((obj, cur, i) => {
-      return { ...obj, [cur.id]: cur }
+    let oneDayData = oneDayResult?.data?.poolsData.reduce((obj, cur, i) => {
+      return { ...obj, [cur.poolAddress]: cur?.period?.['one_day'] }
     }, {})
 
-    let twoDayData = twoDayResult?.data?.pairs.reduce((obj, cur, i) => {
-      return { ...obj, [cur.id]: cur }
+    let twoDayData = twoDayResult?.data?.poolsData.reduce((obj, cur, i) => {
+      return { ...obj, [cur.poolAddress]: cur?.period?.['two_days'] }
     }, {})
 
-    let oneWeekData = oneWeekResult?.data?.pairs.reduce((obj, cur, i) => {
-      return { ...obj, [cur.id]: cur }
+    let oneWeekData = oneWeekResult?.data?.poolsData.reduce((obj, cur, i) => {
+      return { ...obj, [cur.poolAddress]: cur?.period?.['one_week'] }
     }, {})
 
     let pairData = await Promise.all(
       current &&
-        current.data.pairs.map(async (pair) => {
-          let data = pair
-          let oneDayHistory = oneDayData?.[pair.id]
-          if (!oneDayHistory) {
-            let newData = await jediSwapClient.query({
-              query: PAIR_DATA(pair.id, b1),
-              fetchPolicy: 'cache-first',
-            })
-            oneDayHistory = newData.data.pairs[0]
-          }
-          let twoDayHistory = twoDayData?.[pair.id]
-          if (!twoDayHistory) {
-            let newData = await jediSwapClient.query({
-              query: PAIR_DATA(pair.id, b2),
-              fetchPolicy: 'cache-first',
-            })
-            twoDayHistory = newData.data.pairs[0]
-          }
-          let oneWeekHistory = oneWeekData?.[pair.id]
-          if (!oneWeekHistory) {
-            let newData = await jediSwapClient.query({
-              query: PAIR_DATA(pair.id, bWeek),
-              fetchPolicy: 'cache-first',
-            })
-            oneWeekHistory = newData.data.pairs[0]
-          }
-          data = parseData(data, oneDayHistory, twoDayHistory, oneWeekHistory, ethPrice, b1)
-          return data
-        })
+      current.data.pools.map(async (pair) => {
+        let data = pair
+        let oneDayHistory = oneDayData?.[pair.poolAddress]
+        if (!oneDayHistory) {
+          let newData = await jediSwapClientV2.query({
+            query: PAIR_DATA(pair.poolAddress, b1),
+            fetchPolicy: 'cache-first',
+          })
+          oneDayHistory = newData.data.pools[0]
+          console.log('oneDayHistory', newData)
+        }
+        let twoDayHistory = twoDayData?.[pair.poolAddress]
+        if (!twoDayHistory) {
+          let newData = await jediSwapClientV2.query({
+            query: PAIR_DATA(pair.poolAddress, b2),
+            fetchPolicy: 'cache-first',
+          })
+          twoDayHistory = newData.data.pools[0]
+        }
+        let oneWeekHistory = oneWeekData?.[pair.poolAddress]
+        if (!oneWeekHistory) {
+          let newData = await jediSwapClientV2.query({
+            query: PAIR_DATA(pair.poolAddress, bWeek),
+            fetchPolicy: 'cache-first',
+          })
+          oneWeekHistory = newData.data.pools[0]
+        }
+        data = parseData(data, oneDayHistory, twoDayHistory, oneWeekHistory, ethPrice, b1)
+        return data
+      })
     )
     return pairData
   } catch (e) {
@@ -275,7 +278,8 @@ function parseData(data, oneDayData, twoDayData, oneWeekData, ethPrice, oneDayBl
   data.volumeChangeUntracked = volumeChangeUntracked
 
   // set liquidity properties
-  data.trackedReserveUSD = data.trackedReserveETH * ethPrice
+  data.trackedReserveUSD = data.totalValueLockedUSD
+  // data.trackedReserveUSD = data.totalValueLockedETH * ethPrice //??
   data.liquidityChangeUSD = getPercentChange(data.reserveUSD, oneDayData?.reserveUSD)
 
   // format if pair hasnt existed for a day or a week
@@ -398,15 +402,15 @@ export function Updater() {
     async function getData() {
       // get top pairs by reserves
       let {
-        data: { pairs },
-      } = await jediSwapClient.query({
+        data: { pools },
+      } = await jediSwapClientV2.query({
         query: PAIRS_CURRENT,
         fetchPolicy: 'cache-first',
       })
 
       // format as array of addresses
-      const formattedPairs = pairs.map((pair) => {
-        return pair.id
+      const formattedPairs = pools.map((pool) => {
+        return pool.poolAddress
       })
 
       // get data for every pair in list

@@ -133,7 +133,7 @@ function PairPage({ pairAddress, history }) {
     document.querySelector('body').scrollTo(0, 0)
   }, [])
 
-  const transactions = usePairTransactions(pairAddress)
+  // const transactions = usePairTransactions(pairAddress)
   const backgroundColor = useColor(pairAddress)
 
   const formattedLiquidity = reserveUSD ? formattedNum(reserveUSD, true) : formattedNum(trackedReserveUSD, true)
