@@ -42,6 +42,9 @@ export const jediSwapClientV2 = new ApolloClient({
         case 'Token': {
           return `${object.tokenAddress}${object.name}`
         }
+        case 'Pool': {
+          return `${object.poolAddress}`
+        }
         default: {
           return object.id || object._id
         }
