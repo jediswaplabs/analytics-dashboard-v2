@@ -39,6 +39,9 @@ export const jediSwapClientV2 = new ApolloClient({
         case 'TokenDayData': {
           return `${object.tokenAddress}${object.datetime}`
         }
+        case 'Token': {
+          return `${object.tokenAddress}${object.name}`
+        }
         default: {
           return object.id || object._id
         }

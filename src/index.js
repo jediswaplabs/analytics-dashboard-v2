@@ -14,7 +14,9 @@ function ContextProviders({ children }) {
       <ApplicationContextProvider>
         <TokenDataContextProvider>
           <GlobalDataContextProvider>
-            <PairDataContextProvider>{children}</PairDataContextProvider>
+            <PairDataContextProvider>
+              {children}
+            </PairDataContextProvider>
           </GlobalDataContextProvider>
         </TokenDataContextProvider>
       </ApplicationContextProvider>

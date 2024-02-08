@@ -33,9 +33,9 @@ function AllTokensPage() {
       <ContentWrapper>
         <TYPE.largeHeader>Top Tokens</TYPE.largeHeader>
 
-        <PageSection>
-          <Search />
-        </PageSection>
+        {/*<PageSection>*/}
+        {/*  <Search />*/}
+        {/*</PageSection>*/}
 
         <PageSection>
           <TYPE.main fontSize={'1rem'} style={{ whiteSpace: 'nowrap' }}>
