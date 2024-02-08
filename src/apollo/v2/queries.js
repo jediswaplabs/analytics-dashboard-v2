@@ -221,13 +221,13 @@ export const PAIRS_BULK = (pairs) => {
   return gql(queryString)
 }
 
-//TODO replace block for periods
-export const PAIR_DATA = (pairAddress, block) => {
+export const PAIR_DATA = (pairAddress, periods = []) => {
+  const periodString = `[${periods.map((period) => `"${period}"`).join(',')}]`
   const queryString = `
-    ${PairFields}
-    query pools {
-      pools(${block ? `block: {number: ${block}}` : ``} where: { poolAddress: "${pairAddress}"} ) {
-        ...PairFields
+    query poolsData {
+      poolsData(where: { poolAddress: "${pairAddress}", periodIn: ${periodString}} ) {
+        period
+        poolAddress
       }
     }`
   return gql(queryString)

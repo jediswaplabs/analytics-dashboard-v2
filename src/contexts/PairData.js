@@ -177,40 +177,25 @@ export default function Provider({ children }) {
 }
 
 async function getBulkPairData(pairList, ethPrice) {
-  const [t1, t2, tWeek] = getTimestampsForChanges()
-  let [{ number: b1 } = { number: null }, { number: b2 } = { number: null }, { number: bWeek } = { number: null }] = await getBlocksFromTimestamps([
-    t1,
-    t2,
-    tWeek,
-  ])
-  b1 = b1 ?? b2 ?? bWeek
-  b2 = b2 ?? b1 ?? bWeek
-  bWeek = bWeek ?? b2 ?? b1
-
   try {
     let current = await jediSwapClientV2.query({
       query: PAIRS_BULK(pairList),
       fetchPolicy: 'cache-first',
     })
-    let [oneDayResult, twoDayResult, oneWeekResult] = await Promise.all(
-      [b1, b2, bWeek].map(async (block) => {
-        let result = jediSwapClientV2.query({
-          query: PAIRS_HISTORICAL_BULK(pairList, [apiTimeframeOptions.oneDay, apiTimeframeOptions.twoDays, apiTimeframeOptions.oneWeek]),
-          fetchPolicy: 'cache-first',
-        })
-        return result
-      })
-    )
 
-    let oneDayData = oneDayResult?.data?.poolsData.reduce((obj, cur, i) => {
+    let historicalData = await jediSwapClientV2.query({
+      query: PAIRS_HISTORICAL_BULK(pairList, [apiTimeframeOptions.oneDay, apiTimeframeOptions.twoDays, apiTimeframeOptions.oneWeek]),
+      fetchPolicy: 'cache-first',
+    })
+    let oneDayData = historicalData?.data?.poolsData.reduce((obj, cur, i) => {
       return { ...obj, [cur.poolAddress]: cur?.period?.[apiTimeframeOptions.oneDay] }
     }, {})
 
-    let twoDayData = twoDayResult?.data?.poolsData.reduce((obj, cur, i) => {
+    let twoDayData = historicalData?.data?.poolsData.reduce((obj, cur, i) => {
       return { ...obj, [cur.poolAddress]: cur?.period?.[apiTimeframeOptions.twoDays] }
     }, {})
 
-    let oneWeekData = oneWeekResult?.data?.poolsData.reduce((obj, cur, i) => {
+    let oneWeekData = historicalData?.data?.poolsData.reduce((obj, cur, i) => {
       return { ...obj, [cur.poolAddress]: cur?.period?.[apiTimeframeOptions.oneWeek] }
     }, {})
 
@@ -221,29 +206,29 @@ async function getBulkPairData(pairList, ethPrice) {
         let oneDayHistory = oneDayData?.[pair.poolAddress]
         if (!oneDayHistory) {
           let newData = await jediSwapClientV2.query({
-            query: PAIR_DATA(pair.poolAddress, b1),
+            query: PAIR_DATA(pair.poolAddress, [apiTimeframeOptions.oneDay]),
             fetchPolicy: 'cache-first',
           })
-          oneDayHistory = newData.data.pools[0]
-          console.log('oneDayHistory', newData)
+          oneDayHistory = newData.data.poolsData[0]?.period?.[apiTimeframeOptions.oneDay]
         }
         let twoDayHistory = twoDayData?.[pair.poolAddress]
         if (!twoDayHistory) {
           let newData = await jediSwapClientV2.query({
-            query: PAIR_DATA(pair.poolAddress, b2),
+            query: PAIR_DATA(pair.poolAddress, [apiTimeframeOptions.twoDays]),
             fetchPolicy: 'cache-first',
           })
-          twoDayHistory = newData.data.pools[0]
+          twoDayHistory = newData.data.poolsData[0]?.period?.[apiTimeframeOptions.twoDays]
         }
         let oneWeekHistory = oneWeekData?.[pair.poolAddress]
         if (!oneWeekHistory) {
           let newData = await jediSwapClientV2.query({
-            query: PAIR_DATA(pair.poolAddress, bWeek),
+            query: PAIR_DATA(pair.poolAddress, [apiTimeframeOptions.oneWeek]),
             fetchPolicy: 'cache-first',
           })
-          oneWeekHistory = newData.data.pools[0]
+          oneWeekHistory = newData.data.poolsData[0]?.period?.[apiTimeframeOptions.oneWeek]
         }
-        data = parseData(data, oneDayHistory, twoDayHistory, oneWeekHistory, ethPrice, b1)
+        // data = parseData(data, oneDayHistory, twoDayHistory, oneWeekHistory, ethPrice, b1)
+        data = parseData(data, oneDayHistory, twoDayHistory, oneWeekHistory, ethPrice)
         return data
       })
     )
@@ -284,9 +269,9 @@ function parseData(data, oneDayData, twoDayData, oneWeekData, ethPrice, oneDayBl
   data.liquidityChangeUSD = getPercentChange(data.reserveUSD, oneDayData?.reserveUSD)
 
   // format if pair hasnt existed for a day or a week
-  if (!oneDayData && data && data.createdAtBlockNumber > oneDayBlock) {
-    data.oneDayVolumeUSD = parseFloat(data.volumeUSD)
-  }
+  // if (!oneDayData && data && data.createdAtBlockNumber > oneDayBlock) {
+  //   data.oneDayVolumeUSD = parseFloat(data.volumeUSD)
+  // }
   if (!oneDayData && data) {
     data.oneDayVolumeUSD = parseFloat(data.volumeUSD)
   }
