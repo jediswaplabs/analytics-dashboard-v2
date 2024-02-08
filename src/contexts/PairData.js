@@ -23,6 +23,7 @@ import {
 import { timeframeOptions, TRACKED_OVERRIDES_PAIRS, TRACKED_OVERRIDES_TOKENS } from '../constants'
 import { useLatestBlocks } from './Application'
 import { updateNameData } from '../utils/data'
+import { apiTimeframeOptions } from '../constants'
 
 const UPDATE = 'UPDATE'
 const UPDATE_PAIR_TXNS = 'UPDATE_PAIR_TXNS'
@@ -194,7 +195,7 @@ async function getBulkPairData(pairList, ethPrice) {
     let [oneDayResult, twoDayResult, oneWeekResult] = await Promise.all(
       [b1, b2, bWeek].map(async (block) => {
         let result = jediSwapClientV2.query({
-          query: PAIRS_HISTORICAL_BULK(pairList, ['one_day', 'two_days', 'one_week']),
+          query: PAIRS_HISTORICAL_BULK(pairList, [apiTimeframeOptions.oneDay, apiTimeframeOptions.twoDays, apiTimeframeOptions.oneWeek]),
           fetchPolicy: 'cache-first',
         })
         return result
@@ -202,15 +203,15 @@ async function getBulkPairData(pairList, ethPrice) {
     )
 
     let oneDayData = oneDayResult?.data?.poolsData.reduce((obj, cur, i) => {
-      return { ...obj, [cur.poolAddress]: cur?.period?.['one_day'] }
+      return { ...obj, [cur.poolAddress]: cur?.period?.[apiTimeframeOptions.oneDay] }
     }, {})
 
     let twoDayData = twoDayResult?.data?.poolsData.reduce((obj, cur, i) => {
-      return { ...obj, [cur.poolAddress]: cur?.period?.['two_days'] }
+      return { ...obj, [cur.poolAddress]: cur?.period?.[apiTimeframeOptions.twoDays] }
     }, {})
 
     let oneWeekData = oneWeekResult?.data?.poolsData.reduce((obj, cur, i) => {
-      return { ...obj, [cur.poolAddress]: cur?.period?.['one_week'] }
+      return { ...obj, [cur.poolAddress]: cur?.period?.[apiTimeframeOptions.oneWeek] }
     }, {})
 
     let pairData = await Promise.all(
