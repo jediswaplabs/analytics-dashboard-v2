@@ -71,6 +71,7 @@ export default function Tabs({ tabs }: TabsProps) {
         {tabs.map((tab) =>
           activeTab === tab.key ? (
             <ActiveTab
+              key={tab.key}
               onClick={(ev) => {
                 ev.preventDefault()
                 ev.stopPropagation()
@@ -82,6 +83,7 @@ export default function Tabs({ tabs }: TabsProps) {
             </ActiveTab>
           ) : (
             <StyledTab
+              key={tab.key}
               onClick={(ev) => {
                 ev.preventDefault()
                 ev.stopPropagation()

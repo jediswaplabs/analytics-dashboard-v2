@@ -21,6 +21,9 @@ import { updateNameData } from '../../utils/data'
 import { useWhitelistedTokens } from '../../contexts/Application'
 import CMDIcon from '../../assets/cmd.png'
 import Tabs from '../Tabs'
+import Column from '../Column'
+import { formattedNum } from '../../utils'
+import { Flex } from 'rebass'
 
 const Container = styled.div`
   height: 48px;
@@ -143,18 +146,28 @@ const Divider = styled.div`
 `
 
 const Heading = styled(Row)`
-  padding: 1rem;
-  padding-left: 2rem;
+  padding: 1rem 2rem;
   display: ${({ hide = false }) => hide && 'none'};
 `
 
-const HeadingText = styled.div`
+const HeadingText = styled(Column)`
   color: rgba(242, 242, 242, 0.8);
   font-family: 'DM Sans';
   font-size: 16px;
   font-style: normal;
   font-weight: 700;
   line-height: 20px; /* 125% */
+  flex: 1;
+`
+const ColumnHeading = styled(Column)`
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'DM Sans';
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 100%; /* 14px */
+  flex: 1;
+  text-align: end;
 `
 
 const Gray = styled.span`
@@ -165,6 +178,26 @@ const Blue = styled.span`
   color: #50d5ff;
   :hover {
     cursor: pointer;
+  }
+`
+const TokenName = styled.div`
+  display: flex;
+  align-items: center;
+  flex: 1;
+`
+
+const DataText = styled(Flex)`
+  align-items: center;
+  flex: 1;
+  justify-content: end;
+  color: ${({ theme }) => theme.text1} !important;
+
+  & > * {
+    font-size: 14px;
+  }
+
+  @media screen and (max-width: 600px) {
+    font-size: 12px;
   }
 `
 
@@ -181,6 +214,7 @@ export const Search = ({ small = false }) => {
   const [, toggleBottomShadow] = useState(false)
 
   // fetch new data on tokens and pairs if needed
+  const tokenData = useTokenData(value)
   useTokenData(value)
   usePairData(value)
   const whitelistedTokens = useWhitelistedTokens()
@@ -428,6 +462,9 @@ export const Search = ({ small = false }) => {
     <>
       <Heading>
         <HeadingText>All Tokens</HeadingText>
+        <ColumnHeading>Liquidity</ColumnHeading>
+        <ColumnHeading>Voulme(24H)</ColumnHeading>
+        <ColumnHeading>Price</ColumnHeading>
       </Heading>
       <List>
         {Object.keys(filteredTokenList).length === 0 && (
@@ -441,11 +478,18 @@ export const Search = ({ small = false }) => {
           return (
             <BasicLink to={'/token/' + token.id} key={token.id} onClick={onDismiss}>
               <MenuItem>
-                <RowFixed>
-                  <TokenLogo address={token.id} style={{ marginRight: '10px' }} />
-                  <FormattedName text={token.name} maxCharacters={20} style={{ marginRight: '6px' }} />
-                  (<FormattedName text={token.symbol} maxCharacters={6} />)
-                </RowFixed>
+                <Row>
+                  <TokenName>
+                    <TokenLogo address={token.id} style={{ marginRight: '10px' }} />
+                    <FormattedName text={token.name} maxCharacters={20} style={{ marginRight: '6px' }} />
+                    <FormattedName text={`(${token.symbol})`} maxCharacters={6} />
+                  </TokenName>
+                  <DataText area="liq">{formattedNum(123, true)}</DataText>
+                  <DataText area="vol">{formattedNum(123, true)}</DataText>
+                  <DataText area="price" color="text" fontWeight="500">
+                    {formattedNum(123, true)}
+                  </DataText>
+                </Row>
               </MenuItem>
             </BasicLink>
           )
@@ -467,6 +511,9 @@ export const Search = ({ small = false }) => {
       <Divider></Divider>
       <Heading>
         <HeadingText>Pools</HeadingText>
+        <ColumnHeading>Liquidity</ColumnHeading>
+        <ColumnHeading>Voulme(24H)</ColumnHeading>
+        <ColumnHeading>Price</ColumnHeading>
       </Heading>
       <List>
         {filteredPairList && Object.keys(filteredPairList).length === 0 && (
@@ -481,8 +528,17 @@ export const Search = ({ small = false }) => {
             return (
               <BasicLink to={'/pair/' + pair.id} key={pair.id} onClick={onDismiss}>
                 <MenuItem>
-                  <DoubleTokenLogo a0={pair?.token0?.id} a1={pair?.token1?.id} margin={true} />
-                  <TYPE.body style={{ marginLeft: '10px' }}>{pair.token0.symbol + '-' + pair.token1.symbol} Pair</TYPE.body>
+                  <Row>
+                    <TokenName>
+                      <DoubleTokenLogo a0={pair?.token0?.id} a1={pair?.token1?.id} margin={true} />
+                      <TYPE.body style={{ marginLeft: '10px' }}>{pair.token0.symbol + '-' + pair.token1.symbol}</TYPE.body>
+                    </TokenName>
+                    <DataText area="liq">{formattedNum(123, true)}</DataText>
+                    <DataText area="vol">{formattedNum(123, true)}</DataText>
+                    <DataText area="price" color="text" fontWeight="500">
+                      {formattedNum(123, true)}
+                    </DataText>
+                  </Row>
                 </MenuItem>
               </BasicLink>
             )
