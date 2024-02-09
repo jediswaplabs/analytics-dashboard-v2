@@ -221,16 +221,16 @@ export function useLatestBlocks() {
           const syncedBlockResult = latestBlockRes?.data?.blocks?.[0]
           const syncedBlock = syncedBlockResult
             ? {
-                ...syncedBlockResult,
-                timestamp: convertDateToUnixFormat(syncedBlockResult.timestamp),
-              }
+              ...syncedBlockResult,
+              timestamp: convertDateToUnixFormat(syncedBlockResult.timestamp),
+            }
             : null
           const headBlock = parsedHeadBlockResult
             ? {
-                id: parsedHeadBlockResult?.result?.block_hash,
-                number: parsedHeadBlockResult?.result?.block_number,
-                // timestamp: parsedHeadBlockResult.timestamp,
-              }
+              id: parsedHeadBlockResult?.result?.block_hash,
+              number: parsedHeadBlockResult?.result?.block_number,
+              // timestamp: parsedHeadBlockResult.timestamp,
+            }
             : null
           if (syncedBlock && headBlock) {
             updateLatestBlock(syncedBlock)
@@ -370,7 +370,7 @@ export function useWhitelistedTokens() {
         console.log('Error fetching')
       }
     }
-  }, [updateWhitelistedTokens, whitelistedTokens])
+  }, [])
 
   return { ...DEFAULT_TOKENS_WHITELIST, ...whitelistedTokens }
 }
