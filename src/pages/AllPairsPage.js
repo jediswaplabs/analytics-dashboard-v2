@@ -8,11 +8,12 @@ import PairList from '../components/PairList'
 import { PageWrapper, ContentWrapper, PageSection } from '../components'
 import Search from '../components/Search'
 import { useSavedPairs } from '../contexts/LocalStorage'
+import { useTokenDataForList } from '../contexts/TokenData'
 
 function AllPairsPage() {
   const allPoolData = useAllPairData()
   const [savedPools] = useSavedPairs()
-  const savedPairsData = usePairDataForList(Object.keys(savedPools))
+  const savedPairsData = usePairDataForList(Object.keys(savedPools).filter((k) => !!savedPools[k]))
   const formattedSavedPoolsData =
     savedPairsData?.reduce((acc, v) => {
       acc[v.poolAddress] = v

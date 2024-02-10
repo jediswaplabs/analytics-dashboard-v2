@@ -163,6 +163,7 @@ function PairPage({ pairAddress, history }) {
   const formattedSymbol1 = token1?.symbol.length > 6 ? token1?.symbol.slice(0, 5) + '...' : token1?.symbol
 
   const below1024 = useMedia('(max-width: 1024px)')
+  const below800 = useMedia('(max-width: 800px)')
   const below600 = useMedia('(max-width: 600px)')
 
   const [dismissed, markAsDismissed] = usePathDismissed(history.location.pathname)
@@ -282,7 +283,6 @@ function PairPage({ pairAddress, history }) {
               </RowBetween>
               {below600 && actionButtonsMarkup}
             </AutoColumn>
-
             <AutoColumn style={{ gap: '12px' }}>
               <PanelWrapper>
                 <Panel>
@@ -294,7 +294,7 @@ function PairPage({ pairAddress, history }) {
                       <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
                         {formattedLiquidity}
                       </TYPE.main>
-                      <TYPE.main fontSize="1.5rem">{liquidityChange}</TYPE.main>
+                      <TYPE.main fontSize="1rem">{liquidityChange}</TYPE.main>
                     </RowBetween>
                   </AutoColumn>
                 </Panel>
@@ -308,7 +308,7 @@ function PairPage({ pairAddress, history }) {
                       <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
                         {volume}
                       </TYPE.main>
-                      <TYPE.main fontSize="1.5rem">{volumeChange}</TYPE.main>
+                      <TYPE.main fontSize="1rem">{volumeChange}</TYPE.main>
                     </RowBetween>
                   </AutoColumn>
                 </Panel>
@@ -318,10 +318,10 @@ function PairPage({ pairAddress, history }) {
                       <TYPE.subHeader>Total fees (24hr)</TYPE.subHeader>
                     </RowBetween>
                     <RowBetween align="baseline">
-                      <TYPE.main fontSize={'1.3rem'} lineHeight={1} fontWeight={500}>
+                      <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
                         {fees}
                       </TYPE.main>
-                      <TYPE.main fontSize="1.3rem">{volumeChange}</TYPE.main>
+                      <TYPE.main fontSize="1rem">{volumeChange}</TYPE.main>
                     </RowBetween>
                   </AutoColumn>
                 </Panel>
@@ -334,7 +334,7 @@ function PairPage({ pairAddress, history }) {
                       Total Tokens Locked:
                     </TYPE.main>
                   </RowBetween>
-                  <div style={{ display: 'flex', gap: '20px' }}>
+                  <div style={{ display: 'flex', gap: '20px', flexDirection: below800 ? 'column' : 'row' }}>
                     <FixedPanel onClick={() => history.push(`/token/${token0?.tokenAddress}`)} style={{ width: '100%' }}>
                       <AutoRow gap={'4px'}>
                         <TokenLogo address={token0?.tokenAddress} />
