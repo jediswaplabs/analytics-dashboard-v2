@@ -43,7 +43,7 @@ const PanelWrapper = styled.div`
   align-items: start;
   @media screen and (max-width: 1024px) {
     grid-template-columns: 1fr;
-    align-items: stretch;
+    //align-items: stretch;
     > * {
       /* grid-column: 1 / 4; */
     }
@@ -163,6 +163,7 @@ function TokenPage({ address, history }) {
 
   const [dismissed, markAsDismissed] = usePathDismissed(history.location.pathname)
   const [savedTokens, addToken, removeToken] = useSavedTokens()
+
   const listedTokens = useListedTokens()
   const whitelistedTokens = useWhitelistedTokens()
   useEffect(() => {
@@ -250,7 +251,7 @@ function TokenPage({ address, history }) {
                 </RowFixed>
 
                 <RowFixed align="center" style={{ gap: '8px' }}>
-                  <Hover onClick={() => (savedTokens[address] ? removeToken(address, symbol) : addToken(address, symbol))}>
+                  <Hover onClick={() => (savedTokens[address] ? removeToken(address) : addToken(address, symbol))}>
                     <StyledIcon style={{ display: 'flex' }}>
                       <Star fill={savedTokens[address] ? '#fff' : ''} />
                     </StyledIcon>
@@ -262,7 +263,7 @@ function TokenPage({ address, history }) {
               {below600 && actionButtonsMarkup}
             </AutoColumn>
 
-            <>
+            <AutoColumn style={{ gap: '32px' }}>
               <PanelWrapper>
                 <Panel>
                   <AutoColumn gap="20px">
@@ -273,7 +274,7 @@ function TokenPage({ address, history }) {
                       <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
                         {liquidity}
                       </TYPE.main>
-                      <TYPE.main fontSize="1.5rem">{liquidityChange}</TYPE.main>
+                      <TYPE.main fontSize="1rem">{liquidityChange}</TYPE.main>
                     </RowBetween>
                   </AutoColumn>
                 </Panel>
@@ -287,7 +288,7 @@ function TokenPage({ address, history }) {
                       <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
                         {volume}
                       </TYPE.main>
-                      <TYPE.main fontSize="1.5rem">{volumeChange}</TYPE.main>
+                      <TYPE.main fontSize="1rem">{volumeChange}</TYPE.main>
                     </RowBetween>
                   </AutoColumn>
                 </Panel>
@@ -301,21 +302,21 @@ function TokenPage({ address, history }) {
                       <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
                         {fees}
                       </TYPE.main>
-                      <TYPE.main fontSize="1.5rem">{feesChange}</TYPE.main>
+                      <TYPE.main fontSize="1rem">{feesChange}</TYPE.main>
                     </RowBetween>
                   </AutoColumn>
                 </Panel>
               </PanelWrapper>
-            </>
 
-            <PageSection>
-              <TYPE.main fontSize={'1rem'} style={{ whiteSpace: 'nowrap' }}>
-                Available Pools
-              </TYPE.main>
-              <Panel style={{ padding: '0' }}>
-                <PairList color={backgroundColor} address={address} pairs={formattedPairListData} />
-              </Panel>
-            </PageSection>
+              <PageSection>
+                <TYPE.main fontSize={'1rem'} style={{ whiteSpace: 'nowrap' }}>
+                  Available Pools
+                </TYPE.main>
+                <Panel style={{ padding: '0' }}>
+                  <PairList color={backgroundColor} address={address} pairs={formattedPairListData} />
+                </Panel>
+              </PageSection>
+            </AutoColumn>
           </DashboardWrapper>
         </WarningGrouping>
       </ContentWrapper>

@@ -18,7 +18,7 @@ import PairList from '../components/PairList'
 function AllTokensPage() {
   const allTokens = useAllTokenData()
   const [savedTokens] = useSavedTokens()
-  const savedTokensData = useTokenDataForList(Object.keys(savedTokens))
+  const savedTokensData = useTokenDataForList(Object.keys(savedTokens).filter((k) => !!savedTokens[k]))
 
   const formattedSavedTokensData =
     savedTokensData?.reduce((acc, v) => {
