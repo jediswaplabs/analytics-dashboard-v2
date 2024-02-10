@@ -22,7 +22,7 @@ function AllTokensPage() {
 
   const formattedSavedTokensData =
     savedTokensData?.reduce((acc, v) => {
-      acc[v.id] = v
+      acc[v.tokenAddress] = v
       return acc
     }, {}) ?? {}
   useEffect(() => {
@@ -31,11 +31,11 @@ function AllTokensPage() {
   return (
     <PageWrapper>
       <ContentWrapper>
-        <TYPE.largeHeader>Top Tokens</TYPE.largeHeader>
+        <TYPE.largeHeader lineHeight={0.7}>Top Tokens</TYPE.largeHeader>
 
-        {/*<PageSection>*/}
-        {/*  <Search />*/}
-        {/*</PageSection>*/}
+        <PageSection>
+          <Search />
+        </PageSection>
 
         <PageSection>
           <TYPE.main fontSize={'1rem'} style={{ whiteSpace: 'nowrap' }}>

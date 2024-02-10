@@ -17,8 +17,7 @@ export default function DoubleTokenLogo({ a0, a1, s0, s1, size = 24, margin = fa
   `
 
   const CoveredLogo = styled(TokenLogo)`
-    position: absolute;
-    left: ${({ sizeraw }) => (sizeraw / 2).toString() + 'px'};
+    margin-left: -${({ sizeraw }) => (sizeraw / 2).toString() + 'px'};
     // background-color: white;
     border-radius: 50%;
   `

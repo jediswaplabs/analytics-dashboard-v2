@@ -5,12 +5,9 @@ import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import { number as starknetNumberModule } from 'starknet'
 import getTokenList from '../utils/tokenLists'
-import { jediSwapClient } from '../apollo/client'
-import { GET_LATEST_BLOCK } from '../apollo/queries'
-import { convertDateToUnixFormat } from '../utils'
 dayjs.extend(utc)
 
-const LATEST_STARKNET_BLOCK_URL = 'https://starknet-mainnet.public.blastapi.io/'
+// const LATEST_STARKNET_BLOCK_URL = 'https://starknet-mainnet.public.blastapi.io/'
 
 const UPDATE = 'UPDATE'
 const UPDATE_TIMEFRAME = 'UPDATE_TIMEFRAME'
@@ -191,63 +188,63 @@ export default function Provider({ children }) {
   )
 }
 
-export function useLatestBlocks() {
-  const [state, { updateLatestBlock, updateHeadBlock }] = useApplicationContext()
-
-  const latestBlock = state?.[LATEST_BLOCK]
-  const headBlock = state?.[HEAD_BLOCK]
-
-  useEffect(() => {
-    async function fetchData() {
-      const getLatestBlockPromise = jediSwapClient.query({
-        query: GET_LATEST_BLOCK,
-      })
-
-      const getLatestHeadBlockPromise = fetch(LATEST_STARKNET_BLOCK_URL, {
-        method: 'POST',
-        body: JSON.stringify({
-          jsonrpc: '2.0',
-          method: 'starknet_blockHashAndNumber',
-          id: 0,
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-
-      Promise.all([getLatestBlockPromise, getLatestHeadBlockPromise])
-        .then(async ([latestBlockRes, headBlockRes]) => {
-          const parsedHeadBlockResult = await headBlockRes.json()
-          const syncedBlockResult = latestBlockRes?.data?.blocks?.[0]
-          const syncedBlock = syncedBlockResult
-            ? {
-                ...syncedBlockResult,
-                timestamp: convertDateToUnixFormat(syncedBlockResult.timestamp),
-              }
-            : null
-          const headBlock = parsedHeadBlockResult
-            ? {
-                id: parsedHeadBlockResult?.result?.block_hash,
-                number: parsedHeadBlockResult?.result?.block_number,
-                // timestamp: parsedHeadBlockResult.timestamp,
-              }
-            : null
-          if (syncedBlock && headBlock) {
-            updateLatestBlock(syncedBlock)
-            updateHeadBlock(headBlock)
-          }
-        })
-        .catch((e) => {
-          console.log(e)
-        })
-    }
-    if (!latestBlock) {
-      fetchData()
-    }
-  }, [latestBlock, updateHeadBlock, updateLatestBlock])
-
-  return [latestBlock, headBlock]
-}
+// export function useLatestBlocks() {
+//   const [state, { updateLatestBlock, updateHeadBlock }] = useApplicationContext()
+//
+//   const latestBlock = state?.[LATEST_BLOCK]
+//   const headBlock = state?.[HEAD_BLOCK]
+//
+//   useEffect(() => {
+//     async function fetchData() {
+//       const getLatestBlockPromise = jediSwapClient.query({
+//         query: GET_LATEST_BLOCK,
+//       })
+//
+//       const getLatestHeadBlockPromise = fetch(LATEST_STARKNET_BLOCK_URL, {
+//         method: 'POST',
+//         body: JSON.stringify({
+//           jsonrpc: '2.0',
+//           method: 'starknet_blockHashAndNumber',
+//           id: 0,
+//         }),
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//       })
+//
+//       Promise.all([getLatestBlockPromise, getLatestHeadBlockPromise])
+//         .then(async ([latestBlockRes, headBlockRes]) => {
+//           const parsedHeadBlockResult = await headBlockRes.json()
+//           const syncedBlockResult = latestBlockRes?.data?.blocks?.[0]
+//           const syncedBlock = syncedBlockResult
+//             ? {
+//                 ...syncedBlockResult,
+//                 timestamp: convertDateToUnixFormat(syncedBlockResult.timestamp),
+//               }
+//             : null
+//           const headBlock = parsedHeadBlockResult
+//             ? {
+//                 id: parsedHeadBlockResult?.result?.block_hash,
+//                 number: parsedHeadBlockResult?.result?.block_number,
+//                 // timestamp: parsedHeadBlockResult.timestamp,
+//               }
+//             : null
+//           if (syncedBlock && headBlock) {
+//             updateLatestBlock(syncedBlock)
+//             updateHeadBlock(headBlock)
+//           }
+//         })
+//         .catch((e) => {
+//           console.log(e)
+//         })
+//     }
+//     if (!latestBlock) {
+//       fetchData()
+//     }
+//   }, [latestBlock, updateHeadBlock, updateLatestBlock])
+//
+//   return [latestBlock, headBlock]
+// }
 
 export function useCurrentCurrency() {
   const [state, { update }] = useApplicationContext()

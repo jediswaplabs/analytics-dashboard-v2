@@ -67,7 +67,7 @@ export default function Title() {
                 Tokens
               </Option>
             </BasicLink>
-            <BasicLink to="/pairs">
+            <BasicLink to="/pools">
               <Option
                 activeText={(history.location.pathname.split('/')[1] === 'pairs' || history.location.pathname.split('/')[1] === 'pair') ?? undefined}
               >

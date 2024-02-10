@@ -9,18 +9,17 @@ import TokenPage from './pages/TokenPage'
 import PairPage from './pages/PairPage'
 import AllTokensPage from './pages/AllTokensPage'
 import AllPairsPage from './pages/AllPairsPage'
-import { useGlobalData, useGlobalChartData } from './contexts/GlobalData'
+import { useGlobalData } from './contexts/GlobalData'
 import { isStarknetAddress } from './utils'
 
 import SideNav from './components/SideNav'
 import LocalLoader from './components/LocalLoader'
-import { useLatestBlocks, useWhitelistedTokens } from './contexts/Application'
-import GoogleAnalyticsReporter from './components/analytics/GoogleAnalyticsReporter'
+import { useWhitelistedTokens } from './contexts/Application'
 
 const AppWrapper = styled.div`
   position: relative;
   width: 100%;
-  padding-top: 48px;
+  //padding-top: 48px;
 `
 
 const ContentWrapper = styled.div`
@@ -104,7 +103,6 @@ function App() {
         {/*!isEmpty(whitelistedTokens) ? (*/}
         {globalData && Object.keys(globalData).length > 0 && !isEmpty(whitelistedTokens) ? (
           <BrowserRouter>
-            <Route component={GoogleAnalyticsReporter} />
             <Switch>
               <Route
                 exacts
@@ -125,7 +123,7 @@ function App() {
               <Route
                 exacts
                 strict
-                path="/pair/:pairAddress"
+                path="/pool/:pairAddress"
                 render={({ match }) => {
                   if (isStarknetAddress(match.params.pairAddress.toLowerCase())) {
                     return (
@@ -151,7 +149,7 @@ function App() {
                 </LayoutWrapper>
               </Route>
 
-              <Route path="/pairs">
+              <Route path="/pools">
                 <LayoutWrapper savedOpen={savedOpen} setSavedOpen={setSavedOpen}>
                   <AllPairsPage />
                 </LayoutWrapper>

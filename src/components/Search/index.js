@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'
 import styled from 'styled-components'
 
-import Row, { RowFixed } from '../Row'
+import Row, { AutoRow, RowFixed } from '../Row'
 import TokenLogo from '../TokenLogo'
 import { Search as SearchIcon, X } from 'react-feather'
-import { BasicLink } from '../Link'
+import { BasicLink, CustomLink } from '../Link'
 
 import { useAllTokenData, useTokenData } from '../../contexts/TokenData'
 import { useAllPairData, usePairData } from '../../contexts/PairData'
@@ -13,12 +13,11 @@ import { useMedia } from 'react-use'
 import { useAllPairsInJediswap, useAllTokensInJediswap } from '../../contexts/GlobalData'
 
 import { transparentize } from 'polished'
-import { jediSwapClient } from '../../apollo/client'
-import { PAIR_SEARCH, TOKEN_SEARCH } from '../../apollo/queries'
 import FormattedName from '../FormattedName'
 import { TYPE } from '../../Theme'
 import { updateNameData } from '../../utils/data'
 import { useWhitelistedTokens } from '../../contexts/Application'
+import FeeBadge from '../FeeBadge'
 
 const Container = styled.div`
   height: 48px;
@@ -161,8 +160,8 @@ export const Search = ({ small = false }) => {
   const [, toggleBottomShadow] = useState(false)
 
   // fetch new data on tokens and pairs if needed
-  useTokenData(value)
-  usePairData(value)
+  // useTokenData(value)
+  // usePairData(value)
   const whitelistedTokens = useWhitelistedTokens()
 
   const below700 = useMedia('(max-width: 700px)')
@@ -180,36 +179,36 @@ export const Search = ({ small = false }) => {
   const [searchedTokens, setSearchedTokens] = useState([])
   const [searchedPairs, setSearchedPairs] = useState([])
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        if (value?.length > 0) {
-          let tokens = await jediSwapClient.query({
-            query: TOKEN_SEARCH,
-            variables: {
-              value: value ? value.toUpperCase() : '',
-              id: value,
-            },
-          })
-
-          let pairs = await jediSwapClient.query({
-            query: PAIR_SEARCH,
-            variables: {
-              tokens: tokens.data.asSymbol?.map((t) => t.id),
-              id: value,
-            },
-          })
-
-          setSearchedPairs(updateNameData(pairs.data.as0).concat(updateNameData(pairs.data.as1)).concat(updateNameData(pairs.data.asAddress)))
-          const foundTokens = tokens.data.asSymbol.concat(tokens.data.asAddress).concat(tokens.data.asName)
-          setSearchedTokens(foundTokens)
-        }
-      } catch (e) {
-        console.log(e)
-      }
-    }
-    fetchData()
-  }, [value])
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     try {
+  //       if (value?.length > 0) {
+  //         let tokens = await jediSwapClient.query({
+  //           query: TOKEN_SEARCH,
+  //           variables: {
+  //             value: value ? value.toUpperCase() : '',
+  //             id: value,
+  //           },
+  //         })
+  //
+  //         let pairs = await jediSwapClient.query({
+  //           query: PAIR_SEARCH,
+  //           variables: {
+  //             tokens: tokens.data.asSymbol?.map((t) => t.tokenAddress),
+  //             id: value,
+  //           },
+  //         })
+  //
+  //         setSearchedPairs(updateNameData(pairs.data.as0).concat(updateNameData(pairs.data.as1)).concat(updateNameData(pairs.data.asAddress)))
+  //         const foundTokens = tokens.data.asSymbol.concat(tokens.data.asAddress).concat(tokens.data.asName)
+  //         setSearchedTokens(foundTokens)
+  //       }
+  //     } catch (e) {
+  //       console.log(e)
+  //     }
+  //   }
+  //   fetchData()
+  // }, [value])
 
   function escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
@@ -221,7 +220,7 @@ export const Search = ({ small = false }) => {
       let included = false
       updateNameData()
       allTokens.map((token) => {
-        if (token.id === searchedToken.id) {
+        if (token.tokenAddress === searchedToken.tokenAddress) {
           included = true
         }
         return true
@@ -234,8 +233,8 @@ export const Search = ({ small = false }) => {
   let found = {}
   allTokens &&
     allTokens.map((token) => {
-      if (!found[token.id]) {
-        found[token.id] = true
+      if (!found[token.tokenAddress]) {
+        found[token.tokenAddress] = true
         uniqueTokens.push(token)
       }
       return true
@@ -245,7 +244,7 @@ export const Search = ({ small = false }) => {
     searchedPairs.filter((searchedPair) => {
       let included = false
       allPairs.map((pair) => {
-        if (pair.id === searchedPair.id) {
+        if (pair.poolAddress === searchedPair.poolAddress) {
           included = true
         }
         return true
@@ -258,8 +257,8 @@ export const Search = ({ small = false }) => {
   let pairsFound = {}
   allPairs &&
     allPairs.map((pair) => {
-      if (!pairsFound[pair.id]) {
-        pairsFound[pair.id] = true
+      if (!pairsFound[pair.poolAddress]) {
+        pairsFound[pair.poolAddress] = true
         uniquePairs.push(pair)
       }
       return true
@@ -269,8 +268,8 @@ export const Search = ({ small = false }) => {
     return uniqueTokens
       ? uniqueTokens
           .sort((a, b) => {
-            const tokenA = allTokenData[a.id]
-            const tokenB = allTokenData[b.id]
+            const tokenA = allTokenData[a.tokenAddress]
+            const tokenB = allTokenData[b.tokenAddress]
             if (tokenA?.oneDayVolumeUSD && tokenB?.oneDayVolumeUSD) {
               return tokenA.oneDayVolumeUSD > tokenB.oneDayVolumeUSD ? -1 : 1
             }
@@ -283,12 +282,12 @@ export const Search = ({ small = false }) => {
             return 1
           })
           .filter((token) => {
-            if (!whitelistedTokens[token.id]) {
+            if (!whitelistedTokens[token.tokenAddress]) {
               return false
             }
             const regexMatches = Object.keys(token).map((tokenEntryKey) => {
               const isAddress = value.slice(0, 2) === '0x'
-              if (tokenEntryKey === 'id' && isAddress) {
+              if (tokenEntryKey === 'tokenAddress' && isAddress) {
                 return token[tokenEntryKey].match(new RegExp(escapeRegExp(value), 'i'))
               }
               if (tokenEntryKey === 'symbol' && !isAddress) {
@@ -308,21 +307,22 @@ export const Search = ({ small = false }) => {
     return uniquePairs
       ? uniquePairs
           .sort((a, b) => {
-            const pairA = allPairData[a.id]
-            const pairB = allPairData[b.id]
-            if (pairA?.trackedReserveETH && pairB?.trackedReserveETH) {
+            const pairA = allPairData[a.poolAddress]
+            const pairB = allPairData[b.poolAddress]
+
+            if (pairA?.totalValueLockedETH && pairB?.totalValueLockedETH) {
               return parseFloat(pairA.trackedReserveETH) > parseFloat(pairB.trackedReserveETH) ? -1 : 1
             }
-            if (pairA?.trackedReserveETH && !pairB?.trackedReserveETH) {
+            if (pairA?.totalValueLockedETH && !pairB?.totalValueLockedETH) {
               return -1
             }
-            if (!pairA?.trackedReserveETH && pairB?.trackedReserveETH) {
+            if (!pairA?.totalValueLockedETH && pairB?.totalValueLockedETH) {
               return 1
             }
             return 0
           })
           .filter((pair) => {
-            if (!(whitelistedTokens[pair.token0.id] && whitelistedTokens[pair.token1.id])) {
+            if (!(whitelistedTokens[pair.token0.tokenAddress] && whitelistedTokens[pair.token1.tokenAddress])) {
               return false
             }
             if (value && value.includes(' ')) {
@@ -343,7 +343,7 @@ export const Search = ({ small = false }) => {
             }
             const regexMatches = Object.keys(pair).map((field) => {
               const isAddress = value.slice(0, 2) === '0x'
-              if (field === 'id' && isAddress) {
+              if (field === 'poolAddress' && isAddress) {
                 return pair[field].match(new RegExp(escapeRegExp(value), 'i'))
               }
               if (field === 'token0') {
@@ -438,13 +438,16 @@ export const Search = ({ small = false }) => {
           )}
           {filteredPairList &&
             filteredPairList.slice(0, pairsShown).map((pair) => {
-              //format incorrect names
-              updateNameData(pair)
+              const feePercent = (pair.fee ? parseFloat(pair.fee) / 10000 : 0) + '%'
+
               return (
-                <BasicLink to={'/pair/' + pair.id} key={pair.id} onClick={onDismiss}>
+                <BasicLink to={'/pool/' + pair.poolAddress} key={pair.poolAddress} onClick={onDismiss}>
                   <MenuItem>
-                    <DoubleTokenLogo a0={pair?.token0?.id} a1={pair?.token1?.id} margin={true} />
-                    <TYPE.body style={{ marginLeft: '10px' }}>{pair.token0.symbol + '-' + pair.token1.symbol} Pair</TYPE.body>
+                    <DoubleTokenLogo a0={pair?.token0?.tokenAddress} a1={pair?.token1?.tokenAddress} margin={true} />
+                    <AutoRow gap={'4px'} style={{ whiteSpace: 'nowrap', flexWrap: 'nowrap' }}>
+                      <TYPE.body>{pair.token0.symbol + '-' + pair.token1.symbol} Pair</TYPE.body>
+                      <FeeBadge>{feePercent}</FeeBadge>
+                    </AutoRow>
                   </MenuItem>
                 </BasicLink>
               )
@@ -472,10 +475,10 @@ export const Search = ({ small = false }) => {
             // update displayed names
             updateNameData({ token0: token })
             return (
-              <BasicLink to={'/token/' + token.id} key={token.id} onClick={onDismiss}>
+              <BasicLink to={'/token/' + token.tokenAddress} key={token.tokenAddress} onClick={onDismiss}>
                 <MenuItem>
                   <RowFixed>
-                    <TokenLogo address={token.id} style={{ marginRight: '10px' }} />
+                    <TokenLogo address={token.tokenAddress} style={{ marginRight: '10px' }} />
                     <FormattedName text={token.name} maxCharacters={20} style={{ marginRight: '6px' }} />
                     (<FormattedName text={token.symbol} maxCharacters={6} />)
                   </RowFixed>

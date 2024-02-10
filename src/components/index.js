@@ -20,7 +20,7 @@ export const BlockedWrapper = styled.div`
 `
 
 export const BlockedMessageWrapper = styled.div`
-  border: 1px solid ${({ theme }) => theme.text3};
+  border: 1px solid #ff3257;
   border-radius: 12px;
   display: flex;
   justify-content: center;

@@ -3,11 +3,10 @@ import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 
 import { useWhitelistedTokens } from './Application'
-import { useEthPrice } from './GlobalData'
 
-import { jediSwapClientV2 } from '../apollo/v2/client'
+import { jediSwapClient } from '../apollo/client'
 
-import { TOP_TOKENS_DATA, HISTORICAL_TOKENS_DATA, TOKEN_PAIRS_DATA, TOKENS_DATA } from '../apollo/v2/queries'
+import { TOP_TOKENS_DATA, HISTORICAL_TOKENS_DATA, TOKEN_PAIRS_DATA, TOKENS_DATA } from '../apollo/queries'
 
 import { get2DayPercentChange, getPercentChange, isStarknetAddress } from '../utils'
 import { apiTimeframeOptions } from '../constants'
@@ -117,25 +116,25 @@ export default function Provider({ children }) {
   )
 }
 
-const getTopTokens = async (ethPrice, ethPriceOld, whitelistedIds = []) => {
+const getTopTokens = async (whitelistedIds = []) => {
   try {
     // need to get the top tokens by liquidity by need token day datas
     const currentDate = parseInt(Date.now() / 86400 / 1000) * 86400 - 86400
 
-    let tokenids = await jediSwapClientV2.query({
-      query: TOP_TOKENS_DATA(whitelistedIds),
+    let tokenIds = await jediSwapClient.query({
+      query: TOP_TOKENS_DATA({ tokenIds: whitelistedIds }),
       fetchPolicy: 'network-only',
       variables: { date: currentDate - 1000000 },
     })
 
-    const ids = tokenids?.data?.tokensDayData?.reduce((accum, { tokenAddress }) => {
+    const ids = tokenIds?.data?.tokensDayData?.reduce((accum, { tokenAddress }) => {
       if (!accum.includes(tokenAddress)) {
         accum.push(tokenAddress)
       }
       return accum
     }, [])
 
-    const bulkResults = getBulkTokenData(ids, ethPrice, ethPriceOld)
+    const bulkResults = getBulkTokenData(ids)
     return bulkResults
     // calculate percentage changes and daily changes
   } catch (e) {
@@ -143,15 +142,20 @@ const getTopTokens = async (ethPrice, ethPriceOld, whitelistedIds = []) => {
   }
 }
 
-const getBulkTokenData = async (ids, ethPrice, ethPriceOld) => {
+const getBulkTokenData = async (ids) => {
   try {
-    let current = await jediSwapClientV2.query({
-      query: TOKENS_DATA(ids),
+    let current = await jediSwapClient.query({
+      query: TOKENS_DATA({
+        tokenIds: ids,
+      }),
       fetchPolicy: 'cache-first',
     })
 
-    let historicalData = await jediSwapClientV2.query({
-      query: HISTORICAL_TOKENS_DATA(ids, [apiTimeframeOptions.oneDay, apiTimeframeOptions.twoDays, apiTimeframeOptions.oneWeek]),
+    let historicalData = await jediSwapClient.query({
+      query: HISTORICAL_TOKENS_DATA({
+        tokenIds: ids,
+        periods: [apiTimeframeOptions.oneDay, apiTimeframeOptions.twoDays, apiTimeframeOptions.oneWeek],
+      }),
       fetchPolicy: 'cache-first',
     })
 
@@ -169,7 +173,6 @@ const getBulkTokenData = async (ids, ethPrice, ethPriceOld) => {
         twoDaysData &&
         current?.data?.tokens.map(async (token) => {
           let data = token
-
           let oneDayHistory = oneDayData?.[token.tokenAddress]
           let twoDaysHistory = twoDaysData?.[token.tokenAddress]
 
@@ -186,13 +189,16 @@ const getBulkTokenData = async (ids, ethPrice, ethPriceOld) => {
           )
 
           const [oneDayTxns, txnChange] = get2DayPercentChange(data.txCount, oneDayHistory?.txCount ?? 0, twoDaysHistory?.txCount ?? 0)
+          const [oneDayFees, feesChange] = get2DayPercentChange(data.feesUSD, oneDayHistory?.feesUSD ?? 0, twoDaysHistory?.feesUSD ?? 0)
 
           const tvlUSD = data?.totalValueLockedUSD ? parseFloat(data.totalValueLockedUSD) : 0
           const tvlUSDChange = getPercentChange(data?.totalValueLockedUSD, oneDayHistory?.totalValueLockedUSD)
           const tvlToken = data?.totalValueLocked ? parseFloat(data.totalValueLocked) : 0
-          const priceUSD = data?.derivedETH ? parseFloat(data.derivedETH) * ethPrice : 0
-          const priceUSDOneDay = oneDayHistory?.derivedETH ? parseFloat(oneDayHistory.derivedETH) * ethPriceOld : 0
-          const priceUSDChange = priceUSD && priceUSDOneDay ? getPercentChange(priceUSD.toString(), priceUSDOneDay.toString()) : 0
+
+          const priceUSD = oneDayHistory?.close ? parseFloat(oneDayHistory.close) : 0
+          const priceUSDOneDay = oneDayHistory?.close ?? 0
+          const priceUSDTwoDays = twoDaysHistory?.close ?? 0
+          const priceUSDChange = priceUSDOneDay && priceUSDTwoDays ? getPercentChange(priceUSDOneDay.toString(), priceUSDTwoDays.toString()) : 0
 
           const txCount =
             data?.txCount && oneDayHistory?.txCount
@@ -206,9 +212,6 @@ const getBulkTokenData = async (ids, ethPrice, ethPriceOld) => {
               : data
               ? parseFloat(data.feesUSD)
               : 0
-
-          // const currentLiquidityUSD = data?.totalLiquidity * ethPrice * data?.derivedETH
-          // const oldLiquidityUSD = oneDayHistory?.totalLiquidity * ethPriceOld * oneDayHistory?.derivedETH
 
           data.priceUSD = priceUSD
           data.priceChangeUSD = priceUSDChange
@@ -226,6 +229,8 @@ const getBulkTokenData = async (ids, ethPrice, ethPriceOld) => {
           data.txnChange = txnChange
 
           data.feesUSD = feesUSD
+          data.oneDayFees = oneDayFees
+          data.feesChangeUSD = feesChange
 
           // used for custom adjustments
           data.oneDayData = oneDayHistory
@@ -240,14 +245,17 @@ const getBulkTokenData = async (ids, ethPrice, ethPriceOld) => {
   }
 }
 
-const getTokenPairs = async (tokenAddress) => {
+const getTokenPairs = async (address, whitelistedTokenIds = []) => {
   try {
     // fetch all current and historical data
-    let result = await jediSwapClientV2.query({
-      query: TOKEN_PAIRS_DATA(tokenAddress),
+    let result = await jediSwapClient.query({
+      query: TOKEN_PAIRS_DATA({
+        tokenId: address,
+        whitelistedTokenIds: whitelistedTokenIds,
+      }),
       fetchPolicy: 'cache-first',
     })
-    return result.data?.['pairs0'].concat(result.data?.['pairs1'])
+    return result.data?.pairs ?? []
   } catch (e) {
     console.log(e)
   }
@@ -255,39 +263,36 @@ const getTokenPairs = async (tokenAddress) => {
 
 export function Updater() {
   const [, { updateTopTokens }] = useTokenDataContext()
-  const [ethPrice, ethPriceOld] = useEthPrice()
   const whitelistedTokens = useWhitelistedTokens() ?? {}
   useEffect(() => {
     async function getData() {
       // get top pairs for overview list
-      let topTokens = await getTopTokens(ethPrice, ethPriceOld, Object.keys(whitelistedTokens))
+      let topTokens = await getTopTokens(Object.keys(whitelistedTokens))
 
       topTokens && updateTopTokens(topTokens)
     }
-    ethPrice && ethPriceOld && getData()
-  }, [ethPrice, ethPriceOld, updateTopTokens])
+    getData()
+  }, [updateTopTokens])
   return null
 }
 
 export function useTokenData(tokenAddress) {
   const [state, { update }] = useTokenDataContext()
-  const [ethPrice, ethPriceOld] = useEthPrice()
   const tokenData = state?.[tokenAddress]
 
   useEffect(() => {
-    if (!tokenData && ethPrice && ethPriceOld && isStarknetAddress(tokenAddress)) {
-      getBulkTokenData([tokenAddress], ethPrice, ethPriceOld).then((data) => {
+    if (!tokenData && isStarknetAddress(tokenAddress)) {
+      getBulkTokenData([tokenAddress]).then((data) => {
         update(tokenAddress, data)
       })
     }
-  }, [ethPrice, ethPriceOld, tokenAddress, tokenData, update])
+  }, [tokenAddress, tokenData, update])
 
   return tokenData || {}
 }
 
 export function useTokenDataForList(addresses) {
   const [state, { update }] = useTokenDataContext()
-  const [ethPrice] = useEthPrice()
   const allTokensData = useAllTokenData()
 
   const untrackedAddresses = addresses.reduce((accum, address) => {
@@ -310,7 +315,7 @@ export function useTokenDataForList(addresses) {
       if (!untrackedAddresses.length) {
         return
       }
-      let data = await getBulkTokenData(untrackedAddresses, ethPrice)
+      let data = await getBulkTokenData(untrackedAddresses)
       data &&
         data.forEach((p) => {
           update(p.id, p)
@@ -319,17 +324,19 @@ export function useTokenDataForList(addresses) {
     if (untrackedAddresses.length) {
       fetchData()
     }
-  }, [untrackedAddresses, ethPrice, update])
+  }, [untrackedAddresses, update])
   return tokensWithData
 }
 
+//TODO
 export function useTokenPairs(tokenAddress) {
   const [state, { updateAllPairs }] = useTokenDataContext()
   const tokenPairs = state?.[tokenAddress]?.[TOKEN_PAIRS_KEY]
+  const whitelistedTokens = useWhitelistedTokens() ?? {}
 
   useEffect(() => {
     async function fetchData() {
-      let allPairs = await getTokenPairs(tokenAddress)
+      let allPairs = await getTokenPairs(tokenAddress, Object.keys(whitelistedTokens))
       updateAllPairs(tokenAddress, allPairs)
     }
     if (!tokenPairs && isStarknetAddress(tokenAddress)) {
