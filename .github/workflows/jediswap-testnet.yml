@@ -1,4 +1,4 @@
-name: Release - Staging
+name: Release - Testnet
 
 on:
   workflow_dispatch:
