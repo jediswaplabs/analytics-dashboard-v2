@@ -126,7 +126,7 @@ function PinnedData({ history, open, setSavedOpen }) {
                 const pair = savedPairs[address]
                 return (
                   <RowBetween key={pair.address}>
-                    <ButtonFaded onClick={() => history.push('/pair/' + address)}>
+                    <ButtonFaded onClick={() => history.push('/pool/' + address)}>
                       <RowFixed>
                         <TYPE.header>
                           <FormattedName text={pair.token0Symbol + '/' + pair.token1Symbol} maxCharacters={12} fontSize={'12px'} />

@@ -8,12 +8,11 @@ import { OptionButton } from '../ButtonStyled'
 import { darken } from 'polished'
 import { useMedia, usePrevious } from 'react-use'
 import { timeframeOptions } from '../../constants'
-import { useTokenChartData } from '../../contexts/TokenData'
 import DropdownSelect from '../DropdownSelect'
 import LocalLoader from '../LocalLoader'
 import { AutoColumn } from '../Column'
 import { useDarkModeManager } from '../../contexts/LocalStorage'
-import {EmptyCard} from "../index";
+import { EmptyCard } from '../index'
 
 const ChartWrapper = styled.div`
   height: 100%;
@@ -25,7 +24,7 @@ const ChartWrapper = styled.div`
   .loader {
     flex-grow: 1;
   }
-  
+
   @media screen and (max-width: 600px) {
     min-height: 200px;
   }
@@ -60,7 +59,7 @@ const TokenChart = ({ address, color, base }) => {
     }
   }, [address, addressPrev])
 
-  let chartData = useTokenChartData(address)
+  let chartData = {}
 
   const [timeWindow, setTimeWindow] = useState(timeframeOptions.WEEK)
 
@@ -90,9 +89,9 @@ const TokenChart = ({ address, color, base }) => {
 
   if (chartData && !chartData?.length) {
     return (
-        <ChartWrapper>
-          <EmptyCard height="300px">No historical data yet.</EmptyCard>{' '}
-        </ChartWrapper>
+      <ChartWrapper>
+        <EmptyCard height="300px">No historical data yet.</EmptyCard>{' '}
+      </ChartWrapper>
     )
   }
 
@@ -143,209 +142,192 @@ const TokenChart = ({ address, color, base }) => {
             </AutoColumn>
           </AutoRow>
           <AutoRow justify="flex-end" gap="6px" align="flex-start">
-            <OptionButton
-              active={timeWindow === timeframeOptions.WEEK}
-              onClick={() => setTimeWindow(timeframeOptions.WEEK)}
-            >
+            <OptionButton active={timeWindow === timeframeOptions.WEEK} onClick={() => setTimeWindow(timeframeOptions.WEEK)}>
               1W
             </OptionButton>
-            <OptionButton
-              active={timeWindow === timeframeOptions.MONTH}
-              onClick={() => setTimeWindow(timeframeOptions.MONTH)}
-            >
+            <OptionButton active={timeWindow === timeframeOptions.MONTH} onClick={() => setTimeWindow(timeframeOptions.MONTH)}>
               1M
             </OptionButton>
-            <OptionButton
-              active={timeWindow === timeframeOptions.ALL_TIME}
-              onClick={() => setTimeWindow(timeframeOptions.ALL_TIME)}
-            >
+            <OptionButton active={timeWindow === timeframeOptions.ALL_TIME} onClick={() => setTimeWindow(timeframeOptions.ALL_TIME)}>
               All
             </OptionButton>
           </AutoRow>
         </RowBetween>
       )}
       {chartFilter === CHART_VIEW.LIQUIDITY &&
-          (chartData?.length
-            ? <ResponsiveContainer aspect={aspect}>
-                <AreaChart margin={{ top: 0, right: 10, bottom: 6, left: 0 }} barCategoryGap={1} data={chartData}>
-                  <defs>
-                    <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={color} stopOpacity={0.35} />
-                      <stop offset="95%" stopColor={color} stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <XAxis
-                    tickLine={false}
-                    axisLine={false}
-                    interval="preserveEnd"
-                    tickMargin={16}
-                    minTickGap={120}
-                    tickFormatter={(tick) => toNiceDate(tick)}
-                    dataKey="date"
-                    tick={{ fill: textColor }}
-                    type={'number'}
-                    domain={['dataMin', 'dataMax']}
-                  />
-                  <YAxis
-                    type="number"
-                    orientation="right"
-                    tickFormatter={(tick) => '$' + toK(tick)}
-                    axisLine={false}
-                    tickLine={false}
-                    interval="preserveEnd"
-                    minTickGap={80}
-                    yAxisId={0}
-                    tick={{ fill: textColor }}
-                  />
-                  <Tooltip
-                    cursor={true}
-                    formatter={(val) => formattedNum(val, true)}
-                    labelFormatter={(label) => toNiceDateYear(label)}
-                    labelStyle={{ paddingTop: 4 }}
-                    contentStyle={{
-                      padding: '10px 14px',
-                      borderRadius: 10,
-                      borderColor: color,
-                      color: 'black',
-                    }}
-                    wrapperStyle={{ top: -70, left: -10 }}
-                  />
-                  <Area
-                    key={'other'}
-                    dataKey={'totalLiquidityUSD'}
-                    stackId="2"
-                    strokeWidth={2}
-                    dot={false}
-                    type="monotone"
-                    name={'Liquidity'}
-                    yAxisId={0}
-                    stroke={darken(0.12, color)}
-                    fill="url(#colorUv)"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            : <LocalLoader className={"loader"}/>
-          )
-      }
+        (chartData?.length ? (
+          <ResponsiveContainer aspect={aspect}>
+            <AreaChart margin={{ top: 0, right: 10, bottom: 6, left: 0 }} barCategoryGap={1} data={chartData}>
+              <defs>
+                <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={color} stopOpacity={0.35} />
+                  <stop offset="95%" stopColor={color} stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <XAxis
+                tickLine={false}
+                axisLine={false}
+                interval="preserveEnd"
+                tickMargin={16}
+                minTickGap={120}
+                tickFormatter={(tick) => toNiceDate(tick)}
+                dataKey="date"
+                tick={{ fill: textColor }}
+                type={'number'}
+                domain={['dataMin', 'dataMax']}
+              />
+              <YAxis
+                type="number"
+                orientation="right"
+                tickFormatter={(tick) => '$' + toK(tick)}
+                axisLine={false}
+                tickLine={false}
+                interval="preserveEnd"
+                minTickGap={80}
+                yAxisId={0}
+                tick={{ fill: textColor }}
+              />
+              <Tooltip
+                cursor={true}
+                formatter={(val) => formattedNum(val, true)}
+                labelFormatter={(label) => toNiceDateYear(label)}
+                labelStyle={{ paddingTop: 4 }}
+                contentStyle={{
+                  padding: '10px 14px',
+                  borderRadius: 10,
+                  borderColor: color,
+                  color: 'black',
+                }}
+                wrapperStyle={{ top: -70, left: -10 }}
+              />
+              <Area
+                key={'other'}
+                dataKey={'totalLiquidityUSD'}
+                stackId="2"
+                strokeWidth={2}
+                dot={false}
+                type="monotone"
+                name={'Liquidity'}
+                yAxisId={0}
+                stroke={darken(0.12, color)}
+                fill="url(#colorUv)"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        ) : (
+          <LocalLoader className={'loader'} />
+        ))}
       {chartFilter === CHART_VIEW.PRICE &&
-          (chartData?.length
-            ? <ResponsiveContainer aspect={below1080 ? 60 / 32 : 60 / 16}>
-                <AreaChart margin={{ top: 0, right: 10, bottom: 6, left: 0 }} barCategoryGap={1} data={chartData}>
-                  <defs>
-                    <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={color} stopOpacity={0.35} />
-                      <stop offset="95%" stopColor={color} stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <XAxis
-                      tickLine={false}
-                      axisLine={false}
-                      interval="preserveEnd"
-                      tickMargin={16}
-                      minTickGap={120}
-                      tickFormatter={(tick) => toNiceDate(tick)}
-                      dataKey="date"
-                      tick={{ fill: textColor }}
-                      type={'number'}
-                      domain={domain}
-                  />
-                  <YAxis
-                      type="number"
-                      orientation="right"
-                      tickFormatter={(tick) => '$' + toK(tick)}
-                      axisLine={false}
-                      tickLine={false}
-                      interval="preserveEnd"
-                      minTickGap={80}
-                      yAxisId={0}
-                      tick={{ fill: textColor }}
-                  />
-                  <Tooltip
-                      cursor={true}
-                      formatter={(val) => formattedNum(val, true)}
-                      labelFormatter={(label) => toNiceDateYear(label)}
-                      labelStyle={{ paddingTop: 4 }}
-                      contentStyle={{
-                        padding: '10px 14px',
-                        borderRadius: 10,
-                        borderColor: color,
-                        color: 'black',
-                      }}
-                      wrapperStyle={{ top: -70, left: -10 }}
-                  />
-                  <Area
-                      key={'other'}
-                      dataKey={'priceUSD'}
-                      stackId="2"
-                      strokeWidth={2}
-                      dot={false}
-                      type="monotone"
-                      name={'Price'}
-                      yAxisId={0}
-                      stroke={darken(0.12, color)}
-                      fill="url(#colorUv)"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            : <LocalLoader className={"loader"}/>
-          )
-      }
+        (chartData?.length ? (
+          <ResponsiveContainer aspect={below1080 ? 60 / 32 : 60 / 16}>
+            <AreaChart margin={{ top: 0, right: 10, bottom: 6, left: 0 }} barCategoryGap={1} data={chartData}>
+              <defs>
+                <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={color} stopOpacity={0.35} />
+                  <stop offset="95%" stopColor={color} stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <XAxis
+                tickLine={false}
+                axisLine={false}
+                interval="preserveEnd"
+                tickMargin={16}
+                minTickGap={120}
+                tickFormatter={(tick) => toNiceDate(tick)}
+                dataKey="date"
+                tick={{ fill: textColor }}
+                type={'number'}
+                domain={domain}
+              />
+              <YAxis
+                type="number"
+                orientation="right"
+                tickFormatter={(tick) => '$' + toK(tick)}
+                axisLine={false}
+                tickLine={false}
+                interval="preserveEnd"
+                minTickGap={80}
+                yAxisId={0}
+                tick={{ fill: textColor }}
+              />
+              <Tooltip
+                cursor={true}
+                formatter={(val) => formattedNum(val, true)}
+                labelFormatter={(label) => toNiceDateYear(label)}
+                labelStyle={{ paddingTop: 4 }}
+                contentStyle={{
+                  padding: '10px 14px',
+                  borderRadius: 10,
+                  borderColor: color,
+                  color: 'black',
+                }}
+                wrapperStyle={{ top: -70, left: -10 }}
+              />
+              <Area
+                key={'other'}
+                dataKey={'priceUSD'}
+                stackId="2"
+                strokeWidth={2}
+                dot={false}
+                type="monotone"
+                name={'Price'}
+                yAxisId={0}
+                stroke={darken(0.12, color)}
+                fill="url(#colorUv)"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        ) : (
+          <LocalLoader className={'loader'} />
+        ))}
 
       {chartFilter === CHART_VIEW.VOLUME &&
-          (chartData?.length
-            ? <ResponsiveContainer aspect={aspect}>
-                <BarChart margin={{ top: 0, right: 10, bottom: 6, left: 10 }} barCategoryGap={1} data={chartData}>
-                  <XAxis
-                      tickLine={false}
-                      axisLine={false}
-                      interval="preserveEnd"
-                      minTickGap={80}
-                      tickMargin={14}
-                      tickFormatter={(tick) => toNiceDate(tick)}
-                      dataKey="date"
-                      tick={{ fill: textColor }}
-                      type={'number'}
-                      domain={['dataMin', 'dataMax']}
-                  />
-                  <YAxis
-                      type="number"
-                      axisLine={false}
-                      tickMargin={16}
-                      tickFormatter={(tick) => '$' + toK(tick)}
-                      tickLine={false}
-                      orientation="right"
-                      interval="preserveEnd"
-                      minTickGap={80}
-                      yAxisId={0}
-                      tick={{ fill: textColor }}
-                  />
-                  <Tooltip
-                      cursor={{ fill: color, opacity: 0.1 }}
-                      formatter={(val) => formattedNum(val, true)}
-                      labelFormatter={(label) => toNiceDateYear(label)}
-                      labelStyle={{ paddingTop: 4 }}
-                      contentStyle={{
-                        padding: '10px 14px',
-                        borderRadius: 10,
-                        borderColor: color,
-                        color: 'black',
-                      }}
-                      wrapperStyle={{ top: -70, left: -10 }}
-                  />
-                  <Bar
-                      type="monotone"
-                      name={'Volume'}
-                      dataKey={'dailyVolumeUSD'}
-                      fill={color}
-                      opacity={'0.4'}
-                      yAxisId={0}
-                      stroke={color}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            : <LocalLoader className={"loader"}/>
-          )
-      }
+        (chartData?.length ? (
+          <ResponsiveContainer aspect={aspect}>
+            <BarChart margin={{ top: 0, right: 10, bottom: 6, left: 10 }} barCategoryGap={1} data={chartData}>
+              <XAxis
+                tickLine={false}
+                axisLine={false}
+                interval="preserveEnd"
+                minTickGap={80}
+                tickMargin={14}
+                tickFormatter={(tick) => toNiceDate(tick)}
+                dataKey="date"
+                tick={{ fill: textColor }}
+                type={'number'}
+                domain={['dataMin', 'dataMax']}
+              />
+              <YAxis
+                type="number"
+                axisLine={false}
+                tickMargin={16}
+                tickFormatter={(tick) => '$' + toK(tick)}
+                tickLine={false}
+                orientation="right"
+                interval="preserveEnd"
+                minTickGap={80}
+                yAxisId={0}
+                tick={{ fill: textColor }}
+              />
+              <Tooltip
+                cursor={{ fill: color, opacity: 0.1 }}
+                formatter={(val) => formattedNum(val, true)}
+                labelFormatter={(label) => toNiceDateYear(label)}
+                labelStyle={{ paddingTop: 4 }}
+                contentStyle={{
+                  padding: '10px 14px',
+                  borderRadius: 10,
+                  borderColor: color,
+                  color: 'black',
+                }}
+                wrapperStyle={{ top: -70, left: -10 }}
+              />
+              <Bar type="monotone" name={'Volume'} dataKey={'dailyVolumeUSD'} fill={color} opacity={'0.4'} yAxisId={0} stroke={color} />
+            </BarChart>
+          </ResponsiveContainer>
+        ) : (
+          <LocalLoader className={'loader'} />
+        ))}
     </ChartWrapper>
   )
 }

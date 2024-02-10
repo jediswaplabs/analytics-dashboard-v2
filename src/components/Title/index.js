@@ -67,27 +67,11 @@ export default function Title() {
                 Tokens
               </Option>
             </BasicLink>
-            <BasicLink to="/pairs">
+            <BasicLink to="/pools">
               <Option
                 activeText={(history.location.pathname.split('/')[1] === 'pairs' || history.location.pathname.split('/')[1] === 'pair') ?? undefined}
               >
                 Pairs
-              </Option>
-            </BasicLink>
-
-            <BasicLink to="/accounts">
-              <Option
-                activeText={
-                  (history.location.pathname.split('/')[1] === 'accounts' || history.location.pathname.split('/')[1] === 'account') ?? undefined
-                }
-              >
-                Accounts
-              </Option>
-            </BasicLink>
-
-            <BasicLink to="/lp-contest">
-              <Option activeText={history.location.pathname.split('/')[1] === 'lp-contest' ?? undefined} style={{ opacity: 1 }}>
-                <AccentText>LP Contest</AccentText>
               </Option>
             </BasicLink>
           </RowFixed>

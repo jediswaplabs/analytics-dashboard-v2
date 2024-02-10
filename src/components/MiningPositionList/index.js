@@ -154,8 +154,8 @@ function MiningPositionList({ miningPositions }) {
             <DoubleTokenLogo size={16} a0={firstPairAddress} a1={secondPairAddress} margin={!below740} />
           </AutoColumn>
           <AutoColumn gap="8px" justify="flex-start" style={{ marginLeft: '20px' }}>
-            <CustomLink to={'/pair/' + pairAddress}>
-              <TYPE.main style={{ whiteSpace: 'nowrap' }} to={'/pair/'}>
+            <CustomLink to={'/pool/' + pairAddress}>
+              <TYPE.main style={{ whiteSpace: 'nowrap' }} to={'/pool/'}>
                 <FormattedName text={firstPairName + '-' + secondPairName} maxCharacters={below740 ? 10 : 18} />
               </TYPE.main>
             </CustomLink>
@@ -177,21 +177,11 @@ function MiningPositionList({ miningPositions }) {
             <AutoColumn gap="4px" justify="flex-end">
               <RowFixed>
                 <TYPE.small fontWeight={400}>{formattedNum(pairPercentage * parseFloat(valueFirstPair))} </TYPE.small>
-                <FormattedName
-                  text={firstPairName}
-                  maxCharacters={below740 ? 10 : 18}
-                  margin={true}
-                  fontSize={'11px'}
-                />
+                <FormattedName text={firstPairName} maxCharacters={below740 ? 10 : 18} margin={true} fontSize={'11px'} />
               </RowFixed>
               <RowFixed>
                 <TYPE.small fontWeight={400}>{formattedNum(pairPercentage * parseFloat(valueSecondPair))} </TYPE.small>
-                <FormattedName
-                  text={secondPairName}
-                  maxCharacters={below740 ? 10 : 18}
-                  margin={true}
-                  fontSize={'11px'}
-                />
+                <FormattedName text={secondPairName} maxCharacters={below740 ? 10 : 18} margin={true} fontSize={'11px'} />
               </RowFixed>
             </AutoColumn>
           </AutoColumn>

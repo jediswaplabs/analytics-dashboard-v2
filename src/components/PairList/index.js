@@ -12,10 +12,11 @@ import { withRouter } from 'react-router-dom'
 import { formattedNum, formattedPercent } from '../../utils'
 import DoubleTokenLogo from '../DoubleLogo'
 import FormattedName from '../FormattedName'
-import QuestionHelper from '../QuestionHelper'
 import { TYPE } from '../../Theme'
 import { AutoColumn } from '../Column'
 import { useWhitelistedTokens } from '../../contexts/Application'
+import Row, { AutoRow, RowFixed } from '../Row'
+import FeeBadge from '../FeeBadge'
 
 dayjs.extend(utc)
 
@@ -66,18 +67,18 @@ const DashGrid = styled.div`
 
   @media screen and (min-width: 740px) {
     padding: 0 1.125rem;
-    grid-template-columns: 1.5fr 1fr 1fr};
+    grid-template-columns: 1.7fr 1fr 1fr};
     grid-template-areas: ' name liq vol pool ';
   }
 
   @media screen and (min-width: 1080px) {
     padding: 0 1.125rem;
-    grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1.7fr 1fr 1fr 1fr 1fr 1fr;
     grid-template-areas: ' name liq vol volWeek fees apy';
   }
 
   @media screen and (min-width: 1200px) {
-    grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1.7fr 1fr 1fr 1fr 1fr 1fr;
     grid-template-areas: ' name liq vol volWeek fees apy';
   }
 `
@@ -106,18 +107,6 @@ const DataText = styled(Flex)`
   @media screen and (max-width: 600px) {
     font-size: 12px;
   }
-`
-
-const FeeBadge = styled.div`
-  background: #444;
-  color: #fff;
-  font-size: 12px;
-  border-radius: 4px;
-  margin-left: 10px;
-  padding: 3px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 `
 
 const SORT_FIELD = {
@@ -157,7 +146,15 @@ const formatDataText = (value, trackedValue, supressWarning = false, textAlign =
 
 const DEFAULT_NO_PAIRS_PLACEHOLDER_TEXT = 'Pairs will appear here'
 
-function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = false, noPairsPlaceholderText = DEFAULT_NO_PAIRS_PLACEHOLDER_TEXT }) {
+function PairList({
+  pairs,
+  color,
+  disbaleLinks,
+  maxItems = 10,
+  useTracked = false,
+  waitForData = true,
+  noPairsPlaceholderText = DEFAULT_NO_PAIRS_PLACEHOLDER_TEXT,
+}) {
   const below600 = useMedia('(max-width: 600px)')
   const below740 = useMedia('(max-width: 740px)')
   const below1080 = useMedia('(max-width: 1080px)')
@@ -175,7 +172,7 @@ function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = fals
     return (
       pairs &&
       Object.keys(pairs).filter((address) => {
-        return whitelistedTokens[pairs[address].token0.id] && whitelistedTokens[pairs[address].token1.id]
+        return whitelistedTokens[pairs[address].token0.tokenAddress] && whitelistedTokens[pairs[address].token1.tokenAddress]
       })
     )
   }, [pairs, whitelistedTokens])
@@ -197,38 +194,45 @@ function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = fals
 
   const ListItem = ({ pairAddress, index }) => {
     const pairData = pairs[pairAddress]
+    const feePercent = (pairData ? parseFloat(pairData.fee) / 10000 : 0) + '%'
 
     if (pairData && pairData.token0 && pairData.token1) {
+      const feeTier = pairData.fee / 10 ** 6
       const liquidity = formattedNum(!!pairData.trackedReserveUSD ? pairData.trackedReserveUSD : pairData.reserveUSD, true)
 
       const volume = formattedNum(pairData.oneDayVolumeUSD ? pairData.oneDayVolumeUSD : pairData.oneDayVolumeUntracked, true)
 
       const feeRatio24H =
-        ((pairData.oneDayVolumeUSD ? pairData.oneDayVolumeUSD : pairData.oneDayVolumeUntracked) * 0.003) /
+        ((pairData.oneDayVolumeUSD ? pairData.oneDayVolumeUSD : pairData.oneDayVolumeUntracked) * feeTier) /
         (pairData.oneDayVolumeUSD ? pairData.trackedReserveUSD : pairData.reserveUSD)
       const apy = formattedPercent(((1 + feeRatio24H) ** 365 - 1) * 100, true)
 
       const weekVolume = formattedNum(pairData.oneWeekVolumeUSD ? pairData.oneWeekVolumeUSD : pairData.oneWeekVolumeUntracked, true)
 
-      const fees = formattedNum(pairData.oneDayVolumeUSD ? pairData.oneDayVolumeUSD * 0.003 : pairData.oneDayVolumeUntracked * 0.003, true)
+      const fees = formattedNum(pairData.oneDayVolumeUSD ? pairData.oneDayVolumeUSD * feeTier : pairData.oneDayVolumeUntracked * feeTier, true)
       if (below1080) {
         return (
           <div style={{ margin: '10px 0', padding: '20px', borderRadius: '8px', border: '1px solid #959595' }}>
             <div style={{ display: 'flex' }}>
               <DoubleTokenLogo
                 size={below600 ? 16 : 20}
-                a0={pairData.token0.id}
-                a1={pairData.token1.id}
+                a0={pairData.token0.tokenAddress}
+                a1={pairData.token1.tokenAddress}
                 s0={pairData.token0.symbol}
                 s1={pairData.token1.symbol}
-                margin={!below740}
+                margin
               />
-              <CustomLink style={{ marginLeft: '20px', whiteSpace: 'nowrap', color: '#fff' }} to={'/pair/' + pairAddress} color={color}>
-                {pairData.token0.symbol + '-' + pairData.token1.symbol}
-              </CustomLink>
-              <FeeBadge>
-                0.04%
-              </FeeBadge>
+              <AutoRow gap={'4px'} style={{ whiteSpace: 'nowrap', flexWrap: 'nowrap' }}>
+                <CustomLink to={'/pool/' + pairAddress} color={color}>
+                  <FormattedName
+                    text={pairData.token0.symbol + '-' + pairData.token1.symbol}
+                    maxCharacters={below600 ? 8 : 16}
+                    adjustSize={true}
+                    link={true}
+                  />
+                </CustomLink>
+                <FeeBadge>{feePercent}</FeeBadge>
+              </AutoRow>
             </div>
             <div style={{ color: 'white', display: 'flex', columnGap: '30px', marginTop: '10px' }}>
               <div>
@@ -253,23 +257,23 @@ function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = fals
             {!below600 && <div style={{ marginRight: '20px', width: '10px' }}>{index}</div>}
             <DoubleTokenLogo
               size={below600 ? 16 : 20}
-              a0={pairData.token0.id}
-              a1={pairData.token1.id}
+              a0={pairData.token0.tokenAddress}
+              a1={pairData.token1.tokenAddress}
               s0={pairData.token0.symbol}
               s1={pairData.token1.symbol}
-              margin={!below740}
+              margin
             />
-            <CustomLink style={{ marginLeft: '20px', whiteSpace: 'nowrap' }} to={'/pair/' + pairAddress} color={color}>
-              <FormattedName
-                text={pairData.token0.symbol + '-' + pairData.token1.symbol}
-                maxCharacters={below600 ? 8 : 16}
-                adjustSize={true}
-                link={true}
-              />
-            </CustomLink>
-            <FeeBadge>
-              0.04%
-            </FeeBadge>
+            <AutoRow gap={'4px'} style={{ whiteSpace: 'nowrap', flexWrap: 'nowrap' }}>
+              <CustomLink to={'/pool/' + pairAddress} color={color}>
+                <FormattedName
+                  text={pairData.token0.symbol + '-' + pairData.token1.symbol}
+                  maxCharacters={below600 ? 8 : 16}
+                  adjustSize={true}
+                  link={true}
+                />
+              </CustomLink>
+              <FeeBadge>{feePercent}</FeeBadge>
+            </AutoRow>
           </DataText>
           <DataText area="liq">{formatDataText(liquidity, pairData.trackedReserveUSD)}</DataText>
           <DataText area="vol">{formatDataText(volume, pairData.oneDayVolumeUSD)}</DataText>
@@ -311,9 +315,7 @@ function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = fals
           pairAddress && (
             <div key={index}>
               <ListItem key={index} index={(page - 1) * ITEMS_PER_PAGE + index + 1} pairAddress={pairAddress} />
-              {
-                !below1080 && <Divider />
-              }
+              {!below1080 && <Divider />}
             </div>
           )
         )
@@ -323,7 +325,11 @@ function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = fals
     return <LocalLoader />
   }
 
-  if (!pairList.length) {
+  if (waitForData && !pairList.length) {
+    return <LocalLoader />
+  }
+
+  if (!waitForData && !pairList.length) {
     return (
       <PlaceholderContainer>
         <TYPE.main fontSize={'16px'} fontWeight={'400'}>
@@ -335,8 +341,7 @@ function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = fals
 
   return (
     <ListWrapper>
-      {
-        !below1080 &&
+      {!below1080 && (
         <>
           <DashGrid
             center={true}
@@ -406,13 +411,12 @@ function PairList({ pairs, color, disbaleLinks, maxItems = 10, useTracked = fals
                 >
                   1 yr Fee/Liquidity {sortedColumn === SORT_FIELD.APY ? (!sortDirection ? '↑' : '↓') : ''}
                 </ClickableText>
-                <QuestionHelper text={'Based on 24hr fee compounded'} />
               </Flex>
             )}
           </DashGrid>
           <Divider />
         </>
-      }
+      )}
       <List p={0}>{pairList}</List>
       <PageButtons>
         <div

@@ -34,7 +34,7 @@ function GlobalPage() {
   // get data for lists and totals
   const allPairs = useAllPairData()
   const allTokens = useAllTokenData()
-  const { totalLiquidityUSD, oneDayVolumeUSD, volumeChangeUSD, liquidityChangeUSD } = useGlobalData()
+  const { totalValueLockedUSD: totalLiquidityUSD, oneDayVolumeUSD, volumeChangeUSD, liquidityChangeUSD } = useGlobalData()
 
   // breakpoints
   const below800 = useMedia('(max-width: 800px)')
@@ -59,65 +59,65 @@ function GlobalPage() {
           <Search />
         </PageSection>
 
-        {below800 && ( // mobile card
-          <PageSection>
-            <Box mb={20}>
-              <Panel>
-                <Box>
-                  <AutoColumn gap="36px">
-                    <AutoColumn gap="20px">
-                      <RowBetween>
-                        <TYPE.main>Volume (24hrs)</TYPE.main>
-                        <div />
-                      </RowBetween>
-                      <RowBetween align="flex-end">
-                        <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={600}>
-                          {oneDayVolumeUSD ? formattedNum(oneDayVolumeUSD, true) : '-'}
-                        </TYPE.main>
-                        <TYPE.main fontSize={12}>{volumeChangeUSD ? formattedPercent(volumeChangeUSD) : '-'}</TYPE.main>
-                      </RowBetween>
-                    </AutoColumn>
-                    <AutoColumn gap="20px">
-                      <RowBetween>
-                        <TYPE.main>Total Liquidity</TYPE.main>
-                        <div />
-                      </RowBetween>
-                      <RowBetween align="flex-end">
-                        <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={600}>
-                          {totalLiquidityUSD ? formattedNum(totalLiquidityUSD, true) : '-'}
-                        </TYPE.main>
-                        <TYPE.main fontSize={12}>{liquidityChangeUSD ? formattedPercent(liquidityChangeUSD) : '-'}</TYPE.main>
-                      </RowBetween>
-                    </AutoColumn>
-                  </AutoColumn>
-                </Box>
-              </Panel>
-            </Box>
-          </PageSection>
-        )}
+        {/*{below800 && ( // mobile card*/}
+        {/*  <PageSection>*/}
+        {/*    <Box mb={20}>*/}
+        {/*      <Panel>*/}
+        {/*        <Box>*/}
+        {/*          <AutoColumn gap="36px">*/}
+        {/*            <AutoColumn gap="20px">*/}
+        {/*              <RowBetween>*/}
+        {/*                <TYPE.main>Volume (24hrs)</TYPE.main>*/}
+        {/*                <div />*/}
+        {/*              </RowBetween>*/}
+        {/*              <RowBetween align="flex-end">*/}
+        {/*                <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={600}>*/}
+        {/*                  {oneDayVolumeUSD ? formattedNum(oneDayVolumeUSD, true) : '-'}*/}
+        {/*                </TYPE.main>*/}
+        {/*                <TYPE.main fontSize={12}>{volumeChangeUSD ? formattedPercent(volumeChangeUSD) : '-'}</TYPE.main>*/}
+        {/*              </RowBetween>*/}
+        {/*            </AutoColumn>*/}
+        {/*            <AutoColumn gap="20px">*/}
+        {/*              <RowBetween>*/}
+        {/*                <TYPE.main>Total Liquidity</TYPE.main>*/}
+        {/*                <div />*/}
+        {/*              </RowBetween>*/}
+        {/*              <RowBetween align="flex-end">*/}
+        {/*                <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={600}>*/}
+        {/*                  {totalLiquidityUSD ? formattedNum(totalLiquidityUSD, true) : '-'}*/}
+        {/*                </TYPE.main>*/}
+        {/*                <TYPE.main fontSize={12}>{liquidityChangeUSD ? formattedPercent(liquidityChangeUSD) : '-'}</TYPE.main>*/}
+        {/*              </RowBetween>*/}
+        {/*            </AutoColumn>*/}
+        {/*          </AutoColumn>*/}
+        {/*        </Box>*/}
+        {/*      </Panel>*/}
+        {/*    </Box>*/}
+        {/*  </PageSection>*/}
+        {/*)}*/}
 
-        {!below800 && (
-          <PageSection>
-            <GridRow>
-              <Panel style={{ height: '100%', minHeight: '300px' }}>
-                <GlobalChart display="liquidity" />
-              </Panel>
-              <Panel style={{ height: '100%' }}>
-                <GlobalChart display="volume" />
-              </Panel>
-            </GridRow>
-          </PageSection>
-        )}
+        {/*{!below800 && (*/}
+        {/*  <PageSection>*/}
+        {/*    <GridRow>*/}
+        {/*      <Panel style={{ height: '100%', minHeight: '300px' }}>*/}
+        {/*        <GlobalChart display="liquidity" />*/}
+        {/*      </Panel>*/}
+        {/*      <Panel style={{ height: '100%' }}>*/}
+        {/*        <GlobalChart display="volume" />*/}
+        {/*      </Panel>*/}
+        {/*    </GridRow>*/}
+        {/*  </PageSection>*/}
+        {/*)}*/}
 
-        {below800 && (
-          <PageSection>
-            <AutoColumn style={{ marginTop: '6px' }} gap="24px">
-              <Panel style={{ height: '100%', minHeight: '300px' }}>
-                <GlobalChart display="liquidity" />
-              </Panel>
-            </AutoColumn>
-          </PageSection>
-        )}
+        {/*{below800 && (*/}
+        {/*  <PageSection>*/}
+        {/*    <AutoColumn style={{ marginTop: '6px' }} gap="24px">*/}
+        {/*      <Panel style={{ height: '100%', minHeight: '300px' }}>*/}
+        {/*        <GlobalChart display="liquidity" />*/}
+        {/*      </Panel>*/}
+        {/*    </AutoColumn>*/}
+        {/*  </PageSection>*/}
+        {/*)}*/}
 
         <PageSection>
           <TYPE.main fontSize={'1rem'} style={{ whiteSpace: 'nowrap' }}>

@@ -19,9 +19,10 @@ function AllTokensPage() {
   const allTokens = useAllTokenData()
   const [savedTokens] = useSavedTokens()
   const savedTokensData = useTokenDataForList(Object.keys(savedTokens))
+
   const formattedSavedTokensData =
     savedTokensData?.reduce((acc, v) => {
-      acc[v.id] = v
+      acc[v.tokenAddress] = v
       return acc
     }, {}) ?? {}
   useEffect(() => {
@@ -30,7 +31,7 @@ function AllTokensPage() {
   return (
     <PageWrapper>
       <ContentWrapper>
-        <TYPE.largeHeader>Top Tokens</TYPE.largeHeader>
+        <TYPE.largeHeader lineHeight={0.7}>Top Tokens</TYPE.largeHeader>
 
         <PageSection>
           <Search />
@@ -41,7 +42,12 @@ function AllTokensPage() {
             Your Watchlist
           </TYPE.main>
           <Panel style={{ padding: '0' }}>
-            <TopTokenList tokens={formattedSavedTokensData} itemMax={50} noPairsPlaceholderText={'Saved tokens will appear here'} />
+            <TopTokenList
+              tokens={formattedSavedTokensData}
+              itemMax={50}
+              waitForData={false}
+              noTokensPlaceholderText={'Saved tokens will appear here'}
+            />
           </Panel>
         </PageSection>
 

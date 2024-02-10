@@ -126,8 +126,13 @@ const SORT_FIELD = {
 
 const DEFAULT_NO_TOKENS_PLACEHOLDER_TEXT = 'Tokens will appear here'
 
-// @TODO rework into virtualized list
-function TopTokenList({ tokens, itemMax = 10, useTracked = false, noTokensPlaceholderText = DEFAULT_NO_TOKENS_PLACEHOLDER_TEXT }) {
+function TopTokenList({
+  tokens,
+  itemMax = 10,
+  useTracked = false,
+  waitForData = true,
+  noTokensPlaceholderText = DEFAULT_NO_TOKENS_PLACEHOLDER_TEXT,
+}) {
   // page state
   const [page, setPage] = useState(1)
   const [maxPage, setMaxPage] = useState(1)
@@ -186,8 +191,8 @@ function TopTokenList({ tokens, itemMax = 10, useTracked = false, noTokensPlaceh
         <DataText area="name" fontWeight="500">
           <Row>
             {!below680 && <div style={{ marginRight: '1rem', width: '10px' }}>{index}</div>}
-            <TokenLogo address={item.id} symbol={item.symbol} />
-            <CustomLink style={{ marginLeft: '16px', whiteSpace: 'nowrap' }} to={'/token/' + item.id}>
+            <TokenLogo address={item.tokenAddress} symbol={item.symbol} />
+            <CustomLink style={{ marginLeft: '16px', whiteSpace: 'nowrap' }} to={'/token/' + item.tokenAddress}>
               <FormattedName text={item.symbol} maxCharacters={below600 ? 8 : 16} adjustSize={true} link={true} />
             </CustomLink>
           </Row>
@@ -213,7 +218,11 @@ function TopTokenList({ tokens, itemMax = 10, useTracked = false, noTokensPlaceh
     return <LocalLoader />
   }
 
-  if (!filteredList.length) {
+  if (waitForData && !filteredList.length) {
+    return <LocalLoader />
+  }
+
+  if (!waitForData && !filteredList.length) {
     return (
       <PlaceholderContainer>
         <TYPE.main fontSize={'16px'} fontWeight={'400'}>

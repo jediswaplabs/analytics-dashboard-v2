@@ -3,8 +3,6 @@ import { BigNumber } from 'bignumber.js'
 import dayjs from 'dayjs'
 import { ethers } from 'ethers'
 import utc from 'dayjs/plugin/utc'
-import { jediSwapClient } from '../apollo/client'
-import { GET_BLOCK, GET_BLOCKS, SHARE_VALUE } from '../apollo/queries'
 import { Text } from 'rebass'
 import _Decimal from 'decimal.js-light'
 import toFormat from 'toformat'
@@ -172,159 +170,11 @@ export async function splitQuery(query, localClient, vars, list, skipCount = 100
   return fetchedData
 }
 
-/**
- * @notice Fetches first block after a given timestamp
- * @dev Query speed is optimized by limiting to a 600-second period
- * @param {Int} timestamp in seconds
- */
-export async function getBlockFromTimestamp(timestamp) {
-  let result = await jediSwapClient.query({
-    query: GET_BLOCK,
-    variables: {
-      timestampFrom: timestamp,
-      // timestampTo: timestamp + 600,
-    },
-    fetchPolicy: 'cache-first',
-  })
-  return result?.data?.blocks?.[0]?.number
-}
-
-/**
- * @notice Fetches block objects for an array of timestamps.
- * @dev blocks are returned in chronological order (ASC) regardless of input.
- * @dev blocks are returned at string representations of Int
- * @dev timestamps are returns as they were provided; not the block time.
- * @param {Array} timestamps
- */
-export async function getBlocksFromTimestamps(timestamps, skipCount = 500) {
-  if (timestamps?.length === 0) {
-    return []
-  }
-
-  let fetchedData = await splitQuery(GET_BLOCKS, jediSwapClient, [], timestamps, skipCount)
-
-  let blocks = []
-  if (fetchedData) {
-    for (var t in fetchedData) {
-      if (fetchedData[t].length > 0) {
-        blocks.push({
-          timestamp: t.split('t')[1],
-          number: fetchedData[t][0]['number'],
-        })
-      }
-    }
-  }
-  return blocks
-}
-
 export const convertDateToUnixFormat = (date) => {
   if (!Number.isNaN(Number(date))) {
     return date
   }
   return Math.floor(new Date(date).getTime() / 1000)
-}
-
-// export async function getLiquidityTokenBalanceOvertime(account, timestamps) {
-//   // get blocks based on timestamps
-//   const blocks = await getBlocksFromTimestamps(timestamps)
-
-//   // get historical share values with time travel queries
-//   let result = await client.query({
-//     query: SHARE_VALUE(account, blocks),
-//     fetchPolicy: 'cache-first',
-//   })
-
-//   let values = []
-//   for (var row in result?.data) {
-//     let timestamp = row.split('t')[1]
-//     if (timestamp) {
-//       values.push({
-//         timestamp,
-//         balance: 0,
-//       })
-//     }
-//   }
-// }
-
-/**
- * @notice Example query using time travel queries
- * @dev TODO - handle scenario where blocks are not available for a timestamps (e.g. current time)
- * @param {String} pairAddress
- * @param {Array} timestamps
- */
-export async function getShareValueOverTime(pairAddress, timestamps) {
-  if (!timestamps) {
-    const utcCurrentTime = dayjs()
-    const utcSevenDaysBack = utcCurrentTime.subtract(8, 'day').unix()
-    timestamps = getTimestampRange(utcSevenDaysBack, 86400, 7)
-  }
-
-  // get blocks based on timestamps
-  const blocks = await getBlocksFromTimestamps(timestamps)
-
-  // get historical share values with time travel queries
-  let result = await jediSwapClient.query({
-    query: SHARE_VALUE(pairAddress, blocks),
-    fetchPolicy: 'cache-first',
-  })
-
-  let values = []
-  for (var r in result?.data) {
-    if (!r.includes('t')) {
-      continue
-    }
-    let timestamp = r.split('t')[1]
-    let row = result.data[r][0]
-    let sharePriceUsd = parseFloat(row?.reserveUSD) / parseFloat(row?.totalSupply)
-    if (timestamp) {
-      values.push({
-        timestamp,
-        sharePriceUsd,
-        totalSupply: row.totalSupply,
-        reserve0: row.reserve0,
-        reserve1: row.reserve1,
-        reserveUSD: row.reserveUSD,
-        token0DerivedETH: row.token0.derivedETH,
-        token1DerivedETH: row.token1.derivedETH,
-        roiUsd: values && values[0] ? sharePriceUsd / values[0]['sharePriceUsd'] : 1,
-        ethPrice: 0,
-        token0PriceUsd: 0,
-        token1PriceUsd: 0,
-      })
-    }
-  }
-
-  // add eth prices
-  let index = 0
-  for (var br in result?.data) {
-    if (!r.includes('b')) {
-      continue
-    }
-    let timestamp = br.split('b')[1]
-    let brow = result.data[br][0]
-    if (timestamp) {
-      values[index].ethPrice = brow.token1Price
-      values[index].token0PriceUsd = brow.token1Price * values[index].token0DerivedETH
-      values[index].token1PriceUsd = brow.token1Price * values[index].token1DerivedETH
-      index += 1
-    }
-  }
-  return values
-}
-
-/**
- * @notice Creates an evenly-spaced array of timestamps
- * @dev Periods include a start and end timestamp. For example, n periods are defined by n+1 timestamps.
- * @param {Int} timestamp_from in seconds
- * @param {Int} period_length in seconds
- * @param {Int} periods
- */
-export function getTimestampRange(timestamp_from, period_length, periods) {
-  let timestamps = []
-  for (let i = 0; i <= periods; i++) {
-    timestamps.push(timestamp_from + i * period_length)
-  }
-  return timestamps
 }
 
 export const toNiceDateYear = (date) => dayjs.utc(dayjs.unix(date)).format('MMMM DD, YYYY')
@@ -422,7 +272,7 @@ export const formattedNum = (number, usd = false) => {
   if (isNaN(number) || number === '' || number === undefined) {
     return usd ? '$0' : 0
   }
-  let num = parseFloat(number)
+  let num = parseFloat(number).toFixed(10)
 
   if (num > 500000000) {
     return (usd ? '$' : '') + toK(num.toFixed(0), true)
@@ -485,6 +335,14 @@ export function formattedPercent(percent, useAbs = false) {
     return (
       <Text fontWeight={500} color={red}>
         {'< 0.0001%'}
+      </Text>
+    )
+  }
+
+  if (percent > 999999) {
+    return (
+      <Text fontWeight={500} color={green}>
+        {'> 999999%'}
       </Text>
     )
   }

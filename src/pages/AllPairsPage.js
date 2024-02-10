@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect } from 'react'
 import 'feather-icons'
 
 import { TYPE } from '../Theme'
@@ -13,6 +13,11 @@ function AllPairsPage() {
   const allPoolData = useAllPairData()
   const [savedPools] = useSavedPairs()
   const savedPairsData = usePairDataForList(Object.keys(savedPools))
+  const formattedSavedPoolsData =
+    savedPairsData?.reduce((acc, v) => {
+      acc[v.poolAddress] = v
+      return acc
+    }, {}) ?? {}
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -21,7 +26,7 @@ function AllPairsPage() {
   return (
     <PageWrapper>
       <ContentWrapper>
-        <TYPE.largeHeader>Pools</TYPE.largeHeader>
+        <TYPE.largeHeader lineHeight={0.7}>Pools</TYPE.largeHeader>
 
         <PageSection>
           <Search />
@@ -32,7 +37,12 @@ function AllPairsPage() {
             Your Watchlist
           </TYPE.main>
           <Panel style={{ padding: '0' }}>
-            <PairList pairs={savedPairsData} disbaleLinks={true} noPairsPlaceholderText={'Saved pools will appear here'} />
+            <PairList
+              pairs={formattedSavedPoolsData}
+              disbaleLinks={true}
+              waitForData={false}
+              noPairsPlaceholderText={'Saved pools will appear here'}
+            />
           </Panel>
         </PageSection>
 
