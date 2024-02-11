@@ -15,6 +15,28 @@ const Decimal = toFormat(_Decimal)
 BigNumber.set({ EXPONENTIAL_AT: 50 })
 dayjs.extend(utc)
 
+export const isLocalEnvironment = () => {
+  if (!window.location) {
+    return false
+  }
+  if (String(window.location) === '//') {
+    return false
+  }
+  const hostname = new URL(String(window.location))?.hostname || ''
+  return hostname === 'localhost'
+}
+
+export const isTestnetEnvironment = () => {
+  if (!window.location) {
+    return false
+  }
+  if (String(window.location) === '//') {
+    return false
+  }
+  const host = new URL(String(window.location))?.host || ''
+  return host === 'info.v2.goerli.jediswap.xyz' || host === 'info.v2.testnet.jediswap.xyz'
+}
+
 export const isStagingEnvironment = () => {
   if (!window.location) {
     return false
@@ -23,7 +45,7 @@ export const isStagingEnvironment = () => {
     return false
   }
   const host = new URL(String(window.location))?.host || ''
-  return host === 'info.staging.jediswap.xyz'
+  return host === 'info.v2.staging.jediswap.xyz'
 }
 
 export const isProductionEnvironment = () => {
@@ -34,7 +56,7 @@ export const isProductionEnvironment = () => {
     return false
   }
   const host = new URL(String(window.location))?.host || ''
-  return host === 'info.jediswap.xyz'
+  return host === 'info.v2.jediswap.xyz'
 }
 
 export const zeroStarknetAddress = validateAndParseAddress()
@@ -63,13 +85,13 @@ export function getTimeframe(timeWindow) {
 export function getPoolLink(token0Address, token1Address = null, remove = false) {
   if (!token1Address) {
     return (
-      `https://app.jediswap.xyz/#/` +
+      `https://app.v2.jediswap.xyz/#/` +
       (remove ? `remove` : `add`) +
       `/${token0Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token0Address}/${'ETH'}`
     )
   } else {
     return (
-      `https://app.jediswap.xyz/#/` +
+      `https://app.v2.jediswap.xyz/#/` +
       (remove ? `remove` : `add`) +
       `/${token0Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token0Address}/${
         token1Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token1Address
@@ -80,9 +102,9 @@ export function getPoolLink(token0Address, token1Address = null, remove = false)
 
 export function getSwapLink(token0Address, token1Address = null) {
   if (!token1Address) {
-    return `https://app.jediswap.xyz/#/swap?inputCurrency=${token0Address}`
+    return `https://app.v2.jediswap.xyz/#/swap?inputCurrency=${token0Address}`
   } else {
-    return `https://app.jediswap.xyz/#/swap?inputCurrency=${
+    return `https://app.v2.jediswap.xyz/#/swap?inputCurrency=${
       token0Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token0Address
     }&outputCurrency=${token1Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token1Address}`
   }

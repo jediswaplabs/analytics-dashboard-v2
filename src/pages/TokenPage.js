@@ -141,7 +141,7 @@ function TokenPage({ address, history }) {
 
   // fees
   const fees = formattedNum(oneDayFees, true)
-  const feesChange = feesChangeUSD ? formattedPercent(feesChangeUSD) : ''
+  const feesChange = formattedPercent(feesChangeUSD)
 
   // volume
   const volume = formattedNum(oneDayVolumeUSD, true)

@@ -54,9 +54,9 @@ function reducer(state, { type, payload }) {
       const { address, allPairs } = payload
       return {
         ...state,
-        [address]: {
-          ...state?.[address],
-          [TOKEN_PAIRS_KEY]: allPairs,
+        [TOKEN_PAIRS_KEY]: {
+          ...[state[TOKEN_PAIRS_KEY]],
+          [address]: allPairs,
         },
       }
     }
@@ -283,7 +283,7 @@ export function useTokenData(tokenAddress) {
   useEffect(() => {
     if (!tokenData && isStarknetAddress(tokenAddress)) {
       getBulkTokenData([tokenAddress]).then((data) => {
-        update(tokenAddress, data)
+        update(tokenAddress, data[0])
       })
     }
   }, [tokenAddress, tokenData, update])
@@ -328,10 +328,9 @@ export function useTokenDataForList(addresses) {
   return tokensWithData
 }
 
-//TODO
 export function useTokenPairs(tokenAddress) {
   const [state, { updateAllPairs }] = useTokenDataContext()
-  const tokenPairs = state?.[tokenAddress]?.[TOKEN_PAIRS_KEY]
+  const tokenPairs = state?.[TOKEN_PAIRS_KEY]?.[tokenAddress]
   const whitelistedTokens = useWhitelistedTokens() ?? {}
 
   useEffect(() => {
@@ -353,6 +352,7 @@ export function useAllTokenData() {
   // filter out for only addresses
   return Object.keys(state)
     .filter((key) => key !== 'combinedVol')
+    .filter((key) => key !== TOKEN_PAIRS_KEY)
     .reduce((res, key) => {
       res[key] = state[key]
       return res
