@@ -1,11 +1,12 @@
 import { ApolloClient } from 'apollo-client'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { HttpLink } from 'apollo-link-http'
+import { isTestnetEnvironment } from '../utils'
+import { getApiUrl } from '../constants'
 
 export const jediSwapClient = new ApolloClient({
   link: new HttpLink({
-    // uri: 'https://api.v2.jediswap.xyz/graphql',
-    uri: 'https://api.v2.goerli.jediswap.xyz/graphql',
+    uri: getApiUrl(),
     headers: {
       // 'm-color': 'blue',
     },
