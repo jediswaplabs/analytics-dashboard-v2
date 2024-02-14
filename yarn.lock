@@ -6392,6 +6392,11 @@ hosted-git-info@^2.1.4:
   resolved "https://registry.yarnpkg.com/hosted-git-info/-/hosted-git-info-2.8.9.tgz#dffc0bf9a21c02209090f2aa69429e1414daf3f9"
   integrity sha512-mxIDAb9Lsm6DoOJ7xH+5+X4y1LU/4Hi50L9C5sIswK3JzULS4bwk1FvjdBgvYR4bzT4tuUQiC15FE2f5HbLvYw==
 
+hotkeys-js@^3.13.2:
+  version "3.13.7"
+  resolved "https://registry.yarnpkg.com/hotkeys-js/-/hotkeys-js-3.13.7.tgz#0188d8e2fca16a3f1d66541b48de0bb9df613726"
+  integrity sha512-ygFIdTqqwG4fFP7kkiYlvayZppeIQX2aPpirsngkv1xM1lP0piDY5QEh68nQnIKvz64hfocxhBaD/uK3sSK1yQ==
+
 hpack.js@^2.1.6:
   version "2.1.6"
   resolved "https://registry.yarnpkg.com/hpack.js/-/hpack.js-2.1.6.tgz#87774c0949e513f42e84575b3c45681fade2a0b2"
@@ -10069,6 +10074,15 @@ prop-types@^15.5.10, prop-types@^15.5.4, prop-types@^15.5.8, prop-types@^15.6.0,
     object-assign "^4.1.1"
     react-is "^16.8.1"
 
+prop-types@^15.8.1:
+  version "15.8.1"
+  resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
+  integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
+  dependencies:
+    loose-envify "^1.4.0"
+    object-assign "^4.1.1"
+    react-is "^16.13.1"
+
 proxy-addr@~2.0.5:
   version "2.0.7"
   resolved "https://registry.yarnpkg.com/proxy-addr/-/proxy-addr-2.0.7.tgz#f19fe69ceab311eeb94b42e70e8c2070f9ba1025"
@@ -10337,6 +10351,14 @@ react-ga@^3.1.2:
   resolved "https://registry.yarnpkg.com/react-ga/-/react-ga-3.3.0.tgz#c91f407198adcb3b49e2bc5c12b3fe460039b3ca"
   integrity sha512-o8RScHj6Lb8cwy3GMrVH6NJvL+y0zpJvKtc0+wmH7Bt23rszJmnqEQxRbyrqUzk9DTJIHoP42bfO5rswC9SWBQ==
 
+react-hot-keys@^2.7.3:
+  version "2.7.3"
+  resolved "https://registry.yarnpkg.com/react-hot-keys/-/react-hot-keys-2.7.3.tgz#4af8ab2f8087782b09d07a3075f985b37d12dee9"
+  integrity sha512-OoX1kTookqQx/OBXBgBLQCANpw3KGUcJNOl+MNv8xJYyH/Rojv+jTjQbksDGQMIOWVfvLqOZi/ZVcVdsWUAUWg==
+  dependencies:
+    hotkeys-js "^3.13.2"
+    prop-types "^15.8.1"
+
 react-iframe@^1.8.0:
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/react-iframe/-/react-iframe-1.8.0.tgz#8c78f2c59b894ca5605fa7e45e61e27e57e96091"
@@ -10351,7 +10373,7 @@ react-input-autosize@^3.0.0:
   dependencies:
     prop-types "^15.5.8"
 
-react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.4:
+react-is@^16.13.1, react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.4:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==

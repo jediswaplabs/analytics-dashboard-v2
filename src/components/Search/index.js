@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react'
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import styled from 'styled-components'
 
 import Row, { AutoRow, RowFixed } from '../Row'
@@ -18,6 +18,7 @@ import { TYPE } from '../../Theme'
 import { updateNameData } from '../../utils/data'
 import { useWhitelistedTokens } from '../../contexts/Application'
 import FeeBadge from '../FeeBadge'
+import { Flex } from 'rebass'
 
 const Container = styled.div`
   height: 48px;
@@ -35,11 +36,12 @@ const Wrapper = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: flex-end;
-  padding: 12px 16px;
-  border-radius: 12px;
+  padding: 12px 15px;
+  padding-left: 50px;
+  border-radius: 4px;
   background: ${({ theme, small, open }) => (small ? (open ? theme.bg7 : 'none') : transparentize(0.4, theme.bg7))};
-  border-bottom-right-radius: ${({ open }) => (open ? '0px' : '12px')};
-  border-bottom-left-radius: ${({ open }) => (open ? '0px' : '12px')};
+  border-bottom-right-radius: ${({ open }) => (open ? '0px' : '4px')};
+  border-bottom-left-radius: ${({ open }) => (open ? '0px' : '4px')};
   z-index: 9999;
   width: 100%;
   min-width: 300px;
@@ -65,11 +67,11 @@ const Input = styled.input`
   border: none;
   outline: none;
   width: 100%;
-  color: ${({ theme }) => theme.text1};
-  font-size: ${({ large }) => (large ? '20px' : '14px')};
+  color: #fff;
+  font-size: 16px;
 
   ::placeholder {
-    color: ${({ theme }) => theme.text3};
+    color: #959595;
     font-size: 16px;
   }
 
@@ -83,9 +85,10 @@ const Input = styled.input`
 const SearchIconLarge = styled(SearchIcon)`
   height: 20px;
   width: 20px;
-  margin-right: 0.5rem;
   position: absolute;
-  right: 10px;
+  transform: translate(0, -50%);
+  left: 15px;
+  top: 50%;
   pointer-events: none;
   color: ${({ theme }) => theme.text3};
 `
@@ -93,28 +96,36 @@ const SearchIconLarge = styled(SearchIcon)`
 const CloseIcon = styled(X)`
   height: 20px;
   width: 20px;
-  margin-right: 0.5rem;
   position: absolute;
-  right: 10px;
+  transform: translate(0, -50%);
+  top: 50%;
+  right: 15px;
   color: ${({ theme }) => theme.text3};
   :hover {
     cursor: pointer;
   }
 `
-
+const KeyShortCut = styled.div`
+  color: ${({ theme }) => theme.text3};
+  font-size: 20px;
+  line-height: 1;
+  position: absolute;
+  transform: translate(0, -50%);
+  top: 50%;
+  right: 15px;
+`
 const Menu = styled.div`
   display: flex;
   flex-direction: column;
-  z-index: 9999;
   width: 100%;
-  top: 50px;
   max-height: 540px;
+  z-index: 9999;
   overflow: auto;
-  left: 0;
-  padding-bottom: 20px;
+  padding: 32px;
+  //padding-bottom: 20px;
   background: ${({ theme }) => theme.bg7};
-  border-bottom-right-radius: 12px;
-  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 4px;
+  border-bottom-left-radius: 4px;
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.04), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04), 0px 24px 32px rgba(0, 0, 0, 0.04);
   display: ${({ hide }) => hide && 'none'};
 `
@@ -145,6 +156,49 @@ const Blue = styled.span`
   :hover {
     cursor: pointer;
   }
+`
+
+const TableWrapper = styled.div``
+
+const DashGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  grid-template-areas: 'name liquidity volume price';
+
+  // display: grid;
+  // grid-gap: 1em;
+  // grid-template-columns: 100px 1fr 1fr;
+  // grid-template-areas: 'name liq vol';
+  // padding: 0 1.125rem;
+  // //
+  // // opacity: ${({ fade }) => (fade ? '0.6' : '1')};
+  // //
+  // // > * {
+  // //   justify-content: flex-end;
+  // //
+  // //   :first-child {
+  // //     justify-content: flex-start;
+  // //     text-align: left;
+  // //     width: 20px;
+  // //   }
+  // // }
+  // //
+  // // @media screen and (min-width: 740px) {
+  // //   padding: 0 1.125rem;
+  // //   grid-template-columns: 1.7fr 1fr 1fr};
+  // //   grid-template-areas: ' name liq vol pool ';
+  // // }
+  // //
+  // // @media screen and (min-width: 1080px) {
+  // //   padding: 0 1.125rem;
+  // //   grid-template-columns: 1.7fr 1fr 1fr 1fr 1fr 1fr;
+  // //   grid-template-areas: ' name liq vol volWeek fees apy';
+  // // }
+  // //
+  // // @media screen and (min-width: 1200px) {
+  // //   grid-template-columns: 1.7fr 1fr 1fr 1fr 1fr 1fr;
+  // //   grid-template-areas: ' name liq vol volWeek fees apy';
+  // // }
 `
 
 export const Search = ({ small = false }) => {
@@ -397,6 +451,47 @@ export const Search = ({ small = false }) => {
     }
   }
 
+  const handleKeyPress = useCallback(
+    (event) => {
+      if (event.key === '/') {
+        event.preventDefault()
+        !showMenu && toggleMenu(true)
+      }
+    },
+    [showMenu]
+  )
+
+  // close dropdown on escape
+  useEffect(() => {
+    const escapeKeyDownHandler = (event) => {
+      if (event.key === 'Escape' && showMenu) {
+        event.preventDefault()
+        toggleMenu(false)
+      }
+    }
+
+    document.addEventListener('keydown', escapeKeyDownHandler)
+
+    return () => {
+      document.removeEventListener('keydown', escapeKeyDownHandler)
+    }
+  }, [showMenu, toggleMenu])
+
+  useEffect(() => {
+    const wRef = wrapperRef?.current
+
+    if (wRef !== null) {
+      //only mount the listener when input available as ref
+      document.addEventListener('keydown', handleKeyPress)
+    }
+
+    return () => {
+      if (wRef !== null) {
+        document.removeEventListener('keydown', handleKeyPress)
+      }
+    }
+  }, [handleKeyPress, wrapperRef])
+
   useEffect(() => {
     document.addEventListener('click', handleClick)
     return () => {
@@ -404,15 +499,30 @@ export const Search = ({ small = false }) => {
     }
   })
 
+  useEffect(() => {
+    if (showMenu && wrapperRef.current) {
+      wrapperRef.current.focus()
+    }
+  }, [showMenu])
+
   return (
     <Container small={small}>
       <Wrapper open={showMenu} shadow={true} small={small}>
+        <SearchIconLarge />
         <Input
           large={!small}
           type={'text'}
           ref={wrapperRef}
           placeholder={
-            small ? '' : below410 ? 'Search...' : below470 ? 'Search for...' : below700 ? 'Search for tokens...' : 'Search for tokens and pools...'
+            small
+              ? ''
+              : below410
+              ? 'Search...'
+              : below470
+              ? 'Search by...'
+              : below700
+              ? 'Search by token name...'
+              : 'Search by token name, pool name, address'
           }
           value={value}
           onChange={(e) => {
@@ -424,9 +534,28 @@ export const Search = ({ small = false }) => {
             }
           }}
         />
-        {!showMenu ? <SearchIconLarge /> : <CloseIcon onClick={() => toggleMenu(false)} />}
+        {!showMenu ? <KeyShortCut>/</KeyShortCut> : <CloseIcon onClick={() => toggleMenu(false)} />}
       </Wrapper>
-      <Menu hide={!showMenu} ref={menuRef}>
+      <Menu hide={showMenu} ref={menuRef}>
+        <TableWrapper>
+          <DashGrid>
+            <Flex alignItems="center" justifyContent="flex-start">
+              <TYPE.main area="name" fontSize={'16px'}>
+                All tokens
+              </TYPE.main>
+            </Flex>
+            <Flex alignItems="center" justifyContent="flex-start">
+              <TYPE.main area="liquidity">Liquidity</TYPE.main>
+            </Flex>
+            <Flex alignItems="center" justifyContent="flex-start">
+              <TYPE.main area="volume">Volume (24H)</TYPE.main>
+            </Flex>
+            <Flex alignItems="center" justifyContent="flex-end">
+              <TYPE.main area="price">Price</TYPE.main>
+            </Flex>
+          </DashGrid>
+        </TableWrapper>
+
         <Heading>
           <Gray>Pairs</Gray>
         </Heading>
