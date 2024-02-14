@@ -216,7 +216,6 @@ function TokenPage({ address, history }) {
       </Link>
     </RowFixed>
   )
-
   return (
     <PageWrapper>
       <Warning type={'token'} show={!dismissed && listedTokens && !listedTokens.includes(address)} setShow={markAsDismissed} address={address} />

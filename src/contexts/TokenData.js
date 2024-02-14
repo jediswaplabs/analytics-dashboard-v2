@@ -120,7 +120,6 @@ const getTopTokens = async (whitelistedIds = []) => {
   try {
     // need to get the top tokens by liquidity by need token day datas
     const currentDate = parseInt(Date.now() / 86400 / 1000) * 86400 - 86400
-
     let tokenIds = await jediSwapClient.query({
       query: TOP_TOKENS_DATA({ tokenIds: whitelistedIds }),
       fetchPolicy: 'network-only',
@@ -134,7 +133,7 @@ const getTopTokens = async (whitelistedIds = []) => {
       return accum
     }, [])
 
-    const bulkResults = getBulkTokenData(ids)
+    const bulkResults = await getBulkTokenData(ids)
     return bulkResults
     // calculate percentage changes and daily changes
   } catch (e) {
@@ -263,16 +262,17 @@ const getTokenPairs = async (address, whitelistedTokenIds = []) => {
 
 export function Updater() {
   const [, { updateTopTokens }] = useTokenDataContext()
-  const whitelistedTokens = useWhitelistedTokens() ?? {}
+  const whitelistedTokensRaw = useWhitelistedTokens() ?? {}
+  const whitelistedTokens = useMemo(() => whitelistedTokensRaw, [Object.keys(whitelistedTokensRaw).join(',')])
+
   useEffect(() => {
     async function getData() {
       // get top pairs for overview list
       let topTokens = await getTopTokens(Object.keys(whitelistedTokens))
-
       topTokens && updateTopTokens(topTokens)
     }
     getData()
-  }, [updateTopTokens])
+  }, [updateTopTokens, whitelistedTokens])
   return null
 }
 
@@ -294,7 +294,6 @@ export function useTokenData(tokenAddress) {
 export function useTokenDataForList(addresses) {
   const [state, { update }] = useTokenDataContext()
   const allTokensData = useAllTokenData()
-
   const untrackedAddresses = addresses.reduce((accum, address) => {
     if (!Object.keys(allTokensData).includes(address) && isStarknetAddress(address)) {
       accum.push(address)
@@ -331,7 +330,8 @@ export function useTokenDataForList(addresses) {
 export function useTokenPairs(tokenAddress) {
   const [state, { updateAllPairs }] = useTokenDataContext()
   const tokenPairs = state?.[TOKEN_PAIRS_KEY]?.[tokenAddress]
-  const whitelistedTokens = useWhitelistedTokens() ?? {}
+  const whitelistedTokensRaw = useWhitelistedTokens() ?? {}
+  const whitelistedTokens = useMemo(() => whitelistedTokensRaw, [Object.keys(whitelistedTokensRaw).join(',')])
 
   useEffect(() => {
     async function fetchData() {
@@ -341,7 +341,7 @@ export function useTokenPairs(tokenAddress) {
     if (!tokenPairs && isStarknetAddress(tokenAddress)) {
       fetchData()
     }
-  }, [tokenAddress, tokenPairs, updateAllPairs])
+  }, [tokenAddress, tokenPairs, updateAllPairs, whitelistedTokens])
 
   return tokenPairs || []
 }
