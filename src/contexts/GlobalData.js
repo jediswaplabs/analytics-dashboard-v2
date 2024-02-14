@@ -374,7 +374,8 @@ async function getAllTokensOnJediswap(ids = []) {
  */
 export function useGlobalData() {
   const [state, { update, updateAllPairsInUniswap, updateAllTokensInUniswap }] = useGlobalDataContext()
-  const whitelistedTokens = useWhitelistedTokens() ?? {}
+  const whitelistedTokensRaw = useWhitelistedTokens() ?? {}
+  const whitelistedTokens = useMemo(() => whitelistedTokensRaw, [Object.keys(whitelistedTokensRaw).join(',')])
   const data = state?.globalData
 
   // const combinedVolume = useTokenDataCombined(offsetVolumes)
@@ -394,7 +395,7 @@ export function useGlobalData() {
     if (!data) {
       fetchData()
     }
-  }, [update, data, updateAllPairsInUniswap, updateAllTokensInUniswap])
+  }, [update, data, updateAllPairsInUniswap, updateAllTokensInUniswap, whitelistedTokens])
 
   return data || {}
 }

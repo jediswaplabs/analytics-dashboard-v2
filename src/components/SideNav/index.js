@@ -233,7 +233,7 @@ function SideNav({ history }) {
               </Link>
             </HeaderText>
             <HeaderText>
-              <Link href="https://docs.jediswap.xyz/for-developers/smart-contract-integration" target="_blank">
+              <Link href="https://docs.jediswap.xyz/for-developers/jediswap-v2" target="_blank">
                 Tech Docs
               </Link>
             </HeaderText>
