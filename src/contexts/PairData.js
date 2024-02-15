@@ -10,7 +10,7 @@ import { POOLS_DATA, HISTORICAL_POOLS_DATA, TOP_POOLS_DATA } from '../apollo/que
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 
-import { getPercentChange, get2DayPercentChange, isAddress, isStarknetAddress } from '../utils'
+import { getPercentChange, get2DayPercentChange, get2DayPercentChangeNew, isAddress, isStarknetAddress } from '../utils'
 import { apiTimeframeOptions } from '../constants'
 import { useWhitelistedTokens } from './Application'
 
@@ -170,18 +170,13 @@ async function getBulkPairData(pairList) {
 }
 
 function parseData(data, oneDayData, twoDayData, oneWeekData) {
-  // get volume changes
-  // let [oneDayVolumeUSD, volumeChangeUSD] = get2DayPercentChange(
-  //   data?.volumeUSD,
-  //   oneDayData?.volumeUSD ? oneDayData.volumeUSD : 0,
-  //   twoDayData?.volumeUSD ? twoDayData.volumeUSD : 0
-  // )
   const oneDayVolumeUSD = oneDayData?.volumeUSD || 0
   const twoDayVolumeUSD = twoDayData?.volumeUSD || 0
-  const volumeChangeUSD = (oneDayVolumeUSD - twoDayVolumeUSD) / oneDayVolumeUSD * 100;
+  const volumeChangeUSD = get2DayPercentChangeNew(oneDayVolumeUSD, twoDayVolumeUSD)
+
   const oneDayFeesUSD = oneDayData?.feesUSD || 0
   const twoDayFeesUSD = twoDayData?.feesUSD || 0
-  const feesChangeUSD = (oneDayFeesUSD - twoDayFeesUSD) / oneDayFeesUSD * 100;
+  const feesChangeUSD = get2DayPercentChangeNew(oneDayFeesUSD, twoDayFeesUSD)
 
 
   const [oneDayVolumeUntracked, volumeChangeUntracked] = get2DayPercentChange(
