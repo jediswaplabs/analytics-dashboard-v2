@@ -8,7 +8,7 @@ import { jediSwapClient } from '../apollo/client'
 
 import { TOP_TOKENS_DATA, HISTORICAL_TOKENS_DATA, TOKEN_PAIRS_DATA, TOKENS_DATA } from '../apollo/queries'
 
-import { get2DayPercentChange, getPercentChange, isStarknetAddress } from '../utils'
+import { get2DayPercentChange, get2DayPercentChangeNew, getPercentChange, isStarknetAddress } from '../utils'
 import { apiTimeframeOptions } from '../constants'
 
 const UPDATE = 'UPDATE'
@@ -168,75 +168,69 @@ const getBulkTokenData = async (ids) => {
 
     let bulkResults = await Promise.all(
       current &&
-        oneDayData &&
-        twoDaysData &&
-        current?.data?.tokens.map(async (token) => {
-          let data = token
-          let oneDayHistory = oneDayData?.[token.tokenAddress]
-          let twoDaysHistory = twoDaysData?.[token.tokenAddress]
+      oneDayData &&
+      twoDaysData &&
+      current?.data?.tokens.map(async (token) => {
+        let data = token
+        let oneDayHistory = oneDayData?.[token.tokenAddress]
+        let twoDaysHistory = twoDaysData?.[token.tokenAddress]
 
-          // calculate percentage changes and daily changes
-          const [oneDayVolumeUSD, volumeChangeUSD] = get2DayPercentChange(
-            data.volumeUSD,
-            oneDayHistory?.volumeUSD ?? 0,
-            twoDaysHistory?.volumeUSD ?? 0
-          )
-          const [oneDayVolumeETH, volumeChangeETH] = get2DayPercentChange(
-            data.volume * data.derivedETH,
-            oneDayHistory?.volume && oneDayHistory?.derivedETH ? oneDayHistory?.volume * oneDayHistory?.derivedETH : 0,
-            twoDaysHistory?.volume && twoDaysHistory?.derivedETH ? twoDaysHistory?.volume * twoDaysHistory?.derivedETH : 0
-          )
+        const oneDayVolumeUSD = oneDayHistory?.volumeUSD || 0
+        const twoDayVolumeUSD = twoDaysHistory?.volumeUSD || 0
+        const volumeChangeUSD = get2DayPercentChangeNew(oneDayVolumeUSD, twoDayVolumeUSD)
 
-          const [oneDayTxns, txnChange] = get2DayPercentChange(data.txCount, oneDayHistory?.txCount ?? 0, twoDaysHistory?.txCount ?? 0)
-          const [oneDayFees, feesChange] = get2DayPercentChange(data.feesUSD, oneDayHistory?.feesUSD ?? 0, twoDaysHistory?.feesUSD ?? 0)
+        // const [oneDayTxns, txnChange] = get2DayPercentChange(data.txCount, oneDayHistory?.txCount ?? 0, twoDaysHistory?.txCount ?? 0)
+        // const [oneDayFees, feesChange] = get2DayPercentChange(data.feesUSD, oneDayHistory?.feesUSD ?? 0, twoDaysHistory?.feesUSD ?? 0)
+        const oneDayFees = oneDayHistory?.feesUSD || 0
+        const twoDayFees = twoDaysHistory?.feesUSD || 0
+        const feesChange = get2DayPercentChangeNew(oneDayFees, twoDayFees)
 
-          const tvlUSD = data?.totalValueLockedUSD ? parseFloat(data.totalValueLockedUSD) : 0
-          const tvlUSDChange = getPercentChange(data?.totalValueLockedUSD, oneDayHistory?.totalValueLockedUSD)
-          const tvlToken = data?.totalValueLocked ? parseFloat(data.totalValueLocked) : 0
+        const tvlUSD = data?.totalValueLockedUSD ? parseFloat(data.totalValueLockedUSD) : 0
+        const tvlUSDChange = getPercentChange(data?.totalValueLockedUSD, oneDayHistory?.totalValueLockedUSD)
+        const tvlToken = data?.totalValueLocked ? parseFloat(data.totalValueLocked) : 0
 
-          const priceUSD = oneDayHistory?.close ? parseFloat(oneDayHistory.close) : 0
-          const priceUSDOneDay = oneDayHistory?.close ?? 0
-          const priceUSDTwoDays = twoDaysHistory?.close ?? 0
-          const priceUSDChange = priceUSDOneDay && priceUSDTwoDays ? getPercentChange(priceUSDOneDay.toString(), priceUSDTwoDays.toString()) : 0
+        const priceUSD = oneDayHistory?.close ? parseFloat(oneDayHistory.close) : 0
+        // const priceUSDChange = priceUSDOneDay && priceUSDTwoDays ? getPercentChange(priceUSDOneDay.toString(), priceUSDTwoDays.toString()) : 0
+        const priceUSDChange = getPercentChange(oneDayHistory?.close, oneDayHistory?.open)
 
-          const txCount =
-            data?.txCount && oneDayHistory?.txCount
-              ? parseFloat(data.txCount) - parseFloat(oneDayHistory.txCount)
-              : data
+        const txCount =
+          data?.txCount && oneDayHistory?.txCount
+            ? parseFloat(data.txCount) - parseFloat(oneDayHistory.txCount)
+            : data
               ? parseFloat(data.txCount)
               : 0
-          const feesUSD =
-            data?.feesUSD && oneDayHistory?.feesUSD
-              ? parseFloat(data.feesUSD) - parseFloat(oneDayHistory.feesUSD)
-              : data
+        const feesUSD =
+          data?.feesUSD && oneDayHistory?.feesUSD
+            ? parseFloat(data.feesUSD) - parseFloat(oneDayHistory.feesUSD)
+            : data
               ? parseFloat(data.feesUSD)
               : 0
 
-          data.priceUSD = priceUSD
-          data.priceChangeUSD = priceUSDChange
+        data.priceUSD = priceUSD
+        data.priceChangeUSD = priceUSDChange
 
-          data.totalLiquidityUSD = tvlUSD
-          data.liquidityChangeUSD = tvlUSDChange
-          // data.liquidityToken = tvlToken
+        data.totalLiquidityUSD = tvlUSD
+        data.liquidityChangeUSD = tvlUSDChange
+        // data.liquidityToken = tvlToken
 
-          data.oneDayVolumeUSD = parseFloat(oneDayVolumeUSD)
-          data.volumeChangeUSD = volumeChangeUSD
-          data.oneDayVolumeETH = parseFloat(oneDayVolumeETH)
-          data.volumeChangeETH = volumeChangeETH
+        data.oneDayVolumeUSD = parseFloat(oneDayVolumeUSD)
+        data.volumeChangeUSD = volumeChangeUSD
+        // data.oneDayVolumeETH = parseFloat(oneDayVolumeETH)
+        // data.volumeChangeETH = volumeChangeETH
 
-          data.oneDayTxns = oneDayTxns
-          data.txnChange = txnChange
+        // data.oneDayTxns = oneDayTxns
+        // data.txnChange = txnChange
 
-          data.feesUSD = feesUSD
-          data.oneDayFees = oneDayFees
-          data.feesChangeUSD = feesChange
+        data.feesUSD = feesUSD
+        data.oneDayFees = oneDayFees
+        data.feesChangeUSD = feesChange
 
-          // used for custom adjustments
-          data.oneDayData = oneDayHistory
-          data.twoDaysData = twoDaysHistory
+        // used for custom adjustments
+        data.oneDayData = oneDayHistory
+        data.twoDaysData = twoDaysHistory
 
-          return data
-        })
+        return data
+      })
     )
     return bulkResults
   } catch (e) {
