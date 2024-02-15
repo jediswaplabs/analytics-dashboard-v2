@@ -154,14 +154,14 @@ async function getBulkPairData(pairList) {
 
     let pairData = await Promise.all(
       current &&
-        current.data.pools.map(async (pair) => {
-          let data = pair
-          let oneDayHistory = oneDayData?.[pair.poolAddress]
-          let twoDayHistory = twoDayData?.[pair.poolAddress]
-          let oneWeekHistory = oneWeekData?.[pair.poolAddress]
-          data = parseData(data, oneDayHistory, twoDayHistory, oneWeekHistory)
-          return data
-        })
+      current.data.pools.map(async (pair) => {
+        let data = pair
+        let oneDayHistory = oneDayData?.[pair.poolAddress]
+        let twoDayHistory = twoDayData?.[pair.poolAddress]
+        let oneWeekHistory = oneWeekData?.[pair.poolAddress]
+        data = parseData(data, oneDayHistory, twoDayHistory, oneWeekHistory)
+        return data
+      })
     )
     return pairData
   } catch (e) {
@@ -171,11 +171,19 @@ async function getBulkPairData(pairList) {
 
 function parseData(data, oneDayData, twoDayData, oneWeekData) {
   // get volume changes
-  const [oneDayVolumeUSD, volumeChangeUSD] = get2DayPercentChange(
-    data?.volumeUSD,
-    oneDayData?.volumeUSD ? oneDayData.volumeUSD : 0,
-    twoDayData?.volumeUSD ? twoDayData.volumeUSD : 0
-  )
+  // let [oneDayVolumeUSD, volumeChangeUSD] = get2DayPercentChange(
+  //   data?.volumeUSD,
+  //   oneDayData?.volumeUSD ? oneDayData.volumeUSD : 0,
+  //   twoDayData?.volumeUSD ? twoDayData.volumeUSD : 0
+  // )
+  const oneDayVolumeUSD = oneDayData?.volumeUSD || 0
+  const twoDayVolumeUSD = twoDayData?.volumeUSD || 0
+  const volumeChangeUSD = (oneDayVolumeUSD - twoDayVolumeUSD) / oneDayVolumeUSD * 100;
+  const oneDayFeesUSD = oneDayData?.feesUSD || 0
+  const twoDayFeesUSD = twoDayData?.feesUSD || 0
+  const feesChangeUSD = (oneDayFeesUSD - twoDayFeesUSD) / oneDayFeesUSD * 100;
+
+
   const [oneDayVolumeUntracked, volumeChangeUntracked] = get2DayPercentChange(
     data?.untrackedVolumeUSD,
     oneDayData?.untrackedVolumeUSD ? parseFloat(oneDayData?.untrackedVolumeUSD) : 0,
@@ -194,6 +202,9 @@ function parseData(data, oneDayData, twoDayData, oneWeekData) {
   data.oneDayVolumeUntracked = oneDayVolumeUntracked
   data.oneWeekVolumeUntracked = oneWeekVolumeUntracked
   data.volumeChangeUntracked = volumeChangeUntracked
+
+  data.oneDayFeesUSD = oneDayFeesUSD;
+  data.feesChangeUSD = feesChangeUSD;
 
   // set liquidity properties
   data.trackedReserveUSD = data.totalValueLockedUSD
