@@ -236,8 +236,8 @@ const getTopPools = async (whitelistedIds = []) => {
 
 export function Updater() {
   const [, { updateTopPairs }] = usePairDataContext()
-
-  const whitelistedTokens = useWhitelistedTokens() ?? {}
+  const whitelistedTokensRaw = useWhitelistedTokens() ?? {}
+  const whitelistedTokens = useMemo(() => whitelistedTokensRaw, [Object.keys(whitelistedTokensRaw).join(',')])
   useEffect(() => {
     async function getData() {
       // get top pairs for overview list
@@ -245,7 +245,7 @@ export function Updater() {
       topPairs && updateTopPairs(topPairs)
     }
     getData()
-  }, [updateTopPairs])
+  }, [updateTopPairs, whitelistedTokens])
   return null
 }
 
