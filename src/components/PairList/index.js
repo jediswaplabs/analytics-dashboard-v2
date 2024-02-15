@@ -138,7 +138,8 @@ const formatDataText = (value, trackedValue, supressWarning = false, textAlign =
     <AutoColumn gap="2px" style={{ opacity: showUntracked ? '0.7' : '1' }}>
       <div style={{ textAlign }}>{value}</div>
       <TYPE.light fontSize={'9px'} style={{ textAlign: 'right' }}>
-        {showUntracked ? 'untracked' : '  '}
+        {/* {showUntracked ? 'untracked' : '  '} */}
+        {showUntracked ? '' : '  '}
       </TYPE.light>
     </AutoColumn>
   )
@@ -209,7 +210,7 @@ function PairList({
 
       const weekVolume = formattedNum(pairData.oneWeekVolumeUSD ? pairData.oneWeekVolumeUSD : pairData.oneWeekVolumeUntracked, true)
 
-      const fees = formattedNum(pairData.oneDayVolumeUSD ? pairData.oneDayVolumeUSD * feeTier : pairData.oneDayVolumeUntracked * feeTier, true)
+      const fees = formattedNum(pairData.oneDayFeesUSD, true)
       if (below1080) {
         return (
           <div style={{ margin: '10px 0', padding: '20px', borderRadius: '8px', border: '1px solid #959595' }}>

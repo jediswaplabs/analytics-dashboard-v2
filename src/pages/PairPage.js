@@ -126,6 +126,8 @@ function PairPage({ pairAddress, history }) {
     volumeChangeUntracked,
     trackedReserveUSD,
     liquidityChangeUSD,
+    oneDayFeesUSD,
+    feesChangeUSD
   } = usePairData(pairAddress)
   useEffect(() => {
     document.querySelector('body').scrollTo(0, 0)
@@ -147,13 +149,14 @@ function PairPage({ pairAddress, history }) {
   const volumeChange = formattedPercent(!usingUtVolume ? volumeChangeUSD : volumeChangeUntracked)
 
   // get fees	  // get fees
-  const fees =
-    oneDayVolumeUSD || oneDayVolumeUSD === 0
-      ? usingUtVolume
-        ? formattedNum(oneDayVolumeUntracked * feeTier, true)
-        : formattedNum(oneDayVolumeUSD * feeTier, true)
-      : '-'
+  // const fees =
+  //   oneDayVolumeUSD || oneDayVolumeUSD === 0
+  //     ? usingUtVolume
+  //       ? formattedNum(oneDayVolumeUntracked * feeTier, true)
+  //       : formattedNum(oneDayVolumeUSD * feeTier, true)
+  //     : '-'
 
+  const feesChange = formattedPercent(feesChangeUSD)
   // rates
   const token0Rate = token0?.totalValueLocked && token1.totalValueLocked ? formattedNum(token1.totalValueLocked / token0?.totalValueLocked) : '-'
   const token1Rate = token0?.totalValueLocked && token1.totalValueLocked ? formattedNum(token0.totalValueLocked / token1?.totalValueLocked) : '-'
@@ -319,9 +322,9 @@ function PairPage({ pairAddress, history }) {
                     </RowBetween>
                     <RowBetween align="baseline">
                       <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
-                        {fees}
+                        {formattedNum(oneDayFeesUSD, true)}
                       </TYPE.main>
-                      <TYPE.main fontSize="1rem">{volumeChange}</TYPE.main>
+                      <TYPE.main fontSize="1rem">{feesChange}</TYPE.main>
                     </RowBetween>
                   </AutoColumn>
                 </Panel>
