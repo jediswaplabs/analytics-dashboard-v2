@@ -28,10 +28,11 @@ const PageButtons = styled.div`
 `
 
 const Arrow = styled.div`
-  color: ${({ theme }) => theme.primary1};
-  opacity: ${(props) => (props.faded ? 0.3 : 1)};
+  // color: ${({ theme }) => theme.primary1};
+  color: ${({ theme, faded }) => faded ? theme.jediGrey : theme.paginationTest};
   padding: 0 20px;
   user-select: none;
+  font-size: 30px;
   :hover {
     cursor: pointer;
   }
@@ -334,11 +335,11 @@ function TopTokenList({
       </List>
       <PageButtons>
         <div onClick={() => setPage(page === 1 ? page : page - 1)}>
-          <Arrow faded={page === 1}>←</Arrow>
+          <Arrow faded={page === 1}>{'<'}</Arrow>
         </div>
-        <TYPE.body>{page + ' of ' + maxPage}</TYPE.body>
+        <TYPE.body style={{ display: 'flex', alignItems: 'center' }}>{page + ' of ' + maxPage}</TYPE.body>
         <div onClick={() => setPage(page === maxPage ? page : page + 1)}>
-          <Arrow faded={page === maxPage}>→</Arrow>
+          <Arrow faded={page === maxPage}>{'>'}</Arrow>
         </div>
       </PageButtons>
     </ListWrapper>
