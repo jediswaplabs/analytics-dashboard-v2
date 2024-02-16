@@ -10,7 +10,7 @@ import { POOLS_DATA, HISTORICAL_POOLS_DATA, TOP_POOLS_DATA } from '../apollo/que
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 
-import { getPercentChange, get2DayPercentChange, isAddress, isStarknetAddress } from '../utils'
+import { getPercentChange, get2DayPercentChange, get2DayPercentChangeNew, isAddress, isStarknetAddress } from '../utils'
 import { apiTimeframeOptions } from '../constants'
 import { useWhitelistedTokens } from './Application'
 
@@ -154,14 +154,14 @@ async function getBulkPairData(pairList) {
 
     let pairData = await Promise.all(
       current &&
-        current.data.pools.map(async (pair) => {
-          let data = pair
-          let oneDayHistory = oneDayData?.[pair.poolAddress]
-          let twoDayHistory = twoDayData?.[pair.poolAddress]
-          let oneWeekHistory = oneWeekData?.[pair.poolAddress]
-          data = parseData(data, oneDayHistory, twoDayHistory, oneWeekHistory)
-          return data
-        })
+      current.data.pools.map(async (pair) => {
+        let data = pair
+        let oneDayHistory = oneDayData?.[pair.poolAddress]
+        let twoDayHistory = twoDayData?.[pair.poolAddress]
+        let oneWeekHistory = oneWeekData?.[pair.poolAddress]
+        data = parseData(data, oneDayHistory, twoDayHistory, oneWeekHistory)
+        return data
+      })
     )
     return pairData
   } catch (e) {
@@ -170,12 +170,15 @@ async function getBulkPairData(pairList) {
 }
 
 function parseData(data, oneDayData, twoDayData, oneWeekData) {
-  // get volume changes
-  const [oneDayVolumeUSD, volumeChangeUSD] = get2DayPercentChange(
-    data?.volumeUSD,
-    oneDayData?.volumeUSD ? oneDayData.volumeUSD : 0,
-    twoDayData?.volumeUSD ? twoDayData.volumeUSD : 0
-  )
+  const oneDayVolumeUSD = oneDayData?.volumeUSD || 0
+  const twoDayVolumeUSD = twoDayData?.volumeUSD || 0
+  const volumeChangeUSD = get2DayPercentChangeNew(oneDayVolumeUSD, twoDayVolumeUSD)
+
+  const oneDayFeesUSD = oneDayData?.feesUSD || 0
+  const twoDayFeesUSD = twoDayData?.feesUSD || 0
+  const feesChangeUSD = get2DayPercentChangeNew(oneDayFeesUSD, twoDayFeesUSD)
+
+
   const [oneDayVolumeUntracked, volumeChangeUntracked] = get2DayPercentChange(
     data?.untrackedVolumeUSD,
     oneDayData?.untrackedVolumeUSD ? parseFloat(oneDayData?.untrackedVolumeUSD) : 0,
@@ -195,10 +198,12 @@ function parseData(data, oneDayData, twoDayData, oneWeekData) {
   data.oneWeekVolumeUntracked = oneWeekVolumeUntracked
   data.volumeChangeUntracked = volumeChangeUntracked
 
+  data.oneDayFeesUSD = oneDayFeesUSD;
+  data.feesChangeUSD = feesChangeUSD;
+
   // set liquidity properties
   data.trackedReserveUSD = data.totalValueLockedUSD
-  // data.trackedReserveUSD = data.totalValueLockedETH * ethPrice //??
-  data.liquidityChangeUSD = getPercentChange(data.reserveUSD, oneDayData?.reserveUSD)
+  data.liquidityChangeUSD = getPercentChange(oneDayData.totalValueLockedUSD, oneDayData.totalValueLockedUSDFirst)
 
   // format if pair hasnt existed for a day or a week
   // if (!oneDayData && data && data.createdAtBlockNumber > oneDayBlock) {

@@ -42,6 +42,10 @@ const PoolFields = `
     untrackedVolumeUSD
     token0Price
     token1Price
+    totalValueLockedToken0
+    totalValueLockedToken1
+    token0Price
+    token1Price
     fee
   }
 `
@@ -101,9 +105,10 @@ export const HISTORICAL_TOKENS_DATA = ({ tokenIds = [], periods = [] }) => {
   const periodString = `[${periods.map((period) => `"${period}"`).join(',')}]`
 
   let queryString = `
+    ${TokenFields}
     query tokensData {
       tokensData(first: 500, where: {tokenAddressIn: ${tokenString}, periodIn: ${periodString}}) {
-        tokenAddress
+        token{...TokenFields}
         period
       }
     }

@@ -138,7 +138,8 @@ const formatDataText = (value, trackedValue, supressWarning = false, textAlign =
     <AutoColumn gap="2px" style={{ opacity: showUntracked ? '0.7' : '1' }}>
       <div style={{ textAlign }}>{value}</div>
       <TYPE.light fontSize={'9px'} style={{ textAlign: 'right' }}>
-        {showUntracked ? 'untracked' : '  '}
+        {/* {showUntracked ? 'untracked' : '  '} */}
+        {showUntracked ? '' : '  '}
       </TYPE.light>
     </AutoColumn>
   )
@@ -205,11 +206,13 @@ function PairList({
       const feeRatio24H =
         ((pairData.oneDayVolumeUSD ? pairData.oneDayVolumeUSD : pairData.oneDayVolumeUntracked) * feeTier) /
         (pairData.oneDayVolumeUSD ? pairData.trackedReserveUSD : pairData.reserveUSD)
-      const apy = formattedPercent(((1 + feeRatio24H) ** 365 - 1) * 100, true)
+      const apy = ((1 + feeRatio24H) ** 365 - 1) * 100
+      const cleanedApy = (isNaN(apy) || !isFinite(apy)) ? 0 : apy
+      const displayApy = formattedPercent(cleanedApy, true)
 
       const weekVolume = formattedNum(pairData.oneWeekVolumeUSD ? pairData.oneWeekVolumeUSD : pairData.oneWeekVolumeUntracked, true)
 
-      const fees = formattedNum(pairData.oneDayVolumeUSD ? pairData.oneDayVolumeUSD * feeTier : pairData.oneDayVolumeUntracked * feeTier, true)
+      const fees = formattedNum(pairData.oneDayFeesUSD, true)
       if (below1080) {
         return (
           <div style={{ margin: '10px 0', padding: '20px', borderRadius: '8px', border: '1px solid #959595' }}>
@@ -279,7 +282,7 @@ function PairList({
           <DataText area="vol">{formatDataText(volume, pairData.oneDayVolumeUSD)}</DataText>
           {!below1080 && <DataText area="volWeek">{formatDataText(weekVolume, pairData.oneWeekVolumeUSD)}</DataText>}
           {!below1080 && <DataText area="fees">{formatDataText(fees, pairData.oneDayVolumeUSD)}</DataText>}
-          {!below1080 && <DataText area="apy">{formatDataText(apy, pairData.oneDayVolumeUSD, pairData.oneDayVolumeUSD === 0)}</DataText>}
+          {!below1080 && <DataText area="apy">{formatDataText(displayApy, pairData.oneDayVolumeUSD, pairData.oneDayVolumeUSD === 0)}</DataText>}
         </DashGrid>
       )
     } else {
