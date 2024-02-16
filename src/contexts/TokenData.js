@@ -185,8 +185,8 @@ const getBulkTokenData = async (ids) => {
         const twoDayFees = twoDaysHistory?.feesUSD || 0
         const feesChange = get2DayPercentChangeNew(oneDayFees, twoDayFees)
 
-        const tvlUSD = data?.totalValueLockedUSD ? parseFloat(data.totalValueLockedUSD) : 0
-        const tvlUSDChange = getPercentChange(data?.totalValueLockedUSD, oneDayHistory?.totalValueLockedUSD)
+        const tvlUSD = oneDayHistory.totalValueLockedUSD
+        const tvlUSDChange = getPercentChange(oneDayHistory.totalValueLockedUSD, oneDayHistory.totalValueLockedUSDFirst)
         const tvlToken = data?.totalValueLocked ? parseFloat(data.totalValueLocked) : 0
 
         const priceUSD = oneDayHistory?.close ? parseFloat(oneDayHistory.close) : 0

@@ -127,7 +127,11 @@ function PairPage({ pairAddress, history }) {
     trackedReserveUSD,
     liquidityChangeUSD,
     oneDayFeesUSD,
-    feesChangeUSD
+    feesChangeUSD,
+    totalValueLockedToken0,
+    totalValueLockedToken1,
+    token0Price,
+    token1Price
   } = usePairData(pairAddress)
   useEffect(() => {
     document.querySelector('body').scrollTo(0, 0)
@@ -295,7 +299,7 @@ function PairPage({ pairAddress, history }) {
                     </RowBetween>
                     <RowBetween align="baseline">
                       <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
-                        {formattedLiquidity}
+                        US{formattedLiquidity}
                       </TYPE.main>
                       <TYPE.main fontSize="1rem">{liquidityChange}</TYPE.main>
                     </RowBetween>
@@ -309,7 +313,7 @@ function PairPage({ pairAddress, history }) {
                     </RowBetween>
                     <RowBetween align="baseline">
                       <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
-                        {volume}
+                        US{volume}
                       </TYPE.main>
                       <TYPE.main fontSize="1rem">{volumeChange}</TYPE.main>
                     </RowBetween>
@@ -322,7 +326,7 @@ function PairPage({ pairAddress, history }) {
                     </RowBetween>
                     <RowBetween align="baseline">
                       <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
-                        {formattedNum(oneDayFeesUSD, true)}
+                        US{formattedNum(oneDayFeesUSD, true)}
                       </TYPE.main>
                       <TYPE.main fontSize="1rem">{feesChange}</TYPE.main>
                     </RowBetween>
@@ -343,7 +347,7 @@ function PairPage({ pairAddress, history }) {
                         <TokenLogo address={token0?.tokenAddress} />
                         <TYPE.main fontSize={20} lineHeight={1} fontWeight={500}>
                           <RowFixed>
-                            {token0?.totalValueLocked ? formattedNum(token0.totalValueLocked) : ''}{' '}
+                            {totalValueLockedToken0 ? formattedNum(totalValueLockedToken0) : ''}{' '}
                             <FormattedName text={token0?.symbol ?? ''} maxCharacters={8} margin={true} />
                           </RowFixed>
                         </TYPE.main>
@@ -354,7 +358,7 @@ function PairPage({ pairAddress, history }) {
                         <TokenLogo address={token1?.tokenAddress} />
                         <TYPE.main fontSize={20} lineHeight={1} fontWeight={500}>
                           <RowFixed>
-                            {token1?.totalValueLocked ? formattedNum(token1.totalValueLocked) : ''}{' '}
+                            {totalValueLockedToken1 ? formattedNum(totalValueLockedToken1) : ''}{' '}
                             <FormattedName text={token1?.symbol ?? ''} maxCharacters={8} margin={true} />
                           </RowFixed>
                         </TYPE.main>
@@ -385,7 +389,7 @@ function PairPage({ pairAddress, history }) {
                         <AutoRow gap={'4px'}>
                           <TokenLogo address={token0?.tokenAddress} />
                           <TYPE.main fontSize={20} lineHeight={1} fontWeight={500}>
-                            <RowFixed>{token0 && token1 ? `1 ${formattedSymbol0} = ${token0Rate} ${formattedSymbol1}` : '-'}</RowFixed>
+                            <RowFixed>{token0 && token1 ? `1 ${formattedSymbol0} = ${formattedNum(token1Price)} ${formattedSymbol1}` : '-'}</RowFixed>
                           </TYPE.main>
                         </AutoRow>
                       </FixedPanel>
@@ -395,7 +399,7 @@ function PairPage({ pairAddress, history }) {
                         <AutoRow gap={'4px'}>
                           <TokenLogo address={token1?.tokenAddress} />
                           <TYPE.main fontSize={20} lineHeight={1} fontWeight={500}>
-                            <RowFixed>{token0 && token1 ? `1 ${formattedSymbol1} = ${token1Rate} ${formattedSymbol0}` : '-'}</RowFixed>
+                            <RowFixed>{token0 && token1 ? `1 ${formattedSymbol1} = ${formattedNum(token0Price)} ${formattedSymbol0}` : '-'}</RowFixed>
                           </TYPE.main>
                         </AutoRow>
                       </FixedPanel>
