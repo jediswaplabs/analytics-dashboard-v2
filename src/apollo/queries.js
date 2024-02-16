@@ -42,6 +42,10 @@ const PoolFields = `
     untrackedVolumeUSD
     token0Price
     token1Price
+    totalValueLockedToken0
+    totalValueLockedToken1
+    token0Price
+    token1Price
     fee
   }
 `
