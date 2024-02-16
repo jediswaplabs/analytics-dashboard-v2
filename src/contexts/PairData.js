@@ -203,8 +203,7 @@ function parseData(data, oneDayData, twoDayData, oneWeekData) {
 
   // set liquidity properties
   data.trackedReserveUSD = data.totalValueLockedUSD
-  // data.trackedReserveUSD = data.totalValueLockedETH * ethPrice //??
-  data.liquidityChangeUSD = getPercentChange(data.reserveUSD, oneDayData?.reserveUSD)
+  data.liquidityChangeUSD = getPercentChange(oneDayData.totalValueLockedUSD, oneDayData.totalValueLockedUSDFirst)
 
   // format if pair hasnt existed for a day or a week
   // if (!oneDayData && data && data.createdAtBlockNumber > oneDayBlock) {
