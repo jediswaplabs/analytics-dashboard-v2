@@ -62,7 +62,7 @@ export const GLOBAL_DATA = () => {
 }
 export const HISTORICAL_GLOBAL_DATA = () => {
   const queryString = ` query jediswapFactories {
-      factoriesDayData(orderBy: "dayId", orderByDirection: "desc") {
+      factoriesDayData(first: 2, orderBy: "dayId", orderByDirection: "desc") {
         totalValueLockedUSD
         volumeUSD
         feesUSD
