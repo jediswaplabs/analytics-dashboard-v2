@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import Row, { AutoRow, RowFixed } from '../Row'
 import TokenLogo from '../TokenLogo'
-import { Search as SearchIcon, X } from 'react-feather'
+import { Divide, Search as SearchIcon, Star, X } from 'react-feather'
 import { BasicLink, CustomLink } from '../Link'
 
 import { useAllTokenData, useTokenData } from '../../contexts/TokenData'
@@ -19,6 +19,10 @@ import { updateNameData } from '../../utils/data'
 import { useWhitelistedTokens } from '../../contexts/Application'
 import FeeBadge from '../FeeBadge'
 import { Flex } from 'rebass'
+import { formattedNum, formattedPercent } from '../../utils'
+import { Divider, Hover, StyledIcon } from '../index'
+import { useSavedPairs, useSavedTokens } from '../../contexts/LocalStorage'
+import Column from '../Column'
 
 const Container = styled.div`
   height: 48px;
@@ -117,16 +121,16 @@ const KeyShortCut = styled.div`
 const Menu = styled.div`
   display: flex;
   flex-direction: column;
+  gap: 20px;
   width: 100%;
   max-height: 540px;
   z-index: 9999;
   overflow: auto;
   padding: 32px;
   //padding-bottom: 20px;
-  background: ${({ theme }) => theme.bg7};
-  border-bottom-right-radius: 4px;
-  border-bottom-left-radius: 4px;
-  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.04), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04), 0px 24px 32px rgba(0, 0, 0, 0.04);
+  border-radius: 8px;
+  border: 2px solid #7e3ee4;
+  background: #141451;
   display: ${({ hide }) => hide && 'none'};
 `
 
@@ -143,7 +147,8 @@ const MenuItem = styled(Row)`
 `
 
 const Heading = styled(Row)`
-  padding: 1rem;
+  //padding: 1rem;
+  font-size: 12px;
   display: ${({ hide = false }) => hide && 'none'};
 `
 
@@ -158,66 +163,106 @@ const Blue = styled.span`
   }
 `
 
-const TableWrapper = styled.div``
+const TabsContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+`
+const TabItem = styled.button`
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 4px;
+  border: none;
+  color: #50d5ff;
+  background: none;
+  cursor: pointer;
+  min-width: 140px;
+  padding: 0 12px;
+  height: 32px;
+
+  ${(props) =>
+    props.isActive &&
+    css`
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    `}
+`
+
+const TableWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+`
+const TableRowsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+`
 
 const DashGrid = styled.div`
   display: grid;
   grid-template-columns: 1.5fr 1fr 1fr 1fr;
   grid-template-areas: 'name liquidity volume price';
 
-  // display: grid;
-  // grid-gap: 1em;
-  // grid-template-columns: 100px 1fr 1fr;
-  // grid-template-areas: 'name liq vol';
-  // padding: 0 1.125rem;
-  // //
-  // // opacity: ${({ fade }) => (fade ? '0.6' : '1')};
-  // //
-  // // > * {
-  // //   justify-content: flex-end;
-  // //
-  // //   :first-child {
-  // //     justify-content: flex-start;
-  // //     text-align: left;
-  // //     width: 20px;
-  // //   }
-  // // }
-  // //
-  // // @media screen and (min-width: 740px) {
-  // //   padding: 0 1.125rem;
-  // //   grid-template-columns: 1.7fr 1fr 1fr};
-  // //   grid-template-areas: ' name liq vol pool ';
-  // // }
-  // //
-  // // @media screen and (min-width: 1080px) {
-  // //   padding: 0 1.125rem;
-  // //   grid-template-columns: 1.7fr 1fr 1fr 1fr 1fr 1fr;
-  // //   grid-template-areas: ' name liq vol volWeek fees apy';
-  // // }
-  // //
-  // // @media screen and (min-width: 1200px) {
-  // //   grid-template-columns: 1.7fr 1fr 1fr 1fr 1fr 1fr;
-  // //   grid-template-areas: ' name liq vol volWeek fees apy';
-  // // }
+  @media screen and (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
 `
+
+const DataText = styled(Flex)`
+  align-items: center;
+  text-align: center;
+  color: ${({ theme }) => theme.text1} !important;
+  font-size: 16px;
+  & > * {
+    font-size: 16px;
+  }
+
+  @media screen and (max-width: 600px) {
+    font-size: 12px;
+  }
+`
+
+const tabsLookup = {
+  search: 'search',
+  watchlist: 'watchlist',
+}
 
 export const Search = ({ small = false }) => {
   let allTokens = useAllTokensInJediswap()
   const allTokenData = useAllTokenData()
-
+  const [savedPairs, addPair, removePair] = useSavedPairs()
+  const savedPairsKeys = savedPairs ? Object.keys(savedPairs).filter((k) => !!savedPairs[k]) : []
+  const [savedTokens, addToken, removeToken] = useSavedTokens()
+  const savedTokensKeys = savedTokens ? Object.keys(savedTokens).filter((k) => !!savedTokens[k]) : []
   let allPairs = useAllPairsInJediswap()
   const allPairData = useAllPairData()
 
+  const allSavedPairsData =
+    savedPairsKeys
+      ?.map((poolAddress) => {
+        return allPairData[poolAddress] ?? null
+      })
+      .filter(Boolean) ?? []
+
+  const allSavedTokensData =
+    savedTokensKeys
+      ?.map((tokenKey) => {
+        return allTokenData[tokenKey] ?? null
+      })
+      .filter(Boolean) ?? []
+  debugger
+
+  const [activeTab, setActiveTab] = useState(tabsLookup.search)
   const [showMenu, toggleMenu] = useState(false)
   const [value, setValue] = useState('')
   const [, toggleShadow] = useState(false)
   const [, toggleBottomShadow] = useState(false)
 
-  // fetch new data on tokens and pairs if needed
-  // useTokenData(value)
-  // usePairData(value)
-  const whitelistedTokens = useWhitelistedTokens()
+  const whitelistedTokensRaw = useWhitelistedTokens() ?? {}
+  const whitelistedTokens = useMemo(() => whitelistedTokensRaw, [Object.keys(whitelistedTokensRaw).join(',')])
 
+  const below768 = useMedia('(max-width: 768px)')
   const below700 = useMedia('(max-width: 700px)')
   const below470 = useMedia('(max-width: 470px)')
   const below410 = useMedia('(max-width: 410px)')
@@ -232,37 +277,6 @@ export const Search = ({ small = false }) => {
 
   const [searchedTokens, setSearchedTokens] = useState([])
   const [searchedPairs, setSearchedPairs] = useState([])
-
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     try {
-  //       if (value?.length > 0) {
-  //         let tokens = await jediSwapClient.query({
-  //           query: TOKEN_SEARCH,
-  //           variables: {
-  //             value: value ? value.toUpperCase() : '',
-  //             id: value,
-  //           },
-  //         })
-  //
-  //         let pairs = await jediSwapClient.query({
-  //           query: PAIR_SEARCH,
-  //           variables: {
-  //             tokens: tokens.data.asSymbol?.map((t) => t.tokenAddress),
-  //             id: value,
-  //           },
-  //         })
-  //
-  //         setSearchedPairs(updateNameData(pairs.data.as0).concat(updateNameData(pairs.data.as1)).concat(updateNameData(pairs.data.asAddress)))
-  //         const foundTokens = tokens.data.asSymbol.concat(tokens.data.asAddress).concat(tokens.data.asName)
-  //         setSearchedTokens(foundTokens)
-  //       }
-  //     } catch (e) {
-  //       console.log(e)
-  //     }
-  //   }
-  //   fetchData()
-  // }, [value])
 
   function escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
@@ -319,8 +333,9 @@ export const Search = ({ small = false }) => {
     })
 
   const filteredTokenList = useMemo(() => {
-    return uniqueTokens
-      ? uniqueTokens
+    const tokensToProcess = activeTab === tabsLookup.search ? uniqueTokens : allSavedTokensData
+    return tokensToProcess?.length
+      ? tokensToProcess
           .sort((a, b) => {
             const tokenA = allTokenData[a.tokenAddress]
             const tokenB = allTokenData[b.tokenAddress]
@@ -358,8 +373,10 @@ export const Search = ({ small = false }) => {
   }, [allTokenData, uniqueTokens, value, whitelistedTokens])
 
   const filteredPairList = useMemo(() => {
-    return uniquePairs
-      ? uniquePairs
+    const pairsToProcess = activeTab === tabsLookup.search ? uniquePairs : allSavedPairsData
+    debugger
+    return pairsToProcess?.length
+      ? pairsToProcess
           .sort((a, b) => {
             const pairA = allPairData[a.poolAddress]
             const pairB = allPairData[b.poolAddress]
@@ -411,7 +428,7 @@ export const Search = ({ small = false }) => {
             return regexMatches.some((m) => m)
           })
       : []
-  }, [allPairData, uniquePairs, value, whitelistedTokens])
+  }, [allPairData, uniquePairs, activeTab, value, whitelistedTokens])
 
   useEffect(() => {
     if (Object.keys(filteredTokenList).length > 2) {
@@ -444,6 +461,9 @@ export const Search = ({ small = false }) => {
   const menuRef = useRef()
 
   const handleClick = (e) => {
+    if (e.target.closest('svg')) {
+      return
+    }
     if (!(menuRef.current && menuRef.current.contains(e.target)) && !(wrapperRef.current && wrapperRef.current.contains(e.target))) {
       setPairsShown(3)
       setTokensShown(3)
@@ -497,13 +517,130 @@ export const Search = ({ small = false }) => {
     return () => {
       document.removeEventListener('click', handleClick)
     }
-  })
+  }, [])
 
   useEffect(() => {
     if (showMenu && wrapperRef.current) {
       wrapperRef.current.focus()
     }
   }, [showMenu])
+
+  const PoolsListItem = ({ pairData, index }) => {
+    if (!(pairData && pairData.token0 && pairData.token1)) {
+      return null
+    }
+
+    const feePercent = (pairData.fee ? parseFloat(pairData.fee) / 10000 : 0) + '%'
+    const feeTier = pairData.fee / 10 ** 6
+    const liquidity = formattedNum(!!pairData.trackedReserveUSD ? pairData.trackedReserveUSD : pairData.reserveUSD, true)
+    const volume = formattedNum(pairData.oneDayVolumeUSD ? pairData.oneDayVolumeUSD : pairData.oneDayVolumeUntracked, true)
+    const fees = formattedNum(pairData.oneDayVolumeUSD ? pairData.oneDayVolumeUSD * feeTier : pairData.oneDayVolumeUntracked * feeTier, true)
+
+    return (
+      <DashGrid>
+        <DataText area="name" fontWeight="500">
+          <Row>
+            <DoubleTokenLogo
+              size={below700 ? 16 : 20}
+              a0={pairData.token0.tokenAddress}
+              a1={pairData.token1.tokenAddress}
+              s0={pairData.token0.symbol}
+              s1={pairData.token1.symbol}
+              margin
+            />
+            <AutoRow gap={'4px'} style={{ whiteSpace: 'nowrap', flexWrap: 'nowrap' }}>
+              <CustomLink to={'/pool/' + pairData.poolAddress} style={{ fontSize: below768 ? '14px' : '16px' }}>
+                <FormattedName
+                  text={pairData.token0.symbol + '-' + pairData.token1.symbol}
+                  maxCharacters={below700 ? 8 : 16}
+                  adjustSize={true}
+                  link={true}
+                />
+              </CustomLink>
+              <FeeBadge>{feePercent}</FeeBadge>
+              <Hover
+                onClick={() =>
+                  savedPairs[pairData.poolAddress]
+                    ? removePair(pairData.poolAddress)
+                    : addPair(
+                        pairData.poolAddress,
+                        pairData.token0.tokenAddress,
+                        pairData.token1.tokenAddress,
+                        pairData.token0.symbol,
+                        pairData.token1.symbol
+                      )
+                }
+              >
+                <StyledIcon style={{ display: 'flex' }}>
+                  <Star fill={savedPairs[pairData.poolAddress] ? '#fff' : 'transparent'} width={20} height={20} />
+                </StyledIcon>
+              </Hover>
+            </AutoRow>
+          </Row>
+        </DataText>
+        {!below768 && (
+          <>
+            <DataText area="liquidity" justifyContent="flex-end">
+              {liquidity}
+            </DataText>
+            <DataText area="volume" justifyContent="flex-end">
+              {volume}
+            </DataText>
+            <DataText area="price" color="text" fontWeight="500" justifyContent="flex-end">
+              {fees}
+            </DataText>
+          </>
+        )}
+      </DashGrid>
+    )
+  }
+
+  const TokensListItem = ({ tokenData }) => {
+    if (!tokenData) {
+      return null
+    }
+    const liquidity = formattedNum(tokenData.totalLiquidityUSD, true)
+    const volume = formattedNum(tokenData.oneDayVolumeUSD, true)
+    const price = formattedNum(tokenData.priceUSD, true)
+
+    return (
+      <DashGrid>
+        <DataText area="name" fontWeight="500">
+          <Row>
+            <TokenLogo address={tokenData.tokenAddress} symbol={tokenData.symbol} margin />
+            <AutoRow gap={'4px'} style={{ whiteSpace: 'nowrap', flexWrap: 'nowrap' }}>
+              <CustomLink to={'/token/' + tokenData.tokenAddress} style={{ fontSize: '16px' }}>
+                <FormattedName text={tokenData.symbol} maxCharacters={below700 ? 8 : 16} adjustSize={true} link={true} />
+              </CustomLink>
+
+              <Hover
+                onClick={() =>
+                  savedTokens[tokenData.tokenAddress] ? removeToken(tokenData.tokenAddress) : addToken(tokenData.tokenAddress, tokenData.symbol)
+                }
+              >
+                <StyledIcon style={{ display: 'flex' }}>
+                  <Star fill={savedTokens[tokenData.tokenAddress] ? '#fff' : 'transparent'} width={20} height={20} />
+                </StyledIcon>
+              </Hover>
+            </AutoRow>
+          </Row>
+        </DataText>
+        {!below768 && (
+          <>
+            <DataText area="liquidity" justifyContent="flex-end">
+              {liquidity}
+            </DataText>
+            <DataText area="volume" justifyContent="flex-end">
+              {volume}
+            </DataText>
+            <DataText area="price" color="text" fontWeight="500" justifyContent="flex-end">
+              {price}
+            </DataText>
+          </>
+        )}
+      </DashGrid>
+    )
+  }
 
   return (
     <Container small={small}>
@@ -536,96 +673,111 @@ export const Search = ({ small = false }) => {
         />
         {!showMenu ? <KeyShortCut>/</KeyShortCut> : <CloseIcon onClick={() => toggleMenu(false)} />}
       </Wrapper>
-      <Menu hide={showMenu} ref={menuRef}>
+      <Menu hide={!showMenu} ref={menuRef}>
         <TableWrapper>
+          <TabsContainer>
+            <TabItem isActive={activeTab === tabsLookup.search} onClick={() => setActiveTab(tabsLookup.search)}>
+              Search
+            </TabItem>
+            <TabItem isActive={activeTab === tabsLookup.watchlist} onClick={() => setActiveTab(tabsLookup.watchlist)}>
+              Watchlist
+            </TabItem>
+          </TabsContainer>
           <DashGrid>
             <Flex alignItems="center" justifyContent="flex-start">
               <TYPE.main area="name" fontSize={'16px'}>
                 All tokens
               </TYPE.main>
             </Flex>
-            <Flex alignItems="center" justifyContent="flex-start">
-              <TYPE.main area="liquidity">Liquidity</TYPE.main>
-            </Flex>
-            <Flex alignItems="center" justifyContent="flex-start">
-              <TYPE.main area="volume">Volume (24H)</TYPE.main>
-            </Flex>
-            <Flex alignItems="center" justifyContent="flex-end">
-              <TYPE.main area="price">Price</TYPE.main>
-            </Flex>
+            {!below768 && (
+              <>
+                <Flex alignItems="center" justifyContent="flex-end">
+                  <TYPE.main area="liquidity">Liquidity</TYPE.main>
+                </Flex>
+                <Flex alignItems="center" justifyContent="flex-end">
+                  <TYPE.main area="volume">Volume (24H)</TYPE.main>
+                </Flex>
+                <Flex alignItems="center" justifyContent="flex-end">
+                  <TYPE.main area="price">Price</TYPE.main>
+                </Flex>
+              </>
+            )}
           </DashGrid>
+          <TableRowsWrapper gap="20px" flexDirection={'column'}>
+            {filteredTokenList && Object.keys(filteredTokenList).length === 0 && (
+              <TYPE.body>{activeTab === tabsLookup.search ? 'No results' : 'Saved tokens will appear here'}</TYPE.body>
+            )}
+            {filteredTokenList &&
+              filteredTokenList.slice(0, tokensShown).map((item, index) => {
+                return (
+                  <div key={index}>
+                    <TokensListItem key={index} tokenData={allTokenData[item.tokenAddress]} />
+                  </div>
+                )
+              })}
+
+            <Heading hide={!(Object.keys(filteredTokenList).length > 3 && Object.keys(filteredTokenList).length >= tokensShown)}>
+              <Blue
+                onClick={() => {
+                  setTokensShown(tokensShown + 5)
+                }}
+              >
+                See more...
+              </Blue>
+            </Heading>
+          </TableRowsWrapper>
         </TableWrapper>
 
-        <Heading>
-          <Gray>Pairs</Gray>
-        </Heading>
-        <div>
-          {filteredPairList && Object.keys(filteredPairList).length === 0 && (
-            <MenuItem>
-              <TYPE.body>No results</TYPE.body>
-            </MenuItem>
-          )}
-          {filteredPairList &&
-            filteredPairList.slice(0, pairsShown).map((pair) => {
-              const feePercent = (pair.fee ? parseFloat(pair.fee) / 10000 : 0) + '%'
+        <Divider />
 
-              return (
-                <BasicLink to={'/pool/' + pair.poolAddress} key={pair.poolAddress} onClick={onDismiss}>
-                  <MenuItem>
-                    <DoubleTokenLogo a0={pair?.token0?.tokenAddress} a1={pair?.token1?.tokenAddress} margin={true} />
-                    <AutoRow gap={'4px'} style={{ whiteSpace: 'nowrap', flexWrap: 'nowrap' }}>
-                      <TYPE.body>{pair.token0.symbol + '-' + pair.token1.symbol} Pair</TYPE.body>
-                      <FeeBadge>{feePercent}</FeeBadge>
-                    </AutoRow>
-                  </MenuItem>
-                </BasicLink>
-              )
-            })}
-          <Heading hide={!(Object.keys(filteredPairList).length > 3 && Object.keys(filteredPairList).length >= pairsShown)}>
-            <Blue
-              onClick={() => {
-                setPairsShown(pairsShown + 5)
-              }}
-            >
-              See more...
-            </Blue>
-          </Heading>
-        </div>
-        <Heading>
-          <Gray>Tokens</Gray>
-        </Heading>
-        <div>
-          {Object.keys(filteredTokenList).length === 0 && (
-            <MenuItem>
-              <TYPE.body>No results</TYPE.body>
-            </MenuItem>
-          )}
-          {filteredTokenList.slice(0, tokensShown).map((token) => {
-            // update displayed names
-            updateNameData({ token0: token })
-            return (
-              <BasicLink to={'/token/' + token.tokenAddress} key={token.tokenAddress} onClick={onDismiss}>
-                <MenuItem>
-                  <RowFixed>
-                    <TokenLogo address={token.tokenAddress} style={{ marginRight: '10px' }} />
-                    <FormattedName text={token.name} maxCharacters={20} style={{ marginRight: '6px' }} />
-                    (<FormattedName text={token.symbol} maxCharacters={6} />)
-                  </RowFixed>
-                </MenuItem>
-              </BasicLink>
-            )
-          })}
+        <TableWrapper>
+          <DashGrid>
+            <Flex alignItems="center" justifyContent="flex-start">
+              <TYPE.main area="name" fontSize={'16px'}>
+                Pools
+              </TYPE.main>
+            </Flex>
+            {!below768 && (
+              <>
+                <Flex alignItems="center" justifyContent="flex-end">
+                  <TYPE.main area="liquidity">Liquidity</TYPE.main>
+                </Flex>
+                <Flex alignItems="center" justifyContent="flex-end">
+                  <TYPE.main area="volume">Volume (24H)</TYPE.main>
+                </Flex>
+                <Flex alignItems="center" justifyContent="flex-end">
+                  <TYPE.main area="price">Fee</TYPE.main>
+                </Flex>
+              </>
+            )}
+          </DashGrid>
+          <TableRowsWrapper gap="20px" flexDirection={'column'}>
+            {filteredPairList && Object.keys(filteredPairList).length === 0 && (
+              <TYPE.body>
+                <TYPE.body>{activeTab === tabsLookup.search ? 'No results' : 'Saved pools will appear here'}</TYPE.body>
+              </TYPE.body>
+            )}
 
-          <Heading hide={!(Object.keys(filteredTokenList).length > 3 && Object.keys(filteredTokenList).length >= tokensShown)}>
-            <Blue
-              onClick={() => {
-                setTokensShown(tokensShown + 5)
-              }}
-            >
-              See more...
-            </Blue>
-          </Heading>
-        </div>
+            {filteredPairList &&
+              filteredPairList.slice(0, pairsShown).map((item, index) => {
+                return (
+                  <div key={index}>
+                    <PoolsListItem key={index} pairData={allPairData[item.poolAddress]} />
+                  </div>
+                )
+              })}
+
+            <Heading hide={!(Object.keys(filteredPairList).length > 3 && Object.keys(filteredPairList).length >= pairsShown)}>
+              <Blue
+                onClick={() => {
+                  setPairsShown(pairsShown + 5)
+                }}
+              >
+                See more...
+              </Blue>
+            </Heading>
+          </TableRowsWrapper>
+        </TableWrapper>
       </Menu>
     </Container>
   )

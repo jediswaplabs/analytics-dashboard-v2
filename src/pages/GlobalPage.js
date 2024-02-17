@@ -30,14 +30,33 @@ const GridRow = styled.div`
   justify-content: space-between;
 `
 
+const PanelWrapper = styled.div`
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: max-content;
+  gap: 12px;
+  display: inline-grid;
+  width: 100%;
+  align-items: start;
+  @media screen and (max-width: 1024px) {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+    > * {
+      /* grid-column: 1 / 4; */
+    }
+
+    > * {
+      &:first-child {
+        width: 100%;
+      }
+    }
+  }
+`
+
 function GlobalPage() {
   // get data for lists and totals
   const allPairs = useAllPairData()
   const allTokens = useAllTokenData()
-  const { totalValueLockedUSD: totalLiquidityUSD, oneDayVolumeUSD, volumeChangeUSD, liquidityChangeUSD } = useGlobalData()
-
-  // breakpoints
-  const below800 = useMedia('(max-width: 800px)')
+  const { totalVolumeUSD, volumeChangeUSD, totalValueLockedUSD, liquidityChangeUSD, totalFeesUSD, feesChangeUSD } = useGlobalData()
 
   // scrolling refs
   useEffect(() => {
@@ -59,42 +78,50 @@ function GlobalPage() {
           <Search />
         </PageSection>
 
-        {/*{below800 && ( // mobile card*/}
-        {/*  <PageSection>*/}
-        {/*    <Box mb={20}>*/}
-        {/*      <Panel>*/}
-        {/*        <Box>*/}
-        {/*          <AutoColumn gap="36px">*/}
-        {/*            <AutoColumn gap="20px">*/}
-        {/*              <RowBetween>*/}
-        {/*                <TYPE.main>Volume (24hrs)</TYPE.main>*/}
-        {/*                <div />*/}
-        {/*              </RowBetween>*/}
-        {/*              <RowBetween align="flex-end">*/}
-        {/*                <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={600}>*/}
-        {/*                  {oneDayVolumeUSD ? formattedNum(oneDayVolumeUSD, true) : '-'}*/}
-        {/*                </TYPE.main>*/}
-        {/*                <TYPE.main fontSize={12}>{volumeChangeUSD ? formattedPercent(volumeChangeUSD) : '-'}</TYPE.main>*/}
-        {/*              </RowBetween>*/}
-        {/*            </AutoColumn>*/}
-        {/*            <AutoColumn gap="20px">*/}
-        {/*              <RowBetween>*/}
-        {/*                <TYPE.main>Total Liquidity</TYPE.main>*/}
-        {/*                <div />*/}
-        {/*              </RowBetween>*/}
-        {/*              <RowBetween align="flex-end">*/}
-        {/*                <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={600}>*/}
-        {/*                  {totalLiquidityUSD ? formattedNum(totalLiquidityUSD, true) : '-'}*/}
-        {/*                </TYPE.main>*/}
-        {/*                <TYPE.main fontSize={12}>{liquidityChangeUSD ? formattedPercent(liquidityChangeUSD) : '-'}</TYPE.main>*/}
-        {/*              </RowBetween>*/}
-        {/*            </AutoColumn>*/}
-        {/*          </AutoColumn>*/}
-        {/*        </Box>*/}
-        {/*      </Panel>*/}
-        {/*    </Box>*/}
-        {/*  </PageSection>*/}
-        {/*)}*/}
+        <PageSection>
+          <PanelWrapper>
+            <Panel>
+              <AutoColumn gap="20px">
+                <RowBetween>
+                  <TYPE.subHeader>Total Liquidity</TYPE.subHeader>
+                </RowBetween>
+                <RowBetween align="baseline">
+                  <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
+                    {formattedNum(totalValueLockedUSD, true)}
+                  </TYPE.main>
+                  <TYPE.main fontSize="1rem">{formattedPercent(liquidityChangeUSD)}</TYPE.main>
+                </RowBetween>
+              </AutoColumn>
+            </Panel>
+            <Panel>
+              <AutoColumn gap="20px">
+                <RowBetween>
+                  <TYPE.subHeader>Volume (24hr)</TYPE.subHeader>
+                  <div />
+                </RowBetween>
+                <RowBetween align="baseline">
+                  <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
+                    {formattedNum(totalVolumeUSD, true)}
+                  </TYPE.main>
+                  <TYPE.main fontSize="1rem">{formattedPercent(volumeChangeUSD)}</TYPE.main>
+                </RowBetween>
+              </AutoColumn>
+            </Panel>
+            <Panel>
+              <AutoColumn gap="20px">
+                <RowBetween>
+                  <TYPE.subHeader>Total fees (24hr)</TYPE.subHeader>
+                </RowBetween>
+                <RowBetween align="baseline">
+                  <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
+                    {formattedNum(totalFeesUSD, true)}
+                  </TYPE.main>
+                  <TYPE.main fontSize="1rem">{formattedPercent(feesChangeUSD)}</TYPE.main>
+                </RowBetween>
+              </AutoColumn>
+            </Panel>
+          </PanelWrapper>
+        </PageSection>
 
         {/*{!below800 && (*/}
         {/*  <PageSection>*/}

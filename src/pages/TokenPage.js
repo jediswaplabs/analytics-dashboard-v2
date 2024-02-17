@@ -252,7 +252,7 @@ function TokenPage({ address, history }) {
                 <RowFixed align="center" style={{ gap: '8px' }}>
                   <Hover onClick={() => (savedTokens[address] ? removeToken(address) : addToken(address, symbol))}>
                     <StyledIcon style={{ display: 'flex' }}>
-                      <Star fill={savedTokens[address] ? '#fff' : ''} />
+                      <Star fill={savedTokens[address] ? '#fff' : 'transparent'} />
                     </StyledIcon>
                   </Hover>
                   {!below600 && actionButtonsMarkup}

@@ -208,17 +208,13 @@ async function getGlobalData() {
     oneDayData = oneDayResult?.data?.factoriesDayData[0]
 
     if (data && oneDayData) {
-      let [oneDayVolumeUSD, volumeChangeUSD] = get2DayPercentChange(data.totalVolumeUSD, oneDayData.volumeUSD)
-
-      // format the total liquidity in USD
+      let [_, volumeChangeUSD] = get2DayPercentChange(data.totalVolumeUSD, oneDayData.volumeUSD)
       const liquidityChangeUSD = getPercentChange(data.totalValueLockedUSD, oneDayData.totalValueLockedUSD)
       const feesChangeUsd = getPercentChange(data.totalFeesUSD, oneDayData.feesUSD)
 
-      // add relevant fields with the calculated amounts
-      data.oneDayVolumeUSD = oneDayVolumeUSD
       data.volumeChangeUSD = volumeChangeUSD
       data.liquidityChangeUSD = liquidityChangeUSD
-      data.feesChangeUsd = feesChangeUsd
+      data.feesChangeUSD = feesChangeUsd
     }
   } catch (e) {
     console.log(e)

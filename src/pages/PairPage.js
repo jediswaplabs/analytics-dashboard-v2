@@ -131,7 +131,7 @@ function PairPage({ pairAddress, history }) {
     totalValueLockedToken0,
     totalValueLockedToken1,
     token0Price,
-    token1Price
+    token1Price,
   } = usePairData(pairAddress)
   useEffect(() => {
     document.querySelector('body').scrollTo(0, 0)
@@ -282,7 +282,7 @@ function PairPage({ pairAddress, history }) {
                     }
                   >
                     <StyledIcon style={{ display: 'flex' }}>
-                      <Star fill={savedPairs[pairAddress] ? '#fff' : ''} />
+                      <Star fill={savedPairs[pairAddress] ? '#fff' : 'transparent'} />
                     </StyledIcon>
                   </Hover>
                   {!below600 && actionButtonsMarkup}
