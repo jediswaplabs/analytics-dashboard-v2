@@ -93,6 +93,8 @@
     "@jediswap/token-lists": "^1.0.0-beta.1",
     "babel-plugin-styled-components": "^2.0.7",
     "lodash": "^4.17.21",
+    "overlayscrollbars": "^2.5.0",
+    "overlayscrollbars-react": "^0.5.4",
     "react-countdown": "^2.3.5",
     "react-hot-keys": "^2.7.3",
     "react-tooltip": "^5.11.1",

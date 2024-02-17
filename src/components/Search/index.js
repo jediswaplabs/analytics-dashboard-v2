@@ -251,7 +251,6 @@ export const Search = ({ small = false }) => {
         return allTokenData[tokenKey] ?? null
       })
       .filter(Boolean) ?? []
-  debugger
 
   const [activeTab, setActiveTab] = useState(tabsLookup.search)
   const [showMenu, toggleMenu] = useState(false)
@@ -374,7 +373,6 @@ export const Search = ({ small = false }) => {
 
   const filteredPairList = useMemo(() => {
     const pairsToProcess = activeTab === tabsLookup.search ? uniquePairs : allSavedPairsData
-    debugger
     return pairsToProcess?.length
       ? pairsToProcess
           .sort((a, b) => {

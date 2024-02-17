@@ -194,6 +194,8 @@ export const GlobalStyle = createGlobalStyle`
     }
   }
 
+
+  .os-host-overflow { overflow: visible !important; }
   
 .three-line-legend {
 	width: 100%;

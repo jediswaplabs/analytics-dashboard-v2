@@ -12,12 +12,12 @@ import Link from '../Link'
 import { useSessionStart } from '../../contexts/Application'
 
 const Wrapper = styled.div`
-  min-height: ${({ isMobile }) => (isMobile ? 'initial' : 'calc(100vh)')};
-  padding: ${({ isMobile }) => (isMobile ? '16px' : 'calc(17px * 1.3) 40px 50px')};
+  height: 100vh;
+  min-height: 510px;
+  padding: 28px 40px 50px;
   position: sticky;
   top: 0px;
   z-index: 9999;
-  padding-top: 28px;
 
   @media screen and (max-width: 800px) {
     grid-template-columns: 1fr;
@@ -27,6 +27,14 @@ const Wrapper = styled.div`
   @media screen and (max-width: 600px) {
     padding: 16px;
   }
+
+  ${(props) =>
+    props.isMobile &&
+    css`
+      height: initial;
+      min-height: initial;
+      padding: 16px;
+    `}
 `
 
 const OptionContent = styled.span`

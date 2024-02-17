@@ -33,14 +33,6 @@ const Option = styled.div`
   }
 `
 
-const AccentText = styled.span`
-  background: linear-gradient(90deg, #4bd4ff 0%, #ef35ff 97.26%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-fill-color: transparent;
-`
-
 export default function Title() {
   const history = useHistory()
   const below1080 = useMedia('(max-width: 1080px)')
@@ -50,7 +42,13 @@ export default function Title() {
       <Flex alignItems="center" style={{ justifyContent: 'space-between' }}>
         <RowFixed>
           <UniIcon id="link" onClick={() => history.push('/')}>
-            <img width={'110px'} style={{ marginLeft: '8px', marginTop: '-4px' }} src={Wordmark} alt="logo" onClick={() => history.push('/')} />
+            <img
+              width={'110px'}
+              style={{ marginLeft: below1080 ? '0' : '8px', marginTop: '-4px' }}
+              src={Wordmark}
+              alt="logo"
+              onClick={() => history.push('/')}
+            />
           </UniIcon>
         </RowFixed>
         {below1080 && (

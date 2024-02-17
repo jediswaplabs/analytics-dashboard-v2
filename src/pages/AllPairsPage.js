@@ -5,10 +5,12 @@ import { TYPE } from '../Theme'
 import Panel from '../components/Panel'
 import { useAllPairData, usePairDataForList } from '../contexts/PairData'
 import PairList from '../components/PairList'
-import { PageWrapper, ContentWrapper, PageSection } from '../components'
+import { PageWrapper, ContentWrapper, PageSection, PageHeader } from '../components'
 import Search from '../components/Search'
 import { useSavedPairs } from '../contexts/LocalStorage'
 import { useTokenDataForList } from '../contexts/TokenData'
+import { OverlayScrollbarsComponent } from 'overlayscrollbars-react'
+import PageLayout from '../layouts/PageLayout'
 
 function AllPairsPage() {
   const allPoolData = useAllPairData()
@@ -25,38 +27,29 @@ function AllPairsPage() {
   }, [])
 
   return (
-    <PageWrapper>
-      <ContentWrapper>
-        <TYPE.largeHeader lineHeight={0.7}>Pools</TYPE.largeHeader>
+    <PageLayout pageTitle={'Pools'}>
+      <PageSection>
+        <Search />
+      </PageSection>
 
-        <PageSection>
-          <Search />
-        </PageSection>
+      <PageSection>
+        <TYPE.main fontSize={'1rem'} style={{ whiteSpace: 'nowrap' }}>
+          Your Watchlist
+        </TYPE.main>
+        <Panel style={{ padding: '0' }}>
+          <PairList pairs={formattedSavedPoolsData} disbaleLinks={true} waitForData={false} noPairsPlaceholderText={'Saved pools will appear here'} />
+        </Panel>
+      </PageSection>
 
-        <PageSection>
-          <TYPE.main fontSize={'1rem'} style={{ whiteSpace: 'nowrap' }}>
-            Your Watchlist
-          </TYPE.main>
-          <Panel style={{ padding: '0' }}>
-            <PairList
-              pairs={formattedSavedPoolsData}
-              disbaleLinks={true}
-              waitForData={false}
-              noPairsPlaceholderText={'Saved pools will appear here'}
-            />
-          </Panel>
-        </PageSection>
-
-        <PageSection>
-          <TYPE.main fontSize={'1rem'} style={{ whiteSpace: 'nowrap' }}>
-            All Pools
-          </TYPE.main>
-          <Panel style={{ padding: '0' }}>
-            <PairList pairs={allPoolData} disbaleLinks={true} />
-          </Panel>
-        </PageSection>
-      </ContentWrapper>
-    </PageWrapper>
+      <PageSection>
+        <TYPE.main fontSize={'1rem'} style={{ whiteSpace: 'nowrap' }}>
+          All Pools
+        </TYPE.main>
+        <Panel style={{ padding: '0' }}>
+          <PairList pairs={allPoolData} disbaleLinks={true} />
+        </Panel>
+      </PageSection>
+    </PageLayout>
   )
 }
 

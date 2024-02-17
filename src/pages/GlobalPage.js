@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { withRouter } from 'react-router-dom'
-import { Box } from 'rebass'
 import styled from 'styled-components'
 
 import { RowBetween } from '../components/Row'
@@ -12,23 +11,14 @@ import Search from '../components/Search'
 
 import { useGlobalData } from '../contexts/GlobalData'
 import { useAllPairData } from '../contexts/PairData'
-import { useMedia } from 'react-use'
 import Panel from '../components/Panel'
 import { useAllTokenData } from '../contexts/TokenData'
 import { formattedNum, formattedPercent } from '../utils'
 import { TYPE } from '../Theme'
 import { CustomLink } from '../components/Link'
 
-import { PageWrapper, ContentWrapper, PageSection } from '../components'
-
-const GridRow = styled.div`
-  display: grid;
-  width: 100%;
-  grid-template-columns: 1fr 1fr;
-  column-gap: 6px;
-  align-items: start;
-  justify-content: space-between;
-`
+import { PageSection } from '../components'
+import PageLayout from '../layouts/PageLayout'
 
 const PanelWrapper = styled.div`
   grid-template-columns: repeat(3, 1fr);
@@ -70,104 +60,100 @@ function GlobalPage() {
   const [useTracked] = useState(true)
 
   return (
-    <PageWrapper>
-      <ContentWrapper>
-        <TYPE.largeHeader lineHeight={0.7}>Overview</TYPE.largeHeader>
+    <PageLayout pageTitle={'Overview'}>
+      <PageSection>
+        <Search />
+      </PageSection>
 
-        <PageSection>
-          <Search />
-        </PageSection>
+      <PageSection>
+        <PanelWrapper>
+          <Panel>
+            <AutoColumn gap="20px">
+              <RowBetween>
+                <TYPE.subHeader>Total Liquidity</TYPE.subHeader>
+              </RowBetween>
+              <RowBetween align="baseline">
+                <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
+                  {formattedNum(totalValueLockedUSD, true)}
+                </TYPE.main>
+                <TYPE.main fontSize="1rem">{formattedPercent(liquidityChangeUSD)}</TYPE.main>
+              </RowBetween>
+            </AutoColumn>
+          </Panel>
+          <Panel>
+            <AutoColumn gap="20px">
+              <RowBetween>
+                <TYPE.subHeader>Volume (24hr)</TYPE.subHeader>
+                <div />
+              </RowBetween>
+              <RowBetween align="baseline">
+                <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
+                  {formattedNum(totalVolumeUSD, true)}
+                </TYPE.main>
+                <TYPE.main fontSize="1rem">{formattedPercent(volumeChangeUSD)}</TYPE.main>
+              </RowBetween>
+            </AutoColumn>
+          </Panel>
+          <Panel>
+            <AutoColumn gap="20px">
+              <RowBetween>
+                <TYPE.subHeader>Total fees (24hr)</TYPE.subHeader>
+              </RowBetween>
+              <RowBetween align="baseline">
+                <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
+                  {formattedNum(totalFeesUSD, true)}
+                </TYPE.main>
+                <TYPE.main fontSize="1rem">{formattedPercent(feesChangeUSD)}</TYPE.main>
+              </RowBetween>
+            </AutoColumn>
+          </Panel>
+        </PanelWrapper>
+      </PageSection>
 
-        <PageSection>
-          <PanelWrapper>
-            <Panel>
-              <AutoColumn gap="20px">
-                <RowBetween>
-                  <TYPE.subHeader>Total Liquidity</TYPE.subHeader>
-                </RowBetween>
-                <RowBetween align="baseline">
-                  <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
-                    {formattedNum(totalValueLockedUSD, true)}
-                  </TYPE.main>
-                  <TYPE.main fontSize="1rem">{formattedPercent(liquidityChangeUSD)}</TYPE.main>
-                </RowBetween>
-              </AutoColumn>
-            </Panel>
-            <Panel>
-              <AutoColumn gap="20px">
-                <RowBetween>
-                  <TYPE.subHeader>Volume (24hr)</TYPE.subHeader>
-                  <div />
-                </RowBetween>
-                <RowBetween align="baseline">
-                  <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
-                    {formattedNum(totalVolumeUSD, true)}
-                  </TYPE.main>
-                  <TYPE.main fontSize="1rem">{formattedPercent(volumeChangeUSD)}</TYPE.main>
-                </RowBetween>
-              </AutoColumn>
-            </Panel>
-            <Panel>
-              <AutoColumn gap="20px">
-                <RowBetween>
-                  <TYPE.subHeader>Total fees (24hr)</TYPE.subHeader>
-                </RowBetween>
-                <RowBetween align="baseline">
-                  <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
-                    {formattedNum(totalFeesUSD, true)}
-                  </TYPE.main>
-                  <TYPE.main fontSize="1rem">{formattedPercent(feesChangeUSD)}</TYPE.main>
-                </RowBetween>
-              </AutoColumn>
-            </Panel>
-          </PanelWrapper>
-        </PageSection>
+      <PageSection>
+        <TYPE.main fontSize={'1rem'} style={{ whiteSpace: 'nowrap' }}>
+          Top Pools
+        </TYPE.main>
+        <Panel style={{ padding: '0' }}>
+          <PairList pairs={allPairs} useTracked={useTracked} />
+        </Panel>
+      </PageSection>
 
-        {/*{!below800 && (*/}
-        {/*  <PageSection>*/}
-        {/*    <GridRow>*/}
-        {/*      <Panel style={{ height: '100%', minHeight: '300px' }}>*/}
-        {/*        <GlobalChart display="liquidity" />*/}
-        {/*      </Panel>*/}
-        {/*      <Panel style={{ height: '100%' }}>*/}
-        {/*        <GlobalChart display="volume" />*/}
-        {/*      </Panel>*/}
-        {/*    </GridRow>*/}
-        {/*  </PageSection>*/}
-        {/*)}*/}
-
-        {/*{below800 && (*/}
-        {/*  <PageSection>*/}
-        {/*    <AutoColumn style={{ marginTop: '6px' }} gap="24px">*/}
-        {/*      <Panel style={{ height: '100%', minHeight: '300px' }}>*/}
-        {/*        <GlobalChart display="liquidity" />*/}
-        {/*      </Panel>*/}
-        {/*    </AutoColumn>*/}
-        {/*  </PageSection>*/}
-        {/*)}*/}
-
-        <PageSection>
+      <PageSection>
+        <RowBetween>
           <TYPE.main fontSize={'1rem'} style={{ whiteSpace: 'nowrap' }}>
-            Top Pools
+            Top Tokens
           </TYPE.main>
-          <Panel style={{ padding: '0' }}>
-            <PairList pairs={allPairs} useTracked={useTracked} />
-          </Panel>
-        </PageSection>
+          <CustomLink to={'/tokens'}>See All</CustomLink>
+        </RowBetween>
+        <Panel style={{ padding: '0' }}>
+          <TopTokenList tokens={allTokens} />
+        </Panel>
+      </PageSection>
 
-        <PageSection>
-          <RowBetween>
-            <TYPE.main fontSize={'1rem'} style={{ whiteSpace: 'nowrap' }}>
-              Top Tokens
-            </TYPE.main>
-            <CustomLink to={'/tokens'}>See All</CustomLink>
-          </RowBetween>
-          <Panel style={{ padding: '0' }}>
-            <TopTokenList tokens={allTokens} />
-          </Panel>
-        </PageSection>
-      </ContentWrapper>
-    </PageWrapper>
+      {/*{!below800 && (*/}
+      {/*  <PageSection>*/}
+      {/*    <GridRow>*/}
+      {/*      <Panel style={{ height: '100%', minHeight: '300px' }}>*/}
+      {/*        <GlobalChart display="liquidity" />*/}
+      {/*      </Panel>*/}
+      {/*      <Panel style={{ height: '100%' }}>*/}
+      {/*        <GlobalChart display="volume" />*/}
+      {/*      </Panel>*/}
+      {/*    </GridRow>*/}
+      {/*  </PageSection>*/}
+      {/*)}*/}
+
+      {/*{below800 && (*/}
+      {/*  <PageSection>*/}
+      {/*    <AutoColumn style={{ marginTop: '6px' }} gap="24px">*/}
+      {/*      <Panel style={{ height: '100%', minHeight: '300px' }}>*/}
+      {/*        <GlobalChart display="liquidity" />*/}
+      {/*      </Panel>*/}
+      {/*    </AutoColumn>*/}
+      {/*  </PageSection>*/}
+      {/*)}*/}
+    </PageLayout>
   )
 }
 
