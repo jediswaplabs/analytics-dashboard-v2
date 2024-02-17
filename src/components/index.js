@@ -86,11 +86,13 @@ export const PageWrapper = styled.div`
   flex-direction: column;
   height: 100%;
   padding: 26px 2rem 26px;
+  padding-bottom: 0;
   max-width: calc(1440px + 2rem);
 
   @media screen and (max-width: 1080px) {
     padding-left: 16px;
     padding-right: 16px;
+    padding-top: 12px;
   }
 `
 
@@ -130,6 +132,7 @@ export const ContentWrapper = styled.div`
   @media screen and (max-width: 1080px) {
     grid-gap: 16px;
   }
+  padding-bottom: 2rem;
 `
 
 export const FullWrapper = styled.div`
