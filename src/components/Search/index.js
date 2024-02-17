@@ -132,6 +132,10 @@ const Menu = styled.div`
   border: 2px solid #7e3ee4;
   background: #141451;
   display: ${({ hide }) => hide && 'none'};
+
+  @media screen and (max-width: 640px) {
+    padding: 12px;
+  }
 `
 
 const MenuItem = styled(Row)`
@@ -251,7 +255,6 @@ export const Search = ({ small = false }) => {
         return allTokenData[tokenKey] ?? null
       })
       .filter(Boolean) ?? []
-  debugger
 
   const [activeTab, setActiveTab] = useState(tabsLookup.search)
   const [showMenu, toggleMenu] = useState(false)
@@ -374,7 +377,6 @@ export const Search = ({ small = false }) => {
 
   const filteredPairList = useMemo(() => {
     const pairsToProcess = activeTab === tabsLookup.search ? uniquePairs : allSavedPairsData
-    debugger
     return pairsToProcess?.length
       ? pairsToProcess
           .sort((a, b) => {

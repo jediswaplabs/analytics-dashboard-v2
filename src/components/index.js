@@ -81,53 +81,31 @@ const EmptyCard = styled.div`
   height: ${({ height }) => height && height};
 `
 
-export const SideBar = styled.span`
-  display: grid;
-  grid-gap: 24px;
-  position: sticky;
-  top: 4rem;
-`
-
-export const SubNav = styled.ul`
-  list-style: none;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: flex-start;
-  padding: 0;
-  margin-bottom: 2rem;
-`
-export const SubNavEl = styled.li`
-  list-style: none;
-  display: flex;
-  padding-bottom: 0.5rem;
-  margin-right: 1rem;
-  font-weight: ${({ isActive }) => (isActive ? 600 : 500)};
-
-  border-bottom: 1px solid rgba(0, 0, 0, 0);
-
-  :hover {
-    cursor: pointer;
-    border-bottom: 1px solid ${({ theme }) => theme.bg3};
-  }
-`
-
 export const PageWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  padding-top: 26px;
-  padding-bottom: 64px;
-  ${
-    '' /* box-shadow: rgb(255 255 255 / 50%) 0px 30.0211px 43.1072px -27.7118px inset,
-    rgb(255 255 255) 0px 5.38841px 8.46749px -3.07909px inset,
-    rgb(96 68 145 / 30%) 0px -63.1213px 52.3445px -49.2654px inset,
-    rgb(202 172 255 / 30%) 0px 75.4377px 76.9772px -36.9491px inset,
-    rgb(154 146 210 / 30%) 0px 3.07909px 13.8559px inset, rgb(227 222 255 / 20%) 0px 0.769772px 30.7909px inset, */
+  height: 100%;
+  padding: 26px 2rem 26px;
+  padding-bottom: 0;
+  max-width: calc(1440px + 2rem);
+
+  @media screen and (max-width: 1080px) {
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 12px;
   }
+`
+
+export const PageHeader = styled.div`
+  margin-bottom: 32px;
+  display: flex;
+  gap: 32px;
+  flex-direction: column;
+  width: 100%;
+
   @media screen and (max-width: 600px) {
-    & > * {
-      padding: 0 12px;
-    }
+    margin-bottom: 16px;
+    gap: 16px;
   }
 `
 
@@ -143,36 +121,18 @@ export const ContentWrapper = styled.div`
   align-items: start;
   grid-template-columns: 1fr;
   grid-gap: 32px;
-  max-width: calc(1440px + 2rem);
+  //max-width: calc(1440px + 2rem);
+  //padding-right: 1rem;
   width: 100%;
   margin: 0 auto;
-  padding: 0 2rem;
   box-sizing: border-box;
   @media screen and (max-width: 1180px) {
     grid-template-columns: 1fr;
-    padding: 0 1rem;
   }
   @media screen and (max-width: 1080px) {
     grid-gap: 16px;
   }
-`
-
-export const ContentWrapperLarge = styled.div`
-  display: grid;
-  justify-content: start;
-  align-items: start;
-  grid-template-columns: 1fr;
-  grid-gap: 24px;
-  padding: 0 2rem;
-  margin: 0 auto;
-  box-sizing: border-box;
-  max-width: 1440px;
-  width: 100%;
-
-  @media screen and (max-width: 1282px) {
-    grid-template-columns: 1fr;
-    padding: 0 1rem;
-  }
+  padding-bottom: 2rem;
 `
 
 export const FullWrapper = styled.div`
