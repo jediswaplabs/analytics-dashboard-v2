@@ -205,7 +205,7 @@ async function getGlobalData() {
       query: HISTORICAL_GLOBAL_DATA(),
       fetchPolicy: 'cache-first',
     })
-    oneDayData = oneDayResult?.data?.factoriesDayData[0]
+    oneDayData = oneDayResult?.data?.factoriesDayData?.[1]
 
     if (data && oneDayData) {
       let [_, volumeChangeUSD] = get2DayPercentChange(data.totalVolumeUSD, oneDayData.volumeUSD)
