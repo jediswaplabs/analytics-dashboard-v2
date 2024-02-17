@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom'
 import { Text } from 'rebass'
 import styled from 'styled-components'
 import Link from '../components/Link'
-import Panel from '../components/Panel'
+import Panel, { PanelTopLight } from '../components/Panel'
 import TokenLogo from '../components/TokenLogo'
 import PairList from '../components/PairList'
 import Loader from '../components/LocalLoader'
@@ -264,7 +264,7 @@ function TokenPage({ address, history }) {
 
             <AutoColumn style={{ gap: '32px' }}>
               <PanelWrapper>
-                <Panel>
+                <PanelTopLight>
                   <AutoColumn gap="20px">
                     <RowBetween>
                       <TYPE.subHeader>Total Liquidity</TYPE.subHeader>
@@ -276,8 +276,8 @@ function TokenPage({ address, history }) {
                       <TYPE.main fontSize="1rem">{liquidityChange}</TYPE.main>
                     </RowBetween>
                   </AutoColumn>
-                </Panel>
-                <Panel>
+                </PanelTopLight>
+                <PanelTopLight>
                   <AutoColumn gap="20px">
                     <RowBetween>
                       <TYPE.subHeader>Volume (24hr)</TYPE.subHeader>
@@ -290,8 +290,8 @@ function TokenPage({ address, history }) {
                       <TYPE.main fontSize="1rem">{volumeChange}</TYPE.main>
                     </RowBetween>
                   </AutoColumn>
-                </Panel>
-                <Panel>
+                </PanelTopLight>
+                <PanelTopLight>
                   <AutoColumn gap="20px">
                     <RowBetween>
                       <TYPE.subHeader>Total fees (24hr)</TYPE.subHeader>
@@ -304,7 +304,7 @@ function TokenPage({ address, history }) {
                       <TYPE.main fontSize="1rem">{feesChange}</TYPE.main>
                     </RowBetween>
                   </AutoColumn>
-                </Panel>
+                </PanelTopLight>
               </PanelWrapper>
 
               <PageSection>
