@@ -29,8 +29,7 @@ const PageButtons = styled.div`
 `
 
 const Arrow = styled.div`
-  color: ${({ theme }) => theme.jediGrey};
-  opacity: ${(props) => (props.faded ? 0.3 : 1)};
+  color: ${({ theme, faded }) => faded ? theme.jediGrey : theme.paginationTest};
   padding: 0 20px;
   user-select: none;
   font-size: 30px;
@@ -122,11 +121,11 @@ const FIELD_TO_VALUE = (field, useTracked) => {
     case SORT_FIELD.LIQ:
       return useTracked ? 'trackedReserveUSD' : 'reserveUSD'
     case SORT_FIELD.VOL:
-      return useTracked ? 'oneDayVolumeUSD' : 'oneDayVolumeUntracked'
+      return useTracked ? 'oneDayVolumeUSD' : 'oneDayVolumeUSD'
     case SORT_FIELD.VOL_7DAYS:
-      return useTracked ? 'oneWeekVolumeUSD' : 'oneWeekVolumeUntracked'
+      return useTracked ? 'oneWeekVolumeUSD' : 'oneWeekVolumeUSD'
     case SORT_FIELD.FEES:
-      return useTracked ? 'oneDayVolumeUSD' : 'oneDayVolumeUntracked'
+      return useTracked ? 'oneDayFeesUSD' : 'oneDayFeesUSD'
     default:
       return 'trackedReserveUSD'
   }
@@ -135,7 +134,8 @@ const FIELD_TO_VALUE = (field, useTracked) => {
 const formatDataText = (value, trackedValue, supressWarning = false, textAlign = 'right') => {
   const showUntracked = value !== '$0' && !trackedValue & !supressWarning
   return (
-    <AutoColumn gap="2px" style={{ opacity: showUntracked ? '0.7' : '1' }}>
+    // <AutoColumn gap="2px" style={{ opacity: showUntracked ? '0.7' : '1' }}>
+    <AutoColumn gap="2px">
       <div style={{ textAlign }}>{value}</div>
       <TYPE.light fontSize={'9px'} style={{ textAlign: 'right' }}>
         {/* {showUntracked ? 'untracked' : '  '} */}
@@ -203,16 +203,15 @@ function PairList({
 
       const volume = formattedNum(pairData.oneDayVolumeUSD ? pairData.oneDayVolumeUSD : pairData.oneDayVolumeUntracked, true)
 
-      const feeRatio24H =
-        ((pairData.oneDayVolumeUSD ? pairData.oneDayVolumeUSD : pairData.oneDayVolumeUntracked) * feeTier) /
-        (pairData.oneDayVolumeUSD ? pairData.trackedReserveUSD : pairData.reserveUSD)
+      const fees = formattedNum(pairData.oneDayFeesUSD, true)
+
+      const feeRatio24H = pairData.oneDayFeesUSD / pairData.trackedReserveUSD
       const apy = ((1 + feeRatio24H) ** 365 - 1) * 100
       const cleanedApy = (isNaN(apy) || !isFinite(apy)) ? 0 : apy
       const displayApy = formattedPercent(cleanedApy, true)
 
       const weekVolume = formattedNum(pairData.oneWeekVolumeUSD ? pairData.oneWeekVolumeUSD : pairData.oneWeekVolumeUntracked, true)
-
-      const fees = formattedNum(pairData.oneDayFeesUSD, true)
+      // const weekVolume = Math.round(pairData.oneWeekVolumeUSD)
       if (below1080) {
         return (
           <div style={{ margin: '10px 0', padding: '20px', borderRadius: '8px', border: '1px solid #959595' }}>
@@ -298,12 +297,8 @@ function PairList({
         const pairA = pairs[addressA]
         const pairB = pairs[addressB]
         if (sortedColumn === SORT_FIELD.APY) {
-          const pairAFeeRation24H =
-            ((pairA.oneDayVolumeUSD ? pairA.oneDayVolumeUSD : pairA.oneDayVolumeUntracked) * 0.003) /
-            (pairA.oneDayVolumeUSD ? pairA.trackedReserveUSD : pairA.reserveUSD)
-          const pairBFeeRation24H =
-            ((pairB.oneDayVolumeUSD ? pairB.oneDayVolumeUSD : pairB.oneDayVolumeUntracked) * 0.003) /
-            (pairB.oneDayVolumeUSD ? pairB.trackedReserveUSD : pairB.reserveUSD)
+          const pairAFeeRation24H = pairA.oneDayFeesUSD / pairA.trackedReserveUSD
+          const pairBFeeRation24H = pairB.oneDayFeesUSD / pairB.trackedReserveUSD
           const apy0 = parseFloat(((1 + pairAFeeRation24H) ** 365 - 1) * 100)
           const apy1 = parseFloat(((1 + pairBFeeRation24H) ** 365 - 1) * 100)
           return apy0 > apy1 ? (sortDirection ? -1 : 1) * 1 : (sortDirection ? -1 : 1) * -1

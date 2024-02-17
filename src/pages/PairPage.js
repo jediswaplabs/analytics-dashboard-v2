@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import { isEmpty } from 'lodash'
 
 import { PageWrapper, StyledIcon, BlockedWrapper, BlockedMessageWrapper, ContentWrapper, Hover } from '../components'
-import Panel from '../components/Panel'
+import Panel, { PanelTopLight } from '../components/Panel'
 import Loader from '../components/LocalLoader'
 import { AutoRow, RowBetween, RowFixed } from '../components/Row'
 import { AutoColumn } from '../components/Column'
@@ -137,7 +137,6 @@ function PairPage({ pairAddress, history }) {
     document.querySelector('body').scrollTo(0, 0)
   }, [])
 
-  const feeTier = fee / 10 ** 6
   const feePercent = (fee ? parseFloat(fee) / 10000 : 0) + '%'
 
   const [currentPriceDisplayMode, setCurrentPriceDisplayMode] = useState('token0')
@@ -151,14 +150,6 @@ function PairPage({ pairAddress, history }) {
   const volume = !!oneDayVolumeUSD ? formattedNum(oneDayVolumeUSD, true) : formattedNum(oneDayVolumeUntracked, true)
   const usingUtVolume = oneDayVolumeUSD === 0 && !!oneDayVolumeUntracked
   const volumeChange = formattedPercent(!usingUtVolume ? volumeChangeUSD : volumeChangeUntracked)
-
-  // get fees	  // get fees
-  // const fees =
-  //   oneDayVolumeUSD || oneDayVolumeUSD === 0
-  //     ? usingUtVolume
-  //       ? formattedNum(oneDayVolumeUntracked * feeTier, true)
-  //       : formattedNum(oneDayVolumeUSD * feeTier, true)
-  //     : '-'
 
   const feesChange = formattedPercent(feesChangeUSD)
   // rates
@@ -292,20 +283,20 @@ function PairPage({ pairAddress, history }) {
             </AutoColumn>
             <AutoColumn style={{ gap: '12px' }}>
               <PanelWrapper>
-                <Panel>
+                <PanelTopLight>
                   <AutoColumn gap="20px">
                     <RowBetween>
                       <TYPE.subHeader>Total Liquidity</TYPE.subHeader>
                     </RowBetween>
                     <RowBetween align="baseline">
                       <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
-                        US{formattedLiquidity}
+                        {formattedLiquidity}
                       </TYPE.main>
                       <TYPE.main fontSize="1rem">{liquidityChange}</TYPE.main>
                     </RowBetween>
                   </AutoColumn>
-                </Panel>
-                <Panel>
+                </PanelTopLight>
+                <PanelTopLight>
                   <AutoColumn gap="20px">
                     <RowBetween>
                       <TYPE.subHeader>Volume (24hr)</TYPE.subHeader>
@@ -313,25 +304,25 @@ function PairPage({ pairAddress, history }) {
                     </RowBetween>
                     <RowBetween align="baseline">
                       <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
-                        US{volume}
+                        {volume}
                       </TYPE.main>
                       <TYPE.main fontSize="1rem">{volumeChange}</TYPE.main>
                     </RowBetween>
                   </AutoColumn>
-                </Panel>
-                <Panel>
+                </PanelTopLight>
+                <PanelTopLight>
                   <AutoColumn gap="20px">
                     <RowBetween>
                       <TYPE.subHeader>Total fees (24hr)</TYPE.subHeader>
                     </RowBetween>
                     <RowBetween align="baseline">
                       <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
-                        US{formattedNum(oneDayFeesUSD, true)}
+                        {formattedNum(oneDayFeesUSD, true)}
                       </TYPE.main>
                       <TYPE.main fontSize="1rem">{feesChange}</TYPE.main>
                     </RowBetween>
                   </AutoColumn>
-                </Panel>
+                </PanelTopLight>
               </PanelWrapper>
 
               <PairDataPanelWrapper>

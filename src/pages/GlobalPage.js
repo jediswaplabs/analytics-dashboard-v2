@@ -148,7 +148,7 @@ function GlobalPage() {
 
         <PageSection>
           <TYPE.main fontSize={'1rem'} style={{ whiteSpace: 'nowrap' }}>
-            Top Pairs
+            Top Pools
           </TYPE.main>
           <Panel style={{ padding: '0' }}>
             <PairList pairs={allPairs} useTracked={useTracked} />
