@@ -219,7 +219,6 @@ function TokenPage({ address, history }) {
   )
   return (
     <PageWrapper>
-      <Warning type={'token'} show={!dismissed && listedTokens && !listedTokens.includes(address)} setShow={markAsDismissed} address={address} />
       <PageHeader>
         <RowBetween style={{ flexWrap: 'wrap', alingItems: 'start' }}>
           <AutoRow align="flex-end" style={{ width: 'fit-content' }}>
@@ -264,6 +263,7 @@ function TokenPage({ address, history }) {
 
       <OverlayScrollbarsComponent defer options={{ paddingAbsolute: true, scrollbars: { autoHide: 'auto' } }}>
         <ContentWrapper>
+          <Warning type={'token'} show={!dismissed && listedTokens && !listedTokens.includes(address)} setShow={markAsDismissed} address={address} />
           <WarningGrouping disabled={!dismissed && listedTokens && !listedTokens.includes(address)}>
             <DashboardWrapper>
               <AutoColumn style={{ gap: '32px' }}>
