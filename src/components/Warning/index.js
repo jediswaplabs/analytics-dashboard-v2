@@ -9,7 +9,7 @@ import { AutoColumn } from '../Column'
 import { Hover } from '..'
 import Link from '../Link'
 import { useMedia } from 'react-use'
-import {urls} from "../../utils";
+import { urls } from '../../utils'
 
 const WarningWrapper = styled.div`
   border-radius: 20px;
@@ -18,12 +18,12 @@ const WarningWrapper = styled.div`
   padding: 1rem;
   color: #f82d3a;
   display: ${({ show }) => !show && 'none'};
-  margin: 0 2rem 2rem 2rem;
+  //margin: 0 2rem 2rem 2rem;
   position: relative;
 
   @media screen and (max-width: 800px) {
-    width: 80% !important;
-    margin-left: 5%;
+    //width: 80% !important;
+    //margin-left: 5%;
   }
 `
 
@@ -39,20 +39,19 @@ export default function Warning({ type, show, setShow, address }) {
   const textContent = below800 ? (
     <div>
       <Text fontWeight={500} lineHeight={'145.23%'} mt={'10px'}>
-        Anyone can create and name any ERC20 token on Starknet, including creating fake versions of existing tokens and
-        tokens that claim to represent projects that do not have a token.
+        Anyone can create and name any ERC20 token on Starknet, including creating fake versions of existing tokens and tokens that claim to represent
+        projects that do not have a token.
       </Text>
       <Text fontWeight={500} lineHeight={'145.23%'} mt={'10px'}>
-        Similar to Starkscan, this site automatically tracks analytics for all ERC20 tokens independent of token
-        integrity. Please do your own research before interacting with any ERC20 token.
+        Similar to Starkscan, this site automatically tracks analytics for all ERC20 tokens independent of token integrity. Please do your own
+        research before interacting with any ERC20 token.
       </Text>
     </div>
   ) : (
     <Text fontWeight={500} lineHeight={'145.23%'} mt={'10px'}>
-      Anyone can create and name any ERC20 token on Starknet, including creating fake versions of existing tokens and
-      tokens that claim to represent projects that do not have a token. Similar to Starkscan, this site automatically
-      tracks analytics for all ERC20 tokens independent of token integrity. Please do your own research before
-      interacting with any ERC20 token.
+      Anyone can create and name any ERC20 token on Starknet, including creating fake versions of existing tokens and tokens that claim to represent
+      projects that do not have a token. Similar to Starkscan, this site automatically tracks analytics for all ERC20 tokens independent of token
+      integrity. Please do your own research before interacting with any ERC20 token.
     </Text>
   )
 
@@ -69,13 +68,7 @@ export default function Warning({ type, show, setShow, address }) {
         {below800 ? (
           <div>
             <Hover style={{ marginTop: '10px' }}>
-              <Link
-                fontWeight={500}
-                lineHeight={'145.23%'}
-                color={'#2172E5'}
-                href={urls.showAddress(address)}
-                target="_blank"
-              >
+              <Link fontWeight={500} lineHeight={'145.23%'} color={'#2172E5'} href={urls.showAddress(address)} target="_blank">
                 View {type === 'token' ? 'token' : 'pair'} contract on Starkscan
               </Link>
             </Hover>
@@ -89,13 +82,7 @@ export default function Warning({ type, show, setShow, address }) {
         ) : (
           <RowBetween style={{ marginTop: '10px' }}>
             <Hover>
-              <Link
-                fontWeight={500}
-                lineHeight={'145.23%'}
-                color={'#2172E5'}
-                href={urls.showAddress(address)}
-                target="_blank"
-              >
+              <Link fontWeight={500} lineHeight={'145.23%'} color={'#2172E5'} href={urls.showAddress(address)} target="_blank">
                 View {type === 'token' ? 'token' : 'pair'} contract on Starkscan
               </Link>
             </Hover>

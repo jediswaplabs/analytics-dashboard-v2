@@ -216,13 +216,6 @@ function PairPage({ pairAddress, history }) {
     //
     // </InnerPageLayout>
     <PageWrapper>
-      <Warning
-        type={'pair'}
-        show={!dismissed && !isEmpty(whitelistedTokens) && !isTokenWhitelisted}
-        setShow={markAsDismissed}
-        address={pairAddress}
-      />
-
       <PageHeader>
         <RowBetween style={{ flexWrap: 'wrap', alingItems: 'start' }}>
           <AutoRow align="flex-end" style={{ width: 'fit-content' }}>
@@ -283,6 +276,12 @@ function PairPage({ pairAddress, history }) {
       </PageHeader>
       <OverlayScrollbarsComponent defer options={{ paddingAbsolute: true, scrollbars: { autoHide: 'auto' } }}>
         <ContentWrapper>
+          <Warning
+            type={'pair'}
+            show={!dismissed && !isEmpty(whitelistedTokens) && !isTokenWhitelisted}
+            setShow={markAsDismissed}
+            address={pairAddress}
+          />
           <WarningGrouping disabled={!dismissed && !isEmpty(whitelistedTokens) && !isTokenWhitelisted}>
             <DashboardWrapper>
               <AutoColumn style={{ gap: '12px' }}>
