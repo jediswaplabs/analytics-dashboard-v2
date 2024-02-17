@@ -65,7 +65,9 @@ const Panel = styled(RebassBox)`
 
   ${(props) => !props.last && panelPseudo}
 `
-
+export const PanelTopLight = styled(Panel)`
+  box-shadow: 0px 0.77px 30.791px 0px rgba(227, 222, 255, 0.20) inset, 0px 3.079px 13.856px 0px rgba(154, 146, 210, 0.30) inset, 0px 75.438px 76.977px -36.949px rgba(202, 172, 255, 0.30) inset, 0px -63.121px 52.345px -49.265px rgba(96, 68, 144, 0.30) inset, 0px 5.388px 8.467px -3.079px #FFF inset, 0px 30.021px 43.107px -27.712px rgba(255, 255, 255, 0.50) inset;
+`
 export default Panel
 
 // const Panel = styled.div`

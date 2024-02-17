@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import { isEmpty } from 'lodash'
 
 import { PageWrapper, StyledIcon, BlockedWrapper, BlockedMessageWrapper, ContentWrapper, Hover } from '../components'
-import Panel from '../components/Panel'
+import Panel, { PanelTopLight } from '../components/Panel'
 import Loader from '../components/LocalLoader'
 import { AutoRow, RowBetween, RowFixed } from '../components/Row'
 import { AutoColumn } from '../components/Column'
@@ -283,7 +283,7 @@ function PairPage({ pairAddress, history }) {
             </AutoColumn>
             <AutoColumn style={{ gap: '12px' }}>
               <PanelWrapper>
-                <Panel>
+                <PanelTopLight>
                   <AutoColumn gap="20px">
                     <RowBetween>
                       <TYPE.subHeader>Total Liquidity</TYPE.subHeader>
@@ -295,8 +295,8 @@ function PairPage({ pairAddress, history }) {
                       <TYPE.main fontSize="1rem">{liquidityChange}</TYPE.main>
                     </RowBetween>
                   </AutoColumn>
-                </Panel>
-                <Panel>
+                </PanelTopLight>
+                <PanelTopLight>
                   <AutoColumn gap="20px">
                     <RowBetween>
                       <TYPE.subHeader>Volume (24hr)</TYPE.subHeader>
@@ -309,8 +309,8 @@ function PairPage({ pairAddress, history }) {
                       <TYPE.main fontSize="1rem">{volumeChange}</TYPE.main>
                     </RowBetween>
                   </AutoColumn>
-                </Panel>
-                <Panel>
+                </PanelTopLight>
+                <PanelTopLight>
                   <AutoColumn gap="20px">
                     <RowBetween>
                       <TYPE.subHeader>Total fees (24hr)</TYPE.subHeader>
@@ -322,7 +322,7 @@ function PairPage({ pairAddress, history }) {
                       <TYPE.main fontSize="1rem">{feesChange}</TYPE.main>
                     </RowBetween>
                   </AutoColumn>
-                </Panel>
+                </PanelTopLight>
               </PanelWrapper>
 
               <PairDataPanelWrapper>
