@@ -286,7 +286,7 @@ function PairPage({ pairAddress, history }) {
                     </RowBetween>
                     <RowBetween align="baseline">
                       <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
-                        US{formattedLiquidity}
+                        {formattedLiquidity}
                       </TYPE.main>
                       <TYPE.main fontSize="1rem">{liquidityChange}</TYPE.main>
                     </RowBetween>
@@ -300,7 +300,7 @@ function PairPage({ pairAddress, history }) {
                     </RowBetween>
                     <RowBetween align="baseline">
                       <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
-                        US{volume}
+                        {volume}
                       </TYPE.main>
                       <TYPE.main fontSize="1rem">{volumeChange}</TYPE.main>
                     </RowBetween>
@@ -313,7 +313,7 @@ function PairPage({ pairAddress, history }) {
                     </RowBetween>
                     <RowBetween align="baseline">
                       <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
-                        US{formattedNum(oneDayFeesUSD, true)}
+                        {formattedNum(oneDayFeesUSD, true)}
                       </TYPE.main>
                       <TYPE.main fontSize="1rem">{feesChange}</TYPE.main>
                     </RowBetween>
