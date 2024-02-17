@@ -53,8 +53,8 @@ const PoolFields = `
 export const GLOBAL_DATA = () => {
   const queryString = ` query jediswapFactories {
       factories {
-        totalValueLockedUSD
         totalFeesUSD
+        totalValueLockedUSD
         totalVolumeUSD
       }
     }`

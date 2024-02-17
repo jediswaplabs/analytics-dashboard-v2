@@ -12,6 +12,7 @@ import { useMedia } from 'react-use'
 import { useAllPairData, useDataForListV2 } from '../contexts/PairData'
 import { useSavedPairs, useSavedTokens } from '../contexts/LocalStorage'
 import PairList from '../components/PairList'
+import PageLayout from '../layouts/PageLayout'
 // import CheckBox from '../components/Checkbox'
 // import QuestionHelper from '../components/QuestionHelper'
 
@@ -29,38 +30,34 @@ function AllTokensPage() {
     window.scrollTo(0, 0)
   }, [])
   return (
-    <PageWrapper>
-      <ContentWrapper>
-        <TYPE.largeHeader lineHeight={0.7}>Top Tokens</TYPE.largeHeader>
+    <PageLayout pageTitle={'Tokens'}>
+      <PageSection>
+        <Search />
+      </PageSection>
 
-        <PageSection>
-          <Search />
-        </PageSection>
+      <PageSection>
+        <TYPE.main fontSize={'1rem'} style={{ whiteSpace: 'nowrap' }}>
+          Your Watchlist
+        </TYPE.main>
+        <Panel style={{ padding: '0' }}>
+          <TopTokenList
+            tokens={formattedSavedTokensData}
+            itemMax={50}
+            waitForData={false}
+            noTokensPlaceholderText={'Saved tokens will appear here'}
+          />
+        </Panel>
+      </PageSection>
 
-        <PageSection>
-          <TYPE.main fontSize={'1rem'} style={{ whiteSpace: 'nowrap' }}>
-            Your Watchlist
-          </TYPE.main>
-          <Panel style={{ padding: '0' }}>
-            <TopTokenList
-              tokens={formattedSavedTokensData}
-              itemMax={50}
-              waitForData={false}
-              noTokensPlaceholderText={'Saved tokens will appear here'}
-            />
-          </Panel>
-        </PageSection>
-
-        <PageSection>
-          <TYPE.main fontSize={'1rem'} style={{ whiteSpace: 'nowrap' }}>
-            All Tokens
-          </TYPE.main>
-          <Panel style={{ padding: '0' }}>
-            <TopTokenList tokens={allTokens} itemMax={50} />
-          </Panel>
-        </PageSection>
-      </ContentWrapper>
-    </PageWrapper>
+      <PageSection>
+        <TYPE.main fontSize={'1rem'} style={{ whiteSpace: 'nowrap' }}>
+          All Tokens
+        </TYPE.main>
+        <Panel style={{ padding: '0' }}>
+          <TopTokenList tokens={allTokens} itemMax={50} />
+        </Panel>
+      </PageSection>
+    </PageLayout>
   )
 }
 

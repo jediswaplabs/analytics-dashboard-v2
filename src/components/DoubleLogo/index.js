@@ -12,20 +12,18 @@ export default function DoubleTokenLogo({ a0, a1, s0, s1, size = 24, margin = fa
 
   const HigherLogo = styled(TokenLogo)`
     z-index: 2;
-    // background-color: white;
     border-radius: 50%;
   `
 
   const CoveredLogo = styled(TokenLogo)`
     margin-left: -${({ sizeraw }) => (sizeraw / 2).toString() + 'px'};
-    // background-color: white;
     border-radius: 50%;
   `
 
   return (
     <TokenWrapper sizeraw={size} margin={margin}>
-      <HigherLogo address={a0} symbol={s0} size={size.toString() + 'px'} sizeraw={size} />
-      <CoveredLogo address={a1} symbol={s1} size={size.toString() + 'px'} sizeraw={size} />
+      <HigherLogo address={a0} symbol={s0} size={size} sizeraw={size} />
+      <CoveredLogo address={a1} symbol={s1} size={size} sizeraw={size} />
     </TokenWrapper>
   )
 }

@@ -94,7 +94,7 @@ export const TYPE = {
   },
 
   small(props) {
-    return <TextWrapper fontWeight={500} fontSize={11} color={'text1'} {...props} />
+    return <TextWrapper fontWeight={500} fontSize={12} color={'text1'} {...props} />
   },
 
   header(props) {
@@ -194,6 +194,8 @@ export const GlobalStyle = createGlobalStyle`
     }
   }
 
+
+  .os-host-overflow { overflow: visible !important; }
   
 .three-line-legend {
 	width: 100%;

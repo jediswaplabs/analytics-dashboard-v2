@@ -21,12 +21,13 @@ import { usePairDataForList } from '../contexts/PairData'
 import { useEffect } from 'react'
 import Warning from '../components/Warning'
 import { usePathDismissed, useSavedTokens } from '../contexts/LocalStorage'
-import { Hover, PageWrapper, ContentWrapper, StyledIcon, BlockedWrapper, BlockedMessageWrapper, PageSection } from '../components'
+import { Hover, PageWrapper, ContentWrapper, StyledIcon, BlockedWrapper, BlockedMessageWrapper, PageSection, PageHeader } from '../components'
 import { AlertCircle, Star } from 'react-feather'
 import { useListedTokens, useWhitelistedTokens } from '../contexts/Application'
 import { BLOCKED_WARNINGS } from '../constants'
 import { shortenStraknetAddress } from '../utils'
 import backArrow from '../../src/assets/back_arrow.svg'
+import { OverlayScrollbarsComponent } from 'overlayscrollbars-react'
 
 const DashboardWrapper = styled.div`
   display: flex;
@@ -219,7 +220,7 @@ function TokenPage({ address, history }) {
   return (
     <PageWrapper>
       <Warning type={'token'} show={!dismissed && listedTokens && !listedTokens.includes(address)} setShow={markAsDismissed} address={address} />
-      <ContentWrapper>
+      <PageHeader>
         <RowBetween style={{ flexWrap: 'wrap', alingItems: 'start' }}>
           <AutoRow align="flex-end" style={{ width: 'fit-content' }}>
             {!below1024 && (
@@ -237,88 +238,91 @@ function TokenPage({ address, history }) {
             )}
           </AutoRow>
         </RowBetween>
-        <WarningGrouping disabled={!dismissed && listedTokens && !listedTokens.includes(address)}>
-          <DashboardWrapper>
-            <AutoColumn style={{ gap: '8px' }}>
-              <RowBetween>
-                <RowFixed align="center" style={{ gap: '8px' }}>
-                  <TokenLogo address={address} symbol={symbol} size="24px" style={{ alignSelf: 'center' }} />
-                  <TYPE.main fontSize={below600 ? '16px' : '20px'} fontWeight={700}>
-                    {formattedSymbol ? `${formattedSymbol}` : ''}
+        <AutoColumn style={{ gap: '8px' }}>
+          <RowBetween>
+            <RowFixed align="center" style={{ gap: '8px' }}>
+              <TokenLogo address={address} symbol={symbol} size="24" style={{ alignSelf: 'center' }} />
+              <TYPE.main fontSize={below600 ? '16px' : '20px'} fontWeight={700}>
+                {formattedSymbol ? `${formattedSymbol}` : ''}
+              </TYPE.main>
+              {below600 && priceAndPriceChangeMarkup}
+            </RowFixed>
+
+            <RowFixed align="center" style={{ gap: '8px' }}>
+              <Hover onClick={() => (savedTokens[address] ? removeToken(address) : addToken(address, symbol))}>
+                <StyledIcon style={{ display: 'flex' }}>
+                  <Star fill={savedTokens[address] ? '#fff' : 'transparent'} />
+                </StyledIcon>
+              </Hover>
+              {!below600 && actionButtonsMarkup}
+            </RowFixed>
+          </RowBetween>
+          {!below600 && priceAndPriceChangeMarkup}
+          {below600 && actionButtonsMarkup}
+        </AutoColumn>
+      </PageHeader>
+
+      <OverlayScrollbarsComponent defer options={{ paddingAbsolute: true, scrollbars: { autoHide: 'auto' } }}>
+        <ContentWrapper>
+          <WarningGrouping disabled={!dismissed && listedTokens && !listedTokens.includes(address)}>
+            <DashboardWrapper>
+              <AutoColumn style={{ gap: '32px' }}>
+                <PanelWrapper>
+                  <PanelTopLight>
+                    <AutoColumn gap="20px">
+                      <RowBetween>
+                        <TYPE.subHeader>Total Liquidity</TYPE.subHeader>
+                      </RowBetween>
+                      <RowBetween align="baseline">
+                        <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
+                          {liquidity}
+                        </TYPE.main>
+                        <TYPE.main fontSize="1rem">{liquidityChange}</TYPE.main>
+                      </RowBetween>
+                    </AutoColumn>
+                  </PanelTopLight>
+                  <PanelTopLight>
+                    <AutoColumn gap="20px">
+                      <RowBetween>
+                        <TYPE.subHeader>Volume (24hr)</TYPE.subHeader>
+                        <div />
+                      </RowBetween>
+                      <RowBetween align="baseline">
+                        <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
+                          {volume}
+                        </TYPE.main>
+                        <TYPE.main fontSize="1rem">{volumeChange}</TYPE.main>
+                      </RowBetween>
+                    </AutoColumn>
+                  </PanelTopLight>
+                  <PanelTopLight>
+                    <AutoColumn gap="20px">
+                      <RowBetween>
+                        <TYPE.subHeader>Total fees (24hr)</TYPE.subHeader>
+                        <div />
+                      </RowBetween>
+                      <RowBetween align="baseline">
+                        <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
+                          {fees}
+                        </TYPE.main>
+                        <TYPE.main fontSize="1rem">{feesChange}</TYPE.main>
+                      </RowBetween>
+                    </AutoColumn>
+                  </PanelTopLight>
+                </PanelWrapper>
+                <PageSection>
+                  <TYPE.main fontSize={'1rem'} style={{ whiteSpace: 'nowrap' }}>
+                    Available Pools
                   </TYPE.main>
-                  {below600 && priceAndPriceChangeMarkup}
-                </RowFixed>
-
-                <RowFixed align="center" style={{ gap: '8px' }}>
-                  <Hover onClick={() => (savedTokens[address] ? removeToken(address) : addToken(address, symbol))}>
-                    <StyledIcon style={{ display: 'flex' }}>
-                      <Star fill={savedTokens[address] ? '#fff' : ''} />
-                    </StyledIcon>
-                  </Hover>
-                  {!below600 && actionButtonsMarkup}
-                </RowFixed>
-              </RowBetween>
-              {!below600 && priceAndPriceChangeMarkup}
-              {below600 && actionButtonsMarkup}
-            </AutoColumn>
-
-            <AutoColumn style={{ gap: '32px' }}>
-              <PanelWrapper>
-                <PanelTopLight>
-                  <AutoColumn gap="20px">
-                    <RowBetween>
-                      <TYPE.subHeader>Total Liquidity</TYPE.subHeader>
-                    </RowBetween>
-                    <RowBetween align="baseline">
-                      <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
-                        {liquidity}
-                      </TYPE.main>
-                      <TYPE.main fontSize="1rem">{liquidityChange}</TYPE.main>
-                    </RowBetween>
-                  </AutoColumn>
-                </PanelTopLight>
-                <PanelTopLight>
-                  <AutoColumn gap="20px">
-                    <RowBetween>
-                      <TYPE.subHeader>Volume (24hr)</TYPE.subHeader>
-                      <div />
-                    </RowBetween>
-                    <RowBetween align="baseline">
-                      <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
-                        {volume}
-                      </TYPE.main>
-                      <TYPE.main fontSize="1rem">{volumeChange}</TYPE.main>
-                    </RowBetween>
-                  </AutoColumn>
-                </PanelTopLight>
-                <PanelTopLight>
-                  <AutoColumn gap="20px">
-                    <RowBetween>
-                      <TYPE.subHeader>Total fees (24hr)</TYPE.subHeader>
-                      <div />
-                    </RowBetween>
-                    <RowBetween align="baseline">
-                      <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
-                        {fees}
-                      </TYPE.main>
-                      <TYPE.main fontSize="1rem">{feesChange}</TYPE.main>
-                    </RowBetween>
-                  </AutoColumn>
-                </PanelTopLight>
-              </PanelWrapper>
-
-              <PageSection>
-                <TYPE.main fontSize={'1rem'} style={{ whiteSpace: 'nowrap' }}>
-                  Available Pools
-                </TYPE.main>
-                <Panel style={{ padding: '0' }}>
-                  <PairList color={backgroundColor} address={address} pairs={formattedPairListData} />
-                </Panel>
-              </PageSection>
-            </AutoColumn>
-          </DashboardWrapper>
-        </WarningGrouping>
-      </ContentWrapper>
+                  <Panel style={{ padding: '0' }}>
+                    <PairList color={backgroundColor} address={address} pairs={formattedPairListData} />
+                  </Panel>
+                </PageSection>
+              </AutoColumn>
+            </DashboardWrapper>
+          </WarningGrouping>
+        </ContentWrapper>
+      </OverlayScrollbarsComponent>
     </PageWrapper>
   )
 }

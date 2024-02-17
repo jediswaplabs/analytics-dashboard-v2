@@ -12,45 +12,16 @@ import AllPairsPage from './pages/AllPairsPage'
 import { useGlobalData } from './contexts/GlobalData'
 import { isStarknetAddress } from './utils'
 
-import SideNav from './components/SideNav'
+import 'overlayscrollbars/styles/overlayscrollbars.css'
+
 import LocalLoader from './components/LocalLoader'
 import { useWhitelistedTokens } from './contexts/Application'
+import LayoutWrapper from './layouts/LayoutWrapper'
 
 const AppWrapper = styled.div`
   position: relative;
   width: 100%;
   //padding-top: 48px;
-`
-
-const ContentWrapper = styled.div`
-  display: grid;
-  grid-template-columns: ${({ open }) => (open ? '300px 1fr 200px' : '300px 1fr 64px')};
-
-  @media screen and (max-width: 1400px) {
-    grid-template-columns: 300px 1fr;
-  }
-
-  @media screen and (max-width: 1080px) {
-    grid-template-columns: 1fr;
-    max-width: 100vw;
-    overflow: hidden;
-    grid-gap: 0;
-  }
-`
-
-const Center = styled.div`
-  height: 100%;
-  z-index: 9999;
-  transition: width 0.25s ease;
-`
-
-const WarningWrapper = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  position: absolute;
-  top: 0;
-  left: 0;
 `
 
 const WarningBanner = styled.div`
@@ -62,20 +33,6 @@ const WarningBanner = styled.div`
   font-weight: 500;
   font-size: 16px;
 `
-
-/**
- * Wrap the component with the header and sidebar pinned tab
- */
-const LayoutWrapper = ({ children, savedOpen, setSavedOpen }) => {
-  return (
-    <>
-      <ContentWrapper open={savedOpen}>
-        <SideNav />
-        <Center id="center">{children}</Center>
-      </ContentWrapper>
-    </>
-  )
-}
 
 const BLOCK_DIFFERENCE_THRESHOLD = 2
 

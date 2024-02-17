@@ -85,15 +85,18 @@
     "not dead",
     "not op_mini all"
   ],
-  "engines" : {
-    "node" : ">=16.0.0 <17.0.0"
+  "engines": {
+    "node": ">=16.0.0 <17.0.0"
   },
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "@jediswap/token-lists": "^1.0.0-beta.1",
     "babel-plugin-styled-components": "^2.0.7",
     "lodash": "^4.17.21",
+    "overlayscrollbars": "^2.5.0",
+    "overlayscrollbars-react": "^0.5.4",
     "react-countdown": "^2.3.5",
+    "react-hot-keys": "^2.7.3",
     "react-tooltip": "^5.11.1",
     "script-ext-html-webpack-plugin": "^2.1.5",
     "starknet": "^4.22.0",
