@@ -29,8 +29,7 @@ const PageButtons = styled.div`
 `
 
 const Arrow = styled.div`
-  color: ${({ theme }) => theme.jediGrey};
-  opacity: ${(props) => (props.faded ? 0.3 : 1)};
+  color: ${({ theme, faded }) => faded ? theme.jediGrey : theme.paginationTest};
   padding: 0 20px;
   user-select: none;
   font-size: 30px;
@@ -135,7 +134,8 @@ const FIELD_TO_VALUE = (field, useTracked) => {
 const formatDataText = (value, trackedValue, supressWarning = false, textAlign = 'right') => {
   const showUntracked = value !== '$0' && !trackedValue & !supressWarning
   return (
-    <AutoColumn gap="2px" style={{ opacity: showUntracked ? '0.7' : '1' }}>
+    // <AutoColumn gap="2px" style={{ opacity: showUntracked ? '0.7' : '1' }}>
+    <AutoColumn gap="2px">
       <div style={{ textAlign }}>{value}</div>
       <TYPE.light fontSize={'9px'} style={{ textAlign: 'right' }}>
         {/* {showUntracked ? 'untracked' : '  '} */}

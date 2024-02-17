@@ -137,7 +137,6 @@ function PairPage({ pairAddress, history }) {
     document.querySelector('body').scrollTo(0, 0)
   }, [])
 
-  const feeTier = fee / 10 ** 6
   const feePercent = (fee ? parseFloat(fee) / 10000 : 0) + '%'
 
   const [currentPriceDisplayMode, setCurrentPriceDisplayMode] = useState('token0')
@@ -151,14 +150,6 @@ function PairPage({ pairAddress, history }) {
   const volume = !!oneDayVolumeUSD ? formattedNum(oneDayVolumeUSD, true) : formattedNum(oneDayVolumeUntracked, true)
   const usingUtVolume = oneDayVolumeUSD === 0 && !!oneDayVolumeUntracked
   const volumeChange = formattedPercent(!usingUtVolume ? volumeChangeUSD : volumeChangeUntracked)
-
-  // get fees	  // get fees
-  // const fees =
-  //   oneDayVolumeUSD || oneDayVolumeUSD === 0
-  //     ? usingUtVolume
-  //       ? formattedNum(oneDayVolumeUntracked * feeTier, true)
-  //       : formattedNum(oneDayVolumeUSD * feeTier, true)
-  //     : '-'
 
   const feesChange = formattedPercent(feesChangeUSD)
   // rates
@@ -299,7 +290,7 @@ function PairPage({ pairAddress, history }) {
                     </RowBetween>
                     <RowBetween align="baseline">
                       <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
-                        US{formattedLiquidity}
+                        {formattedLiquidity}
                       </TYPE.main>
                       <TYPE.main fontSize="1rem">{liquidityChange}</TYPE.main>
                     </RowBetween>
@@ -313,7 +304,7 @@ function PairPage({ pairAddress, history }) {
                     </RowBetween>
                     <RowBetween align="baseline">
                       <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
-                        US{volume}
+                        {volume}
                       </TYPE.main>
                       <TYPE.main fontSize="1rem">{volumeChange}</TYPE.main>
                     </RowBetween>
@@ -326,7 +317,7 @@ function PairPage({ pairAddress, history }) {
                     </RowBetween>
                     <RowBetween align="baseline">
                       <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
-                        US{formattedNum(oneDayFeesUSD, true)}
+                        {formattedNum(oneDayFeesUSD, true)}
                       </TYPE.main>
                       <TYPE.main fontSize="1rem">{feesChange}</TYPE.main>
                     </RowBetween>
