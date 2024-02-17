@@ -185,20 +185,20 @@ function parseData(data, oneDayData, twoDayData, oneWeekData) {
     twoDayData?.untrackedVolumeUSD ? twoDayData?.untrackedVolumeUSD : 0
   )
 
-  const oneWeekVolumeUSD = parseFloat(oneWeekData?.volumeUSD ? data?.volumeUSD - oneWeekData?.volumeUSD : data.volumeUSD)
-  const oneWeekVolumeUntracked = parseFloat(
-    oneWeekData?.untrackedVolumeUSD ? data?.untrackedVolumeUSD - oneWeekData?.untrackedVolumeUSD : data.untrackedVolumeUSD
-  )
+  const oneWeekVolumeUSD = oneWeekData?.volumeUSD || 0
+  // const oneWeekVolumeUntracked = parseFloat(
+  //   oneWeekData?.untrackedVolumeUSD ? data?.untrackedVolumeUSD - oneWeekData?.untrackedVolumeUSD : data.untrackedVolumeUSD
+  // )
 
   // set volume properties
   data.oneDayVolumeUSD = parseFloat(oneDayVolumeUSD)
   data.oneWeekVolumeUSD = oneWeekVolumeUSD
   data.volumeChangeUSD = volumeChangeUSD
   data.oneDayVolumeUntracked = oneDayVolumeUntracked
-  data.oneWeekVolumeUntracked = oneWeekVolumeUntracked
+  // data.oneWeekVolumeUntracked = oneWeekVolumeUntracked
   data.volumeChangeUntracked = volumeChangeUntracked
 
-  data.oneDayFeesUSD = oneDayFeesUSD;
+  data.oneDayFeesUSD = parseFloat(oneDayFeesUSD);
   data.feesChangeUSD = feesChangeUSD;
 
   // set liquidity properties
