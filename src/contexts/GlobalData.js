@@ -190,36 +190,30 @@ export default function Provider({ children }) {
  * 24 hour USD changes.
  */
 async function getGlobalData() {
-  // data for each day , historic data used for % changes
-  let data = {}
-  let oneDayData = {}
-
+  const dataFinal = {}
   try {
-    let result = await jediSwapClient.query({
-      query: GLOBAL_DATA(),
-      fetchPolicy: 'cache-first',
-    })
-    data = result?.data?.factories[0]
-
-    let oneDayResult = await jediSwapClient.query({
+    // data for each day , historic data used for % changes
+    let historyResult = await jediSwapClient.query({
       query: HISTORICAL_GLOBAL_DATA(),
       fetchPolicy: 'cache-first',
     })
-    oneDayData = oneDayResult?.data?.factoriesDayData?.[1]
+    const todayData = historyResult?.data?.factoriesDayData?.[0]
+    const yesterdayData = historyResult?.data?.factoriesDayData?.[1]
 
-    if (data && oneDayData) {
-      let [_, volumeChangeUSD] = get2DayPercentChange(data.totalVolumeUSD, oneDayData.volumeUSD)
-      const liquidityChangeUSD = getPercentChange(data.totalValueLockedUSD, oneDayData.totalValueLockedUSD)
-      const feesChangeUsd = getPercentChange(data.totalFeesUSD, oneDayData.feesUSD)
+    if (todayData && yesterdayData) {
+      dataFinal.totalValueLockedUSD = todayData.totalValueLockedUSD
+      dataFinal.liquidityChangeUSD = getPercentChange(todayData.totalValueLockedUSD, yesterdayData.totalValueLockedUSD)
 
-      data.volumeChangeUSD = volumeChangeUSD
-      data.liquidityChangeUSD = liquidityChangeUSD
-      data.feesChangeUSD = feesChangeUsd
+      dataFinal.totalVolumeUSD = todayData.volumeUSD
+      dataFinal.volumeChangeUSD = getPercentChange(todayData.volumeUSD, yesterdayData.volumeUSD)
+
+      dataFinal.totalFeesUSD = todayData.feesUSD
+      dataFinal.feesChangeUSD = getPercentChange(todayData.feesUSD, yesterdayData.feesUSD)
     }
   } catch (e) {
     console.log(e)
   }
-  return data
+  return dataFinal
 }
 
 /**

@@ -68,7 +68,7 @@ function GlobalPage() {
                   <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
                     {formattedNum(totalValueLockedUSD, true)}
                   </TYPE.main>
-                  {/*<TYPE.main fontSize="1rem">{formattedPercent(liquidityChangeUSD)}</TYPE.main>*/}
+                  <TYPE.main fontSize="1rem">{formattedPercent(liquidityChangeUSD)}</TYPE.main>
                 </RowBetween>
               </AutoColumn>
             </PanelTopLight>
@@ -82,7 +82,7 @@ function GlobalPage() {
                   <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
                     {formattedNum(totalVolumeUSD, true)}
                   </TYPE.main>
-                  {/*<TYPE.main fontSize="1rem">{formattedPercent(volumeChangeUSD)}</TYPE.main>*/}
+                  <TYPE.main fontSize="1rem">{formattedPercent(volumeChangeUSD)}</TYPE.main>
                 </RowBetween>
               </AutoColumn>
             </PanelTopLight>
@@ -95,7 +95,7 @@ function GlobalPage() {
                   <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
                     {formattedNum(totalFeesUSD, true)}
                   </TYPE.main>
-                  {/*<TYPE.main fontSize="1rem">{formattedPercent(feesChangeUSD)}</TYPE.main>*/}
+                  <TYPE.main fontSize="1rem">{formattedPercent(feesChangeUSD)}</TYPE.main>
                 </RowBetween>
               </AutoColumn>
             </PanelTopLight>
