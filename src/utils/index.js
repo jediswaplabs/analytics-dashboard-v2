@@ -93,7 +93,8 @@ export function getPoolLink(token0Address, token1Address = null, remove = false)
     return (
       `https://app.v2.jediswap.xyz/#/` +
       (remove ? `remove` : `add`) +
-      `/${token0Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token0Address}/${token1Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token1Address
+      `/${token0Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token0Address}/${
+        token1Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token1Address
       }`
     )
   }
@@ -103,8 +104,9 @@ export function getSwapLink(token0Address, token1Address = null) {
   if (!token1Address) {
     return `https://app.v2.jediswap.xyz/#/swap?inputCurrency=${token0Address}`
   } else {
-    return `https://app.v2.jediswap.xyz/#/swap?inputCurrency=${token0Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token0Address
-      }&outputCurrency=${token1Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token1Address}`
+    return `https://app.v2.jediswap.xyz/#/swap?inputCurrency=${
+      token0Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token0Address
+    }&outputCurrency=${token1Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token1Address}`
   }
 }
 

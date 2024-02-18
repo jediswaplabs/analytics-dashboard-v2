@@ -15,6 +15,7 @@ import { isStarknetAddress } from './utils'
 import LocalLoader from './components/LocalLoader'
 import { useWhitelistedTokens } from './contexts/Application'
 import LayoutWrapper from './layouts/LayoutWrapper'
+import VolumeLeaderboardPage from './pages/VolumeLeaderboardPage'
 
 const AppWrapper = styled.div`
   position: relative;
@@ -107,6 +108,12 @@ function App() {
               <Route path="/pools">
                 <LayoutWrapper savedOpen={savedOpen} setSavedOpen={setSavedOpen}>
                   <AllPairsPage />
+                </LayoutWrapper>
+              </Route>
+
+              <Route path="/volume-leaderboard">
+                <LayoutWrapper savedOpen={savedOpen} setSavedOpen={setSavedOpen}>
+                  <VolumeLeaderboardPage />
                 </LayoutWrapper>
               </Route>
 

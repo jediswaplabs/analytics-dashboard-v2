@@ -192,18 +192,13 @@ function SideNav({ history }) {
                   </Option>
                 </BasicLink>
 
-                {/*<Separator />*/}
+                <Separator />
 
-                {/*<BasicLink to="/volume-leaderboarad">*/}
-                {/*  <Option*/}
-                {/*    activeText={*/}
-                {/*      (history.location.pathname.split('/')[1] === 'accounts' || history.location.pathname.split('/')[1] === 'volume-leaderboarad') ??*/}
-                {/*      undefined*/}
-                {/*    }*/}
-                {/*  >*/}
-                {/*    <OptionContent>Volume Leaderboard</OptionContent>*/}
-                {/*  </Option>*/}
-                {/*</BasicLink>*/}
+                <BasicLink to="/volume-leaderboard">
+                  <Option activeText={history.location.pathname.split('/')[1] === 'volume-leaderboard' ?? undefined}>
+                    <OptionContent>Volume Leaderboard</OptionContent>
+                  </Option>
+                </BasicLink>
                 {/*<BasicLink to="/accounts">*/}
                 {/*  <Option*/}
                 {/*    activeText={*/}
