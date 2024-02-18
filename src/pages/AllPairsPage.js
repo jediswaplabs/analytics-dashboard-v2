@@ -8,8 +8,6 @@ import PairList from '../components/PairList'
 import { PageWrapper, ContentWrapper, PageSection, PageHeader } from '../components'
 import Search from '../components/Search'
 import { useSavedPairs } from '../contexts/LocalStorage'
-import { useTokenDataForList } from '../contexts/TokenData'
-import { OverlayScrollbarsComponent } from 'overlayscrollbars-react'
 import PageLayout from '../layouts/PageLayout'
 
 function AllPairsPage() {
