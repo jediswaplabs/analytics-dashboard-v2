@@ -12,8 +12,6 @@ import AllPairsPage from './pages/AllPairsPage'
 import { useGlobalData } from './contexts/GlobalData'
 import { isStarknetAddress } from './utils'
 
-import 'overlayscrollbars/styles/overlayscrollbars.css'
-
 import LocalLoader from './components/LocalLoader'
 import { useWhitelistedTokens } from './contexts/Application'
 import LayoutWrapper from './layouts/LayoutWrapper'

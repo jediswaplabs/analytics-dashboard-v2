@@ -3,13 +3,9 @@ import SideNav from '../components/SideNav'
 import styled from 'styled-components'
 
 const Center = styled.div`
-  height: 100vh;
+  height: 100%;
   z-index: 9999;
   transition: width 0.25s ease;
-
-  @media screen and (max-width: 1080px) {
-    height: calc(100vh - 50px);
-  }
 `
 
 const ContentWrapper = styled.div`

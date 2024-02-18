@@ -1,7 +1,6 @@
 import { ContentWrapper, PageHeader, PageWrapper } from '../components'
 
 import React from 'react'
-import { OverlayScrollbarsComponent } from 'overlayscrollbars-react'
 import { TYPE } from '../Theme'
 
 function PageLayout({ pageTitle = '', children }) {
@@ -13,9 +12,7 @@ function PageLayout({ pageTitle = '', children }) {
         </PageHeader>
       )}
 
-      <OverlayScrollbarsComponent defer options={{ paddingAbsolute: true, scrollbars: { autoHide: 'auto' } }}>
-        <ContentWrapper>{children}</ContentWrapper>
-      </OverlayScrollbarsComponent>
+      <ContentWrapper>{children}</ContentWrapper>
     </PageWrapper>
   )
 }
