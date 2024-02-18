@@ -126,16 +126,20 @@ export default function Provider({ children }) {
   )
 }
 
-async function getBulkPairData(pairList) {
+async function getBulkPairData(pairList, tokenList) {
   try {
     let current = await jediSwapClient.query({
-      query: POOLS_DATA({ poolIds: pairList }),
+      query: POOLS_DATA({
+        poolIds: pairList,
+        tokenIds: tokenList
+      }),
       fetchPolicy: 'cache-first',
     })
 
     let historicalData = await jediSwapClient.query({
       query: HISTORICAL_POOLS_DATA({
         poolIds: pairList,
+        tokenIds: tokenList,
         periods: [apiTimeframeOptions.oneDay, apiTimeframeOptions.twoDays, apiTimeframeOptions.oneWeek],
       }),
       fetchPolicy: 'cache-first',
@@ -221,19 +225,8 @@ function parseData(data, oneDayData, twoDayData, oneWeekData) {
 
 const getTopPools = async (whitelistedIds = []) => {
   try {
-    let poolsIds = await jediSwapClient.query({
-      query: TOP_POOLS_DATA({ tokenIds: whitelistedIds }),
-      fetchPolicy: 'network-only',
-    })
-    const ids = poolsIds?.data?.poolsDayData?.reduce((accum, { pool }) => {
-      if (!accum.includes(pool.poolAddress)) {
-        accum.push(pool.poolAddress)
-      }
-      return accum
-    }, [])
-    const bulkResults = getBulkPairData(ids)
+    const bulkResults = getBulkPairData([], whitelistedIds)
     return bulkResults
-    // calculate percentage changes and daily changes
   } catch (e) {
     console.log(e)
   }
