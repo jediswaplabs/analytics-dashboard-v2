@@ -89,9 +89,7 @@ export const PageWrapper = styled.div`
   max-width: calc(1440px + 2rem);
 
   @media screen and (max-width: 1080px) {
-    padding-left: 16px;
-    padding-right: 16px;
-    padding-top: 12px;
+    padding: 1rem;
   }
 `
 
