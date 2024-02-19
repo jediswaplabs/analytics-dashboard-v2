@@ -27,8 +27,6 @@ import { useListedTokens, useWhitelistedTokens } from '../contexts/Application'
 import { BLOCKED_WARNINGS } from '../constants'
 import { shortenStraknetAddress } from '../utils'
 import backArrow from '../../src/assets/back_arrow.svg'
-import { OverlayScrollbarsComponent } from 'overlayscrollbars-react'
-
 const DashboardWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -261,68 +259,66 @@ function TokenPage({ address, history }) {
         </AutoColumn>
       </PageHeader>
 
-      <OverlayScrollbarsComponent defer options={{ paddingAbsolute: true, scrollbars: { autoHide: 'auto' } }}>
-        <ContentWrapper>
-          <Warning type={'token'} show={!dismissed && listedTokens && !listedTokens.includes(address)} setShow={markAsDismissed} address={address} />
-          <WarningGrouping disabled={!dismissed && listedTokens && !listedTokens.includes(address)}>
-            <DashboardWrapper>
-              <AutoColumn style={{ gap: '32px' }}>
-                <PanelWrapper>
-                  <PanelTopLight>
-                    <AutoColumn gap="20px">
-                      <RowBetween>
-                        <TYPE.subHeader>Total Liquidity</TYPE.subHeader>
-                      </RowBetween>
-                      <RowBetween align="baseline">
-                        <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
-                          {liquidity}
-                        </TYPE.main>
-                        <TYPE.main fontSize="1rem">{liquidityChange}</TYPE.main>
-                      </RowBetween>
-                    </AutoColumn>
-                  </PanelTopLight>
-                  <PanelTopLight>
-                    <AutoColumn gap="20px">
-                      <RowBetween>
-                        <TYPE.subHeader>Volume (24hr)</TYPE.subHeader>
-                        <div />
-                      </RowBetween>
-                      <RowBetween align="baseline">
-                        <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
-                          {volume}
-                        </TYPE.main>
-                        <TYPE.main fontSize="1rem">{volumeChange}</TYPE.main>
-                      </RowBetween>
-                    </AutoColumn>
-                  </PanelTopLight>
-                  <PanelTopLight>
-                    <AutoColumn gap="20px">
-                      <RowBetween>
-                        <TYPE.subHeader>Total fees (24hr)</TYPE.subHeader>
-                        <div />
-                      </RowBetween>
-                      <RowBetween align="baseline">
-                        <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
-                          {fees}
-                        </TYPE.main>
-                        <TYPE.main fontSize="1rem">{feesChange}</TYPE.main>
-                      </RowBetween>
-                    </AutoColumn>
-                  </PanelTopLight>
-                </PanelWrapper>
-                <PageSection>
-                  <TYPE.main fontSize={'1rem'} style={{ whiteSpace: 'nowrap' }}>
-                    Available Pools
-                  </TYPE.main>
-                  <Panel style={{ padding: '0' }}>
-                    <PairList color={backgroundColor} address={address} pairs={formattedPairListData} />
-                  </Panel>
-                </PageSection>
-              </AutoColumn>
-            </DashboardWrapper>
-          </WarningGrouping>
-        </ContentWrapper>
-      </OverlayScrollbarsComponent>
+      <ContentWrapper>
+        <Warning type={'token'} show={!dismissed && listedTokens && !listedTokens.includes(address)} setShow={markAsDismissed} address={address} />
+        <WarningGrouping disabled={!dismissed && listedTokens && !listedTokens.includes(address)}>
+          <DashboardWrapper>
+            <AutoColumn style={{ gap: '32px' }}>
+              <PanelWrapper>
+                <PanelTopLight>
+                  <AutoColumn gap="20px">
+                    <RowBetween>
+                      <TYPE.subHeader>Total Liquidity</TYPE.subHeader>
+                    </RowBetween>
+                    <RowBetween align="baseline">
+                      <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
+                        {liquidity}
+                      </TYPE.main>
+                      <TYPE.main fontSize="1rem">{liquidityChange}</TYPE.main>
+                    </RowBetween>
+                  </AutoColumn>
+                </PanelTopLight>
+                <PanelTopLight>
+                  <AutoColumn gap="20px">
+                    <RowBetween>
+                      <TYPE.subHeader>Volume (24hr)</TYPE.subHeader>
+                      <div />
+                    </RowBetween>
+                    <RowBetween align="baseline">
+                      <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
+                        {volume}
+                      </TYPE.main>
+                      <TYPE.main fontSize="1rem">{volumeChange}</TYPE.main>
+                    </RowBetween>
+                  </AutoColumn>
+                </PanelTopLight>
+                <PanelTopLight>
+                  <AutoColumn gap="20px">
+                    <RowBetween>
+                      <TYPE.subHeader>Total fees (24hr)</TYPE.subHeader>
+                      <div />
+                    </RowBetween>
+                    <RowBetween align="baseline">
+                      <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
+                        {fees}
+                      </TYPE.main>
+                      <TYPE.main fontSize="1rem">{feesChange}</TYPE.main>
+                    </RowBetween>
+                  </AutoColumn>
+                </PanelTopLight>
+              </PanelWrapper>
+              <PageSection>
+                <TYPE.main fontSize={'1rem'} style={{ whiteSpace: 'nowrap' }}>
+                  Available Pools
+                </TYPE.main>
+                <Panel style={{ padding: '0' }}>
+                  <PairList color={backgroundColor} address={address} pairs={formattedPairListData} />
+                </Panel>
+              </PageSection>
+            </AutoColumn>
+          </DashboardWrapper>
+        </WarningGrouping>
+      </ContentWrapper>
     </PageWrapper>
   )
 }

@@ -85,13 +85,13 @@ export function getTimeframe(timeWindow) {
 export function getPoolLink(token0Address, token1Address = null, remove = false) {
   if (!token1Address) {
     return (
-      `https://app.v2.jediswap.xyz/#/` +
+      `https://app.jediswap.xyz/#/` +
       (remove ? `remove` : `add`) +
       `/${token0Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token0Address}/${'ETH'}`
     )
   } else {
     return (
-      `https://app.v2.jediswap.xyz/#/` +
+      `https://app.jediswap.xyz/#/` +
       (remove ? `remove` : `add`) +
       `/${token0Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token0Address}/${
         token1Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token1Address
@@ -102,21 +102,12 @@ export function getPoolLink(token0Address, token1Address = null, remove = false)
 
 export function getSwapLink(token0Address, token1Address = null) {
   if (!token1Address) {
-    return `https://app.v2.jediswap.xyz/#/swap?inputCurrency=${token0Address}`
+    return `https://app.jediswap.xyz/#/swap?inputCurrency=${token0Address}`
   } else {
-    return `https://app.v2.jediswap.xyz/#/swap?inputCurrency=${
+    return `https://app.jediswap.xyz/#/swap?inputCurrency=${
       token0Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token0Address
     }&outputCurrency=${token1Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token1Address}`
   }
-}
-
-export function getUniswapAppLink(linkVariable) {
-  let baseUniswapUrl = 'https://app.uniswap.org/#/uni'
-  if (!linkVariable) {
-    return baseUniswapUrl
-  }
-
-  return `${baseUniswapUrl}/ETH/${linkVariable}`
 }
 
 export function localNumber(val) {
@@ -294,7 +285,7 @@ export const formattedNum = (number, usd = false) => {
   if (isNaN(number) || number === '' || number === undefined) {
     return usd ? '$0' : 0
   }
-  let num = parseFloat(number).toFixed(10)
+  let num = parseFloat(number)
 
   if (num > 500000000) {
     return (usd ? '$' : '') + toK(num.toFixed(0), true)

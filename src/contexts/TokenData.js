@@ -6,7 +6,7 @@ import { useWhitelistedTokens } from './Application'
 
 import { jediSwapClient } from '../apollo/client'
 
-import { TOP_TOKENS_DATA, HISTORICAL_TOKENS_DATA, TOKEN_PAIRS_DATA, TOKENS_DATA } from '../apollo/queries'
+import { HISTORICAL_TOKENS_DATA, TOKEN_PAIRS_DATA, TOKENS_DATA } from '../apollo/queries'
 
 import { get2DayPercentChange, get2DayPercentChangeNew, getPercentChange, isStarknetAddress } from '../utils'
 import { apiTimeframeOptions } from '../constants'
@@ -118,24 +118,8 @@ export default function Provider({ children }) {
 
 const getTopTokens = async (whitelistedIds = []) => {
   try {
-    // need to get the top tokens by liquidity by need token day datas
-    const currentDate = parseInt(Date.now() / 86400 / 1000) * 86400 - 86400
-    let tokenIds = await jediSwapClient.query({
-      query: TOP_TOKENS_DATA({ tokenIds: whitelistedIds }),
-      fetchPolicy: 'network-only',
-      variables: { date: currentDate - 1000000 },
-    })
-
-    const ids = tokenIds?.data?.tokensDayData?.reduce((accum, { tokenAddress }) => {
-      if (!accum.includes(tokenAddress)) {
-        accum.push(tokenAddress)
-      }
-      return accum
-    }, [])
-
-    const bulkResults = await getBulkTokenData(ids)
+    const bulkResults = await getBulkTokenData(whitelistedIds)
     return bulkResults
-    // calculate percentage changes and daily changes
   } catch (e) {
     console.log(e)
   }
