@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { withRouter } from 'react-router-dom'
 import styled from 'styled-components'
 import { Search as SearchIcon } from 'react-feather'
@@ -21,6 +21,7 @@ const Decoration = styled.img`
   width: 187px;
   z-index: 0;
   transform: rotate(12.116deg);
+  user-select: none;
 `
 
 const SearchIconLarge = styled(SearchIcon)`
@@ -53,11 +54,13 @@ const SearchPanel = styled(Panel)`
   }
 `
 
-const SearchPanelRow = styled(AutoRow)`
-  width: calc(100% + 32px);
+const SearchPanelRow = styled.div`
+  display: flex;
+  gap: 16px;
 
+  //
   @media screen and (max-width: 600px) {
-    flex-wrap: wrap;
+    flex-direction: column;
   }
 `
 
@@ -118,45 +121,42 @@ const SearchButton = styled(ButtonDark)`
   padding: 14px 17px;
 `
 
-function SearchWalletPanel({ onSearch }) {
-  const [checkAccountQuery, setCheckAccountQuery] = useState('')
+function SearchWalletPanel({ onSearch, onChange, address }) {
   const [isCheckAccountAddressValid, setIsCheckAccountAddressValid] = useState(false)
 
-  const handleCheckAccountInputChange = useCallback(
-    (e) => {
-      const value = e.currentTarget.value
-      if (!value) {
-        setCheckAccountQuery('')
-        setIsCheckAccountAddressValid(false)
-        return
-      }
-      setCheckAccountQuery(value)
-      setIsCheckAccountAddressValid(isStarknetAddress(value, true))
-    },
-    [setCheckAccountQuery]
-  )
+  useEffect(() => {
+    if (!address) {
+      setIsCheckAccountAddressValid(false)
+      return
+    }
+    setIsCheckAccountAddressValid(isStarknetAddress(address, true))
+  }, [address])
+
+  const handleInputChange = useCallback((e) => {
+    const value = e.currentTarget.value
+    onChange(value)
+  }, [])
 
   const handleAccountSearch = useCallback(
     (e) => {
-      if (!(isCheckAccountAddressValid && checkAccountQuery)) {
+      if (!(isCheckAccountAddressValid && address)) {
         return
       }
-      onSearch(checkAccountQuery)
+      onSearch(address)
     },
-    [isCheckAccountAddressValid, checkAccountQuery, onSearch]
+    [isCheckAccountAddressValid, onSearch]
   )
 
   return (
     <>
       <SearchPanel>
         <Title>Search your wallet</Title>
-
         <SearchPanelRow gap={'14px'}>
           <SearchWrapper>
             <Input
               type="text"
-              value={checkAccountQuery}
-              onChange={handleCheckAccountInputChange}
+              value={address}
+              onChange={handleInputChange}
               placeholder={'Enter account address'}
               maxLength={zeroStarknetAddress.length}
             />
@@ -168,7 +168,7 @@ function SearchWalletPanel({ onSearch }) {
             </SearchButton>
           </div>
         </SearchPanelRow>
-        <Decoration src={digitalWalletImage} srcSet={digitalWalletImage + ' 1x,' + digitalWalletImage_x2 + ' 2x'} alt={''} />
+        <Decoration src={digitalWalletImage} srcSet={digitalWalletImage + ' 1x,' + digitalWalletImage_x2 + ' 2x'} alt={''} draggable={false} />
       </SearchPanel>
     </>
   )

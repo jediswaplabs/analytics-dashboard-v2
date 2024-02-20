@@ -140,7 +140,7 @@ function VolumeLeaderboard({ leaderboardPositions, itemMax = 10 }) {
         // })
         .slice(itemMax * (page - 1), page * itemMax)
     )
-  }, [formattedLeaderboardPositions])
+  }, [formattedLeaderboardPositions, activeTab])
   // }, [formattedTokens, itemMax, page, sortDirection, sortedColumn])
 
   const getStarIconByPosition = (position) => {

@@ -9,27 +9,12 @@ import VolumeLeaderboardPosition from '../components/VolumeLeaderboardPosition'
 import { isStarknetAddress } from '../utils'
 
 function VolumeLeaderboardPage() {
-  const [searchAddressQuery, setSearchAddressQuery] = useState('0x030941ffa8874ea7c5c8c943fa50f9193d3748cc219b67fdda334b37be85955e')
+  const [searchAddressQuery, setSearchAddressQuery] = useState('')
   const [detailedPosition, setDetailedPosition] = useState(null)
 
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
-
-  useEffect(() => {
-    if (!isStarknetAddress(searchAddressQuery, true)) {
-      return
-    }
-    // const position = useVolumeLeaderboardPosition(searchAddressQuery);
-    const position = {
-      address: '0x030941ffa8874ea7c5c8c943fa50f9193d3748cc219b67fdda334b37be85955e',
-      tradesCount: 100,
-      volumeUSD: 990177.97,
-      score: 2100,
-      rank: 2100,
-    }
-    setDetailedPosition(position)
-  }, [searchAddressQuery])
 
   // const leaderboardPositions = useAllVolumeLeaderboardPositions();
   const leaderboardPositions = [
@@ -63,19 +48,37 @@ function VolumeLeaderboardPage() {
     },
   ]
 
-  const handleOnWalletSearch = (address) => {
+  const handleOnWalletSearch = () => {
+    if (!isStarknetAddress(searchAddressQuery, true)) {
+      return
+    }
+    // const position = useVolumeLeaderboardPosition(searchAddressQuery);
+    const position = {
+      address: '0x030941ffa8874ea7c5c8c943fa50f9193d3748cc219b67fdda334b37be85955e',
+      tradesCount: 100,
+      volumeUSD: 990177.97,
+      score: 2100,
+      rank: 2100,
+    }
+    setDetailedPosition(position)
+  }
+  const handleOnWalletChange = (address) => {
     setSearchAddressQuery(address)
+  }
+  const handleOnClearSearch = () => {
+    setSearchAddressQuery('')
+    setDetailedPosition(null)
   }
 
   return (
     <PageLayout pageTitle={'Volume leaderboard'}>
       <PageSection>
-        <SearchWallet onSearch={handleOnWalletSearch} />
+        <SearchWallet onSearch={handleOnWalletSearch} onChange={handleOnWalletChange} address={searchAddressQuery} />
       </PageSection>
 
       {detailedPosition && (
         <PageSection>
-          <VolumeLeaderboardPosition position={detailedPosition} />
+          <VolumeLeaderboardPosition position={detailedPosition} onClearSearch={handleOnClearSearch} />
         </PageSection>
       )}
 

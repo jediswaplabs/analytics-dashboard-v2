@@ -10,14 +10,11 @@ import cupImage_x2 from '../../assets/banners/cup@x2.png'
 import { TYPE } from '../../Theme'
 import { formattedNum, shortenStraknetAddress } from '../../utils'
 import { Flex } from 'rebass'
+import { useMedia } from 'react-use'
 
 const Wrapper = styled.div`
   display: grid;
-  gap: 30px;
-
-  @media screen and (max-width: 1080px) {
-    gap: 16px;
-  }
+  gap: 16px;
 `
 
 const Decoration = styled.img`
@@ -27,6 +24,19 @@ const Decoration = styled.img`
   max-width: 100%;
   width: 111px;
   z-index: 0;
+  user-select: none;
+`
+
+const ClearSearchLink = styled.a`
+  color: #50d5ff;
+  font-size: '12px';
+`
+
+const PositionPanelHeader = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: baseline;
 `
 
 const PositionPanel = styled(Panel)`
@@ -37,7 +47,7 @@ const PositionPanel = styled(Panel)`
   overflow: hidden;
   color: #fff;
   padding: 40px;
-  padding-right: 125px;
+  padding-right: 105px;
 
   @media screen and (max-width: 880px) {
     padding: 12px;
@@ -51,6 +61,10 @@ const PositionDataWrapper = styled.div`
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   grid-template-areas: 'address rank score trades volume';
+
+  @media screen and (max-width: 600px) {
+    grid-template-columns: 1.5fr 1fr 1fr;
+  }
 `
 
 const DataItem = styled(Flex)`
@@ -76,33 +90,68 @@ const DataItem = styled(Flex)`
   }
 `
 
-function VolumeLeaderboardPosition({ position }) {
+const DataItemTitle = styled(TYPE.main)`
+  font-size: 20px !important;
+  white-space: nowrap;
+
+  @media screen and (max-width: 880px) {
+    font-size: 16px !important;
+  }
+`
+const DataItemValue = styled(TYPE.main)`
+  font-size: 18px !important;
+  white-space: nowrap;
+
+  @media screen and (max-width: 880px) {
+    font-size: 14px !important;
+  }
+`
+
+function VolumeLeaderboardPosition({ position, onClearSearch }) {
+  const below600 = useMedia('(max-width: 600px)')
+  const handleClearSearchClick = (e) => {
+    e.preventDefault()
+    onClearSearch && onClearSearch()
+  }
+
   return (
     <Wrapper>
+      <PositionPanelHeader>
+        <TYPE.main color={'#CCC'} fontSize={'18px'}>
+          Search result for:
+        </TYPE.main>
+        <ClearSearchLink href={'#'} onClick={handleClearSearchClick}>
+          Clear search
+        </ClearSearchLink>
+      </PositionPanelHeader>
       <PositionPanel>
         <PositionDataWrapper>
           <DataItem area={'address'}>
-            <TYPE.main fontSize={'20px'}>Address</TYPE.main>
-            <TYPE.main fontSize={'18px'}>{shortenStraknetAddress(position.address, 4)}</TYPE.main>
+            <DataItemTitle>Address</DataItemTitle>
+            <DataItemValue>{shortenStraknetAddress(position.address, 4)}</DataItemValue>
           </DataItem>
           <DataItem area={'rank'}>
-            <TYPE.main fontSize={'20px'}>Rank</TYPE.main>
-            <TYPE.main fontSize={'18px'}>{position.rank}</TYPE.main>
+            <DataItemTitle>Rank</DataItemTitle>
+            <DataItemValue>{position.rank}</DataItemValue>
           </DataItem>
           <DataItem area={'score'}>
-            <TYPE.main fontSize={'20px'}>Score</TYPE.main>
-            <TYPE.main fontSize={'18px'}>{position.score}</TYPE.main>
+            <DataItemTitle>Score</DataItemTitle>
+            <DataItemValue>{position.score}</DataItemValue>
           </DataItem>
-          <DataItem area={'trades'}>
-            <TYPE.main fontSize={'20px'}>Trades</TYPE.main>
-            <TYPE.main fontSize={'18px'}>{position.tradesCount}</TYPE.main>
-          </DataItem>
-          <DataItem area={'volume'}>
-            <TYPE.main fontSize={'20px'}>Volume ($)</TYPE.main>
-            <TYPE.main fontSize={'18px'}>{formattedNum(position.volumeUSD, true)}</TYPE.main>
-          </DataItem>
+          {!below600 && (
+            <>
+              <DataItem area={'trades'}>
+                <DataItemTitle>Trades</DataItemTitle>
+                <DataItemValue>{position.tradesCount}</DataItemValue>
+              </DataItem>
+              <DataItem area={'volume'}>
+                <DataItemTitle>Volume ($)</DataItemTitle>
+                <DataItemValue>{formattedNum(position.volumeUSD, true)}</DataItemValue>
+              </DataItem>
+            </>
+          )}
         </PositionDataWrapper>
-        <Decoration src={cupImage} srcSet={cupImage + ' 1x,' + cupImage_x2 + ' 2x'} alt={''} />
+        <Decoration src={cupImage} srcSet={cupImage + ' 1x,' + cupImage_x2 + ' 2x'} alt={''} draggable={false} />
       </PositionPanel>
     </Wrapper>
   )
