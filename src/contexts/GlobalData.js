@@ -324,7 +324,7 @@ const getChartData = async (oldestDateToFetch) => {
  */
 async function getAllPairsOnJediswap(whitelistedTokenIds) {
   if (!whitelistedTokenIds?.length) {
-    return {}
+    return []
   }
 
   try {
@@ -332,8 +332,7 @@ async function getAllPairsOnJediswap(whitelistedTokenIds) {
       query: POOLS_DATA([], whitelistedTokenIds),
       fetchPolicy: 'cache-first',
     })
-
-    return queryResult?.data?.pools ?? {}
+    return queryResult?.data?.pools ?? []
   } catch (e) {
     console.log(e)
   }
@@ -344,7 +343,7 @@ async function getAllPairsOnJediswap(whitelistedTokenIds) {
  */
 async function getAllTokensOnJediswap(ids = []) {
   if (!ids?.length) {
-    return {}
+    return []
   }
 
   try {
@@ -353,7 +352,7 @@ async function getAllTokensOnJediswap(ids = []) {
       fetchPolicy: 'cache-first',
     })
 
-    return queryResult?.data?.tokens ?? {}
+    return queryResult?.data?.tokens ?? []
   } catch (e) {
     console.log(e)
   }
@@ -382,7 +381,7 @@ export function useGlobalData() {
 
       updateAllTokensInUniswap(allTokens)
     }
-    if (!data) {
+    if (!data || !state?.allPairs || !state?.allTokens) {
       fetchData()
     }
   }, [update, data, updateAllPairsInUniswap, updateAllTokensInUniswap, whitelistedTokens])

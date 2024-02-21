@@ -239,6 +239,9 @@ export function Updater() {
   useEffect(() => {
     async function getData() {
       // get top pairs for overview list
+      if (Object.keys(whitelistedTokens).length === 0) {
+        return
+      }
       let topPairs = await getTopPools(Object.keys(whitelistedTokens))
       topPairs && updateTopPairs(topPairs)
     }

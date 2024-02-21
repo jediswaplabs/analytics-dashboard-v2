@@ -246,6 +246,9 @@ export function Updater() {
   useEffect(() => {
     async function getData() {
       // get top pairs for overview list
+      if (Object.keys(whitelistedTokens).length === 0) {
+        return
+      }
       let topTokens = await getTopTokens(Object.keys(whitelistedTokens))
       topTokens && updateTopTokens(topTokens)
     }

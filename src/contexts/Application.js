@@ -336,9 +336,15 @@ export function useListedTokens() {
   return supportedTokens
 }
 
+const loadingStates = {
+  NOT_STARTED: 'NOT_STARTED',
+  LOADING: 'LOADING',
+  FINISHED: 'FINISHED',
+}
+let tokenListLoadingState = loadingStates.NOT_STARTED
 export function useWhitelistedTokens() {
   const [state, { updateWhitelistedTokens }] = useApplicationContext()
-  const whitelistedTokens = state?.[WHITELISTED_TOKENS] ?? []
+  const whitelistedTokens = state?.[WHITELISTED_TOKENS] ?? {}
 
   useEffect(() => {
     async function fetchList() {
@@ -357,10 +363,11 @@ export function useWhitelistedTokens() {
         }
         return acc
       }, {})
-
       updateWhitelistedTokens(formatted)
+      tokenListLoadingState = loadingStates.FINISHED
     }
-    if (isEmpty(whitelistedTokens)) {
+    if (isEmpty(whitelistedTokens) && tokenListLoadingState !== loadingStates.LOADING) {
+      tokenListLoadingState = loadingStates.LOADING
       try {
         fetchList()
       } catch {
@@ -369,5 +376,8 @@ export function useWhitelistedTokens() {
     }
   }, [updateWhitelistedTokens, whitelistedTokens])
 
+  if (tokenListLoadingState !== loadingStates.FINISHED) {
+    return {}
+  }
   return { ...DEFAULT_TOKENS_WHITELIST, ...whitelistedTokens }
 }
