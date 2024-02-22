@@ -1,11 +1,7 @@
 import React, { createContext, useContext, useReducer, useMemo, useCallback, useEffect, useState } from 'react'
 
 import { jediSwapClient } from '../apollo/client'
-import { POOLS_DATA, HISTORICAL_POOLS_DATA, TOP_POOLS_DATA } from '../apollo/queries'
-
-// import { TOP_TOKENS_DATA, HISTORICAL_TOKENS_DATA, TOKEN_PAIRS_DATA, TOKENS_DATA } from '../apollo/queries'
-// import { PAIR_CHART, FILTERED_TRANSACTIONS } from '../apollo/queries'
-// import { PAIRS_CURRENT, PAIRS_BULK, PAIR_DATA, PAIRS_HISTORICAL_BULK } from '../apollo/queries'
+import { HISTORICAL_POOLS_DATA } from '../apollo/queries'
 
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
@@ -128,18 +124,10 @@ export default function Provider({ children }) {
 
 async function getBulkPairData(pairList, tokenList) {
   try {
-    let current = await jediSwapClient.query({
-      query: POOLS_DATA({
-        poolIds: pairList,
-        tokenIds: tokenList
-      }),
-      fetchPolicy: 'cache-first',
-    })
-
     let historicalData = await jediSwapClient.query({
       query: HISTORICAL_POOLS_DATA({
         poolIds: pairList,
-        tokenIds: tokenList,
+        tokenIds: poolList,
         periods: [apiTimeframeOptions.oneDay, apiTimeframeOptions.twoDays, apiTimeframeOptions.oneWeek],
       }),
       fetchPolicy: 'cache-first',
@@ -155,18 +143,23 @@ async function getBulkPairData(pairList, tokenList) {
     let oneWeekData = historicalData?.data?.poolsData.reduce((obj, cur, i) => {
       return { ...obj, [cur.pool.poolAddress]: cur?.period?.[apiTimeframeOptions.oneWeek] }
     }, {})
+    let currentData = historicalData?.data?.poolsData.reduce((obj, cur, i) => {
+      return { ...obj, [cur.pool.poolAddress]: cur?.pool }
+    }, {})
 
-    let pairData = await Promise.all(
-      current &&
-      current.data.pools.map(async (pair) => {
-        let data = pair
+
+    const poolList = Object.keys(currentData)
+
+    let pairData =
+      poolList.map((poolAddress) => {
+        let pair = currentData[poolAddress]
         let oneDayHistory = oneDayData?.[pair.poolAddress]
         let twoDayHistory = twoDayData?.[pair.poolAddress]
         let oneWeekHistory = oneWeekData?.[pair.poolAddress]
-        data = parseData(data, oneDayHistory, twoDayHistory, oneWeekHistory)
+        const data = parseData(pair, oneDayHistory, twoDayHistory, oneWeekHistory)
         return data
       })
-    )
+
     return pairData
   } catch (e) {
     console.log(e)
@@ -253,6 +246,7 @@ export function Updater() {
 export function usePairDataForList(poolAddresses) {
   const [state, { update }] = usePairDataContext()
   const allPoolData = useAllPairData()
+  // console.log('allPoolData', allPoolData)
 
   const untrackedAddresses = poolAddresses.reduce((accum, address) => {
     if (!Object.keys(allPoolData).includes(address) && isStarknetAddress(address)) {
@@ -316,5 +310,5 @@ export function usePairData(pairAddress) {
  */
 export function useAllPairData() {
   const [state] = usePairDataContext()
-  return state || {}
+  return state || []
 }

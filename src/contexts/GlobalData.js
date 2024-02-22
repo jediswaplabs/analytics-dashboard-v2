@@ -8,9 +8,12 @@ import { useTimeframe, useWhitelistedTokens } from './Application'
 import { getPercentChange, get2DayPercentChange, getTimeframe, convertDateToUnixFormat } from '../utils'
 
 import { GLOBAL_CHART } from '../apollo/queries'
-import { GLOBAL_DATA, TOKENS_DATA, POOLS_DATA, HISTORICAL_GLOBAL_DATA } from '../apollo/queries'
+import { HISTORICAL_GLOBAL_DATA } from '../apollo/queries'
 
 import weekOfYear from 'dayjs/plugin/weekOfYear'
+import { useAllPairData } from './PairData.js'
+import { useAllTokenData } from './TokenData.js'
+
 const UPDATE = 'UPDATE'
 const UPDATE_TXNS = 'UPDATE_TXNS'
 const UPDATE_CHART = 'UPDATE_CHART'
@@ -320,45 +323,6 @@ const getChartData = async (oldestDateToFetch) => {
 }
 
 /**
- * Loop through every pair on uniswap, used for search
- */
-async function getAllPairsOnJediswap(whitelistedTokenIds) {
-  if (!whitelistedTokenIds?.length) {
-    return []
-  }
-
-  try {
-    let queryResult = await jediSwapClient.query({
-      query: POOLS_DATA([], whitelistedTokenIds),
-      fetchPolicy: 'cache-first',
-    })
-    return queryResult?.data?.pools ?? []
-  } catch (e) {
-    console.log(e)
-  }
-}
-
-/**
- * Loop through every token on uniswap, used for search
- */
-async function getAllTokensOnJediswap(ids = []) {
-  if (!ids?.length) {
-    return []
-  }
-
-  try {
-    let queryResult = await jediSwapClient.query({
-      query: TOKENS_DATA(ids),
-      fetchPolicy: 'cache-first',
-    })
-
-    return queryResult?.data?.tokens ?? []
-  } catch (e) {
-    console.log(e)
-  }
-}
-
-/**
  * Hook that fetches overview data, plus all tokens and pairs for search
  */
 export function useGlobalData() {
@@ -367,21 +331,13 @@ export function useGlobalData() {
   const whitelistedTokens = useMemo(() => whitelistedTokensRaw, [Object.keys(whitelistedTokensRaw).join(',')])
   const data = state?.globalData
 
-  // const combinedVolume = useTokenDataCombined(offsetVolumes)
-
   useEffect(() => {
     async function fetchData() {
       let globalData = await getGlobalData()
       globalData && update(globalData)
 
-      let allPairs = await getAllPairsOnJediswap(Object.keys(whitelistedTokens))
-      updateAllPairsInUniswap(allPairs)
-
-      let allTokens = await getAllTokensOnJediswap(Object.keys(whitelistedTokens))
-
-      updateAllTokensInUniswap(allTokens)
     }
-    if (!data || !state?.allPairs || !state?.allTokens) {
+    if (!data) {
       fetchData()
     }
   }, [update, data, updateAllPairsInUniswap, updateAllTokensInUniswap, whitelistedTokens])
@@ -433,15 +389,9 @@ export function useGlobalChartData() {
 }
 
 export function useAllPairsInJediswap() {
-  const [state] = useGlobalDataContext()
-  let allPairs = state?.allPairs
-
-  return allPairs || []
+  return Object.values(useAllPairData())
 }
 
 export function useAllTokensInJediswap() {
-  const [state] = useGlobalDataContext()
-  let allTokens = state?.allTokens
-
-  return allTokens || []
+  return Object.values(useAllTokenData())
 }

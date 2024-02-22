@@ -6,7 +6,7 @@ import { useWhitelistedTokens } from './Application'
 
 import { jediSwapClient } from '../apollo/client'
 
-import { HISTORICAL_TOKENS_DATA, TOKEN_PAIRS_DATA, TOKENS_DATA } from '../apollo/queries'
+import { HISTORICAL_TOKENS_DATA, TOKEN_PAIRS_DATA } from '../apollo/queries'
 
 import { get2DayPercentChange, get2DayPercentChangeNew, getPercentChange, isStarknetAddress } from '../utils'
 import { apiTimeframeOptions } from '../constants'
@@ -127,13 +127,6 @@ const getTopTokens = async (whitelistedIds = []) => {
 
 const getBulkTokenData = async (ids) => {
   try {
-    let current = await jediSwapClient.query({
-      query: TOKENS_DATA({
-        tokenIds: ids,
-      }),
-      fetchPolicy: 'cache-first',
-    })
-
     let historicalData = await jediSwapClient.query({
       query: HISTORICAL_TOKENS_DATA({
         tokenIds: ids,
@@ -149,15 +142,21 @@ const getBulkTokenData = async (ids) => {
     let twoDaysData = historicalData?.data?.tokensData.reduce((acc, currentValue, i) => {
       return { ...acc, [currentValue.token.tokenAddress]: currentValue?.period?.[apiTimeframeOptions.twoDays] }
     }, {})
+    let currentData = historicalData?.data?.tokensData.reduce((acc, currentValue, i) => {
+      return { ...acc, [currentValue.token.tokenAddress]: currentValue?.token }
+    }, {})
+
+    const tokenList = Object.keys(currentData)
 
     let bulkResults = await Promise.all(
-      current &&
+      tokenList &&
       oneDayData &&
       twoDaysData &&
-      current?.data?.tokens.map(async (token) => {
-        let data = token
-        let oneDayHistory = oneDayData?.[token.tokenAddress]
-        let twoDaysHistory = twoDaysData?.[token.tokenAddress]
+      tokenList.map(async (tokenAddress) => {
+        let data = currentData[tokenAddress]
+        // let data = token
+        let oneDayHistory = oneDayData?.[tokenAddress]
+        let twoDaysHistory = twoDaysData?.[tokenAddress]
 
         const oneDayVolumeUSD = oneDayHistory?.volumeUSD || 0
         const twoDayVolumeUSD = twoDaysHistory?.volumeUSD || 0

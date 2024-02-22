@@ -50,16 +50,7 @@ const PoolFields = `
   }
 `
 
-export const GLOBAL_DATA = () => {
-  const queryString = ` query jediswapFactories {
-      factories {
-        totalFeesUSD
-        totalValueLockedUSD
-        totalVolumeUSD
-      }
-    }`
-  return gql(queryString)
-}
+
 export const HISTORICAL_GLOBAL_DATA = () => {
   const queryString = ` query jediswapFactories {
       factoriesDayData(first: 2, orderBy: "dayId", orderByDirection: "desc") {
@@ -87,18 +78,6 @@ export const GLOBAL_CHART = gql`
   }
 `
 
-export const TOKENS_DATA = ({ tokenIds = [] }) => {
-  const tokenString = `[${tokenIds.map((token) => `"${token}"`).join(',')}]`
-  let queryString = `
-    ${TokenFields}
-    query tokens {
-      tokens(first: 500, where: {tokenAddressIn: ${tokenString}}) {
-        ...TokenFields
-      }
-    }
-  `
-  return gql(queryString)
-}
 
 export const HISTORICAL_TOKENS_DATA = ({ tokenIds = [], periods = [] }) => {
   const tokenString = `[${tokenIds.map((token) => `"${token}"`).join(',')}]`
@@ -142,22 +121,66 @@ export const TOKEN_PAIRS_DATA = ({ tokenId, whitelistedTokenIds = [] }) => {
   return gql(queryString)
 }
 
-// used for getting top tokens by daily volume
-export const TOP_TOKENS_DATA = ({ tokenIds = [] }) => {
-  const tokenString = `[${tokenIds.map((token) => `"${token}",`)}]`
 
-  // добавить ключ where: { dateGt: $date }
+
+export const HISTORICAL_POOLS_DATA = ({ poolIds = [], tokenIds = [], periods = [] }) => {
+  const poolsString = `[${poolIds.map((pool) => `"${pool}"`).join(',')}]`
+  const tokensString = `[${tokenIds.map((token) => `"${token}",`)}]`
+  const periodString = `[${periods.map((period) => `"${period}"`).join(',')}]`
+
   let queryString = `
-    query tokensDayData {
-      tokensDayData(first: 100, orderByDirection: "desc", orderBy: "day_id", where: {tokenAddressIn: ${tokenString}}) {
-        tokenAddress
-        datetime
+    ${PoolFields}
+    query poolsData {
+      poolsData(
+        first: 500, 
+        where: {
+          poolAddressIn: ${poolsString}, 
+          periodIn: ${periodString},
+          bothTokenAddressIn: ${tokensString},
+        }
+      ) {
+        pool {
+          ...PoolFields
+        }
+        period
       }
     }
   `
   return gql(queryString)
 }
 
+
+
+
+
+//don't use for now
+export const TOKENS_DATA = ({ tokenIds = [] }) => {
+  const tokenString = `[${tokenIds.map((token) => `"${token}"`).join(',')}]`
+  let queryString = `
+    ${TokenFields}
+    query tokens {
+      tokens(first: 500, where: {tokenAddressIn: ${tokenString}}) {
+        ...TokenFields
+      }
+    }
+  `
+  return gql(queryString)
+}
+
+
+//don't use for now
+export const GLOBAL_DATA = () => {
+  const queryString = ` query jediswapFactories {
+      factories {
+        totalFeesUSD
+        totalValueLockedUSD
+        totalVolumeUSD
+      }
+    }`
+  return gql(queryString)
+}
+
+//don't use for now
 export const POOLS_DATA = ({ poolIds = [], tokenIds = [] }) => {
   const poolsString = `[${poolIds.map((pool) => `"${pool}"`).join(',')}]`
   const tokensString = `[${tokenIds.map((token) => `"${token}",`)}]`
@@ -177,120 +200,3 @@ export const POOLS_DATA = ({ poolIds = [], tokenIds = [] }) => {
   `
   return gql(queryString)
 }
-
-export const HISTORICAL_POOLS_DATA = ({ poolIds = [], tokenIds = [], periods = [] }) => {
-  const poolsString = `[${poolIds.map((pool) => `"${pool}"`).join(',')}]`
-  const tokensString = `[${tokenIds.map((token) => `"${token}",`)}]`
-  const periodString = `[${periods.map((period) => `"${period}"`).join(',')}]`
-
-  let queryString = `
-    query poolsData {
-      poolsData(
-        first: 500, 
-        where: {
-          poolAddressIn: ${poolsString}, 
-          periodIn: ${periodString},
-          bothTokenAddressIn: ${tokensString},
-        }
-      ) {
-        pool {
-          poolAddress
-        }
-        period
-      }
-    }
-  `
-  return gql(queryString)
-}
-
-export const TOP_POOLS_DATA = ({ poolIds = [], tokenIds = [] }) => {
-  const poolsString = `[${poolIds.map((pool) => `"${pool}",`)}]`
-  const tokensString = `[${tokenIds.map((token) => `"${token}",`)}]`
-
-  let queryString = `
-    query poolsDayData {
-      poolsDayData(
-        first: 100, 
-        orderByDirection: "desc", 
-        orderBy: "day_id", 
-        where: {
-          poolAddressIn: ${poolsString},
-          bothTokenAddressIn: ${tokensString}
-        }
-      ) {
-        pool {
-          poolAddress
-        }
-        datetime
-      }
-    }
-  `
-  return gql(queryString)
-}
-
-export const TOKEN_SEARCH = gql`
-  query tokens($value: String, $id: String) {
-    asSymbol: tokens(where: { symbolContains: $value }, orderBy: "total_liquidity", orderByDirection: "desc") {
-      id
-      symbol
-      name
-      totalLiquidity
-    }
-    asName: tokens(where: { nameContains: $value }, orderBy: "total_liquidity", orderByDirection: "desc") {
-      id
-      symbol
-      name
-      totalLiquidity
-    }
-    asAddress: tokens(where: { id: $id }, orderBy: "total_liquidity", orderByDirection: "desc") {
-      id
-      symbol
-      name
-      totalLiquidity
-    }
-  }
-`
-
-export const PAIR_SEARCH = gql`
-  query pairs($tokens: [String!], $id: String) {
-    as0: pairs(where: { token0In: $tokens }) {
-      id
-      token0 {
-        id
-        symbol
-        name
-      }
-      token1 {
-        id
-        symbol
-        name
-      }
-    }
-    as1: pairs(where: { token1In: $tokens }) {
-      id
-      token0 {
-        id
-        symbol
-        name
-      }
-      token1 {
-        id
-        symbol
-        name
-      }
-    }
-    asAddress: pairs(where: { id: $id }) {
-      id
-      token0 {
-        id
-        symbol
-        name
-      }
-      token1 {
-        id
-        symbol
-        name
-      }
-    }
-  }
-`
