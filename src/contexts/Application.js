@@ -364,12 +364,12 @@ export function useWhitelistedTokens() {
         return acc
       }, {})
       updateWhitelistedTokens(formatted)
-      tokenListLoadingState = loadingStates.FINISHED
+      // tokenListLoadingState = loadingStates.FINISHED
     }
     if (isEmpty(whitelistedTokens) && tokenListLoadingState !== loadingStates.LOADING) {
       tokenListLoadingState = loadingStates.LOADING
       try {
-        fetchList()
+        fetchList().finally(() => tokenListLoadingState = loadingStates.FINISHED)
       } catch {
         console.log('Error fetching')
       }
