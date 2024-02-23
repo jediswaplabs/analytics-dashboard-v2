@@ -34,6 +34,7 @@ const Wrapper = styled.div`
       height: initial;
       min-height: initial;
       padding: 16px;
+      z-index: 10000;
     `}
 `
 

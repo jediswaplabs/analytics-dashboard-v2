@@ -6,6 +6,7 @@ import { Flex } from 'rebass'
 import Link from '../Link'
 import { RowFixed } from '../Row'
 import Wordmark from '../../assets/wordmark.svg'
+import Hamburger from '../../assets/menu.svg'
 
 import { BasicLink } from '../Link'
 import { useMedia } from 'react-use'
@@ -22,15 +23,40 @@ const TitleWrapper = styled.div`
 const UniIcon = styled(Link)``
 
 const Option = styled.div`
+  position: relative;
   font-weight: 500;
   font-size: 14px;
-  opacity: ${({ activeText }) => (activeText ? 1 : 0.6)};
   color: ${({ theme }) => theme.white};
   display: flex;
-  margin-left: 12px;
+  padding: 15px 0;
   :hover {
     opacity: 1;
   }
+`
+const ActiveOption = styled(Option)`
+  text-shadow: 0px 0px 73.21151733398438px rgba(49, 255, 156, 0.50), 0px 0px 18.911256790161133px rgba(49, 255, 156, 0.70);
+  &::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      top: 0px;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(0deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), linear-gradient(rgb(255, 255, 255) 0%, rgba(255, 255, 255, 0) 100%);
+      box-shadow: rgba(49, 255, 156, 0.5) 0px 0px 18.9113px, rgba(49, 255, 156, 0.5) 0px 0px 73.2115px, rgba(49, 255, 156, 0.5) 0px 0px 7.32115px inset;
+    }
+`
+
+const BlackBottomMenu = styled(RowFixed)`
+  alignItems: flex-end;
+  background: linear-gradient(244deg, #000 0%, #000508 100%);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  justify-content: space-around;
+  font-size: 1rem;
+  font-family: 'Avenir LT Std';
 `
 
 export default function Title() {
@@ -52,27 +78,50 @@ export default function Title() {
           </UniIcon>
         </RowFixed>
         {below1080 && (
-          <RowFixed style={{ alignItems: 'flex-end' }}>
+          <BlackBottomMenu>
             <BasicLink to="/home">
-              <Option activeText={history.location.pathname === '/home' ?? undefined}>Overview</Option>
+              {
+                history.location.pathname === '/home'
+                  ?
+                  <ActiveOption>
+                    Overview
+                  </ActiveOption>
+                  :
+                  <Option>
+                    Overview
+                  </Option>
+              }
             </BasicLink>
             <BasicLink to="/tokens">
-              <Option
-                activeText={
-                  (history.location.pathname.split('/')[1] === 'tokens' || history.location.pathname.split('/')[1] === 'token') ?? undefined
-                }
-              >
-                Tokens
-              </Option>
+              {
+                (history.location.pathname.split('/')[1] === 'tokens' || history.location.pathname.split('/')[1] === 'token')
+                  ?
+                  <ActiveOption>
+                    Tokens
+                  </ActiveOption>
+                  :
+                  <Option>
+                    Tokens
+                  </Option>
+              }
             </BasicLink>
             <BasicLink to="/pools">
-              <Option
-                activeText={(history.location.pathname.split('/')[1] === 'pairs' || history.location.pathname.split('/')[1] === 'pair') ?? undefined}
-              >
-                Pairs
-              </Option>
+              {
+                (history.location.pathname.split('/')[1] === 'pools' || history.location.pathname.split('/')[1] === 'pool')
+                  ?
+                  <ActiveOption>
+                    Pools
+                  </ActiveOption>
+                  :
+                  <Option>
+                    Pools
+                  </Option>
+              }
             </BasicLink>
-          </RowFixed>
+            <div>
+              <img src={Hamburger} />
+            </div>
+          </BlackBottomMenu>
         )}
       </Flex>
     </TitleWrapper>
