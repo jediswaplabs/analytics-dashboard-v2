@@ -162,13 +162,12 @@ const getBulkTokenData = async (ids) => {
         const twoDayVolumeUSD = twoDaysHistory?.volumeUSD || 0
         const volumeChangeUSD = get2DayPercentChange(oneDayVolumeUSD, twoDayVolumeUSD)
 
-        // const [oneDayTxns, txnChange] = get2DayPercentChange(data.txCount, oneDayHistory?.txCount ?? 0, twoDaysHistory?.txCount ?? 0)
         // const [oneDayFees, feesChange] = get2DayPercentChange(data.feesUSD, oneDayHistory?.feesUSD ?? 0, twoDaysHistory?.feesUSD ?? 0)
         const oneDayFees = oneDayHistory?.feesUSD || 0
         const twoDayFees = twoDaysHistory?.feesUSD || 0
         const feesChange = get2DayPercentChange(oneDayFees, twoDayFees)
 
-        const tvlUSD = oneDayHistory.totalValueLockedUSD
+        const tvlUSD = oneDayHistory.totalValueLockedUSD || 0
         const tvlUSDChange = getPercentChange(oneDayHistory.totalValueLockedUSD, oneDayHistory.totalValueLockedUSDFirst)
         const tvlToken = data?.totalValueLocked ? parseFloat(data.totalValueLocked) : 0
 
@@ -176,12 +175,6 @@ const getBulkTokenData = async (ids) => {
         // const priceUSDChange = priceUSDOneDay && priceUSDTwoDays ? getPercentChange(priceUSDOneDay.toString(), priceUSDTwoDays.toString()) : 0
         const priceUSDChange = getPercentChange(oneDayHistory?.close, oneDayHistory?.open)
 
-        const txCount =
-          data?.txCount && oneDayHistory?.txCount
-            ? parseFloat(data.txCount) - parseFloat(oneDayHistory.txCount)
-            : data
-              ? parseFloat(data.txCount)
-              : 0
         const feesUSD =
           data?.feesUSD && oneDayHistory?.feesUSD
             ? parseFloat(data.feesUSD) - parseFloat(oneDayHistory.feesUSD)
@@ -192,7 +185,7 @@ const getBulkTokenData = async (ids) => {
         data.priceUSD = priceUSD
         data.priceChangeUSD = priceUSDChange
 
-        data.totalLiquidityUSD = tvlUSD
+        data.totalLiquidityUSD = data.totalValueLockedUSD
         data.liquidityChangeUSD = tvlUSDChange
         // data.liquidityToken = tvlToken
 

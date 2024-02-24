@@ -5,13 +5,10 @@ const TokenFields = `
     tokenAddress
     name
     symbol
-    derivedETH
     volume
     volumeUSD
-    untrackedVolumeUSD
     totalValueLocked
     totalValueLockedUSD
-    txCount
     feesUSD
   }
 `
@@ -19,29 +16,23 @@ const TokenFields = `
 const PoolFields = `
   fragment PoolFields on Pool {
     poolAddress
-    txCount
     token0 {
       tokenAddress
       symbol
       name
-      totalValueLocked
-      derivedETH
+      #totalValueLocked
     }
     token1 {
       tokenAddress
       symbol
       name
-      totalValueLocked
-      derivedETH
+      #totalValueLocked
     }
     volumeToken0
     volumeToken1
+    volumeUSD
     totalValueLockedUSD
     totalValueLockedETH
-    volumeUSD
-    untrackedVolumeUSD
-    token0Price
-    token1Price
     totalValueLockedToken0
     totalValueLockedToken1
     token0Price
@@ -95,8 +86,7 @@ export const HISTORICAL_TOKENS_DATA = ({ tokenIds = [], periods = [] }) => {
   return gql(queryString)
 }
 
-export const HISTORICAL_POOLS_DATA = ({ poolIds = [], tokenIds = [], periods = [] }) => {
-  const poolsString = `[${poolIds.map((pool) => `"${pool}"`).join(',')}]`
+export const HISTORICAL_POOLS_DATA = ({ tokenIds = [], periods = [] }) => {
   const tokensString = `[${tokenIds.map((token) => `"${token}",`)}]`
   const periodString = `[${periods.map((period) => `"${period}"`).join(',')}]`
 
@@ -106,7 +96,6 @@ export const HISTORICAL_POOLS_DATA = ({ poolIds = [], tokenIds = [], periods = [
       poolsData(
         first: 500, 
         where: {
-          poolAddressIn: ${poolsString}, 
           periodIn: ${periodString},
           bothTokenAddressIn: ${tokensString},
         }

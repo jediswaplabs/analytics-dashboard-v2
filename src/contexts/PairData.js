@@ -116,11 +116,10 @@ export default function Provider({ children }) {
   )
 }
 
-async function getBulkPairData(pairList, tokenList) {
+async function getBulkPairData(tokenList) {
   try {
     let historicalData = await jediSwapClient.query({
       query: HISTORICAL_POOLS_DATA({
-        poolIds: pairList,
         tokenIds: tokenList,
         periods: [apiTimeframeOptions.oneDay, apiTimeframeOptions.twoDays, apiTimeframeOptions.oneWeek],
       }),
@@ -195,7 +194,7 @@ function parseData(data, oneDayData, twoDayData, oneWeekData) {
 
 const getAllPools = async (whitelistedIds = []) => {
   try {
-    const bulkResults = getBulkPairData([], whitelistedIds)
+    const bulkResults = getBulkPairData(whitelistedIds)
     return bulkResults
   } catch (e) {
     console.log(e)

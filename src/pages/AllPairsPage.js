@@ -14,11 +14,6 @@ function AllPairsPage() {
   const allPoolData = useAllPairData()
   const [savedPools] = useSavedPairs()
   const formattedSavedPoolsData = usePairDataForList(Object.keys(savedPools).filter((k) => !!savedPools[k]))
-  // const formattedSavedPoolsData =
-  //   savedPairsData?.reduce((acc, v) => {
-  //     acc[v.poolAddress] = v
-  //     return acc
-  //   }, {}) ?? {}
 
   useEffect(() => {
     window.scrollTo(0, 0)
