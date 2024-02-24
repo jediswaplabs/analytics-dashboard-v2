@@ -18,6 +18,24 @@ const Wrapper = styled.div`
   }
 `
 
+const PageButtons = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 2em;
+  margin-bottom: 0.5em;
+`
+
+const Arrow = styled.div`
+  color: ${({ theme, faded }) => (faded ? theme.jediGrey : theme.paginationTest)};
+  padding: 0 20px;
+  user-select: none;
+  font-size: 30px;
+  :hover {
+    cursor: pointer;
+  }
+`
+
 const TabsContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -103,14 +121,12 @@ function VolumeLeaderboard({ leaderboardPositions, itemMax = 10 }) {
     return leaderboardPositions //TODO add normalization if necessary
   }, [leaderboardPositions])
 
-  // // sorting
-  // const [sortDirection, setSortDirection] = useState(true)
-  // const [sortedColumn, setSortedColumn] = useState(SORT_FIELD.VOL)
-  //
+  const filteredLeaderboardPositionAddresses = useMemo(() => {
+    return Object.keys(leaderboardPositions)
+  }, [leaderboardPositions])
+
   const below1200 = useMedia('(max-width: 1200px)')
   const below600 = useMedia('(max-width: 600px)')
-  // const below1080 = useMedia('(max-width: 1080px)')
-  // const below680 = useMedia('(max-width: 680px)')
 
   useEffect(() => {
     setMaxPage(1) // edit this to do modular
@@ -118,30 +134,22 @@ function VolumeLeaderboard({ leaderboardPositions, itemMax = 10 }) {
   }, [leaderboardPositions])
 
   useEffect(() => {
-    if (leaderboardPositions) {
+    if (filteredLeaderboardPositionAddresses) {
       let extraPages = 1
-      if (formattedLeaderboardPositions.length % itemMax === 0) {
+      if (filteredLeaderboardPositionAddresses.length % itemMax === 0) {
         extraPages = 0
       }
-      setMaxPage(Math.floor(formattedLeaderboardPositions.length / itemMax) + extraPages)
+      setMaxPage(Math.floor(filteredLeaderboardPositionAddresses.length / itemMax) + extraPages)
     }
-  }, [leaderboardPositions, formattedLeaderboardPositions, itemMax])
+  }, [leaderboardPositions, filteredLeaderboardPositionAddresses, itemMax])
 
   const filteredLeaderboardPositions = useMemo(() => {
     //TODO filter data based on activeTab value
     return (
-      formattedLeaderboardPositions &&
-      formattedLeaderboardPositions
-        // .sort((a, b) => {
-        //   if (sortedColumn === SORT_FIELD.SYMBOL || sortedColumn === SORT_FIELD.NAME) {
-        //     return a[sortedColumn] > b[sortedColumn] ? (sortDirection ? -1 : 1) * 1 : (sortDirection ? -1 : 1) * -1
-        //   }
-        //   return parseFloat(a[sortedColumn]) > parseFloat(b[sortedColumn]) ? (sortDirection ? -1 : 1) * 1 : (sortDirection ? -1 : 1) * -1
-        // })
-        .slice(itemMax * (page - 1), page * itemMax)
+      filteredLeaderboardPositionAddresses &&
+      filteredLeaderboardPositionAddresses.slice(itemMax * (page - 1), page * itemMax).map((address) => formattedLeaderboardPositions[address])
     )
-  }, [formattedLeaderboardPositions, activeTab])
-  // }, [formattedTokens, itemMax, page, sortDirection, sortedColumn])
+  }, [formattedLeaderboardPositions, page, itemMax, activeTab])
 
   const getStarIconByPosition = (position) => {
     switch (position) {
@@ -196,16 +204,6 @@ function VolumeLeaderboard({ leaderboardPositions, itemMax = 10 }) {
     return <LocalLoader />
   }
 
-  // if (!filteredList.length) {
-  //   return (
-  //     <PlaceholderContainer>
-  //       <TYPE.main fontSize={'16px'} fontWeight={'400'}>
-  //         {noTokensPlaceholderText}
-  //       </TYPE.main>
-  //     </PlaceholderContainer>
-  //   )
-  // }
-
   return (
     <Wrapper>
       <TabsContainer>
@@ -250,14 +248,33 @@ function VolumeLeaderboard({ leaderboardPositions, itemMax = 10 }) {
         </DashGrid>
 
         <List p={0}>
-          {filteredLeaderboardPositions.map((item, index) => {
+          {filteredLeaderboardPositions.map((position, index) => {
             return (
               <div key={index}>
-                <ListItem key={index} index={(page - 1) * itemMax + index + 1} item={item} />
+                <ListItem key={index} index={(page - 1) * itemMax + index + 1} item={position} />
               </div>
             )
           })}
         </List>
+        {maxPage > 1 && (
+          <PageButtons>
+            <div
+              onClick={(e) => {
+                setPage(page === 1 ? page : page - 1)
+              }}
+            >
+              <Arrow faded={page === 1 ? true : false}>{'<'}</Arrow>
+            </div>
+            <TYPE.body style={{ display: 'flex', alignItems: 'center' }}>{page + ' of ' + maxPage}</TYPE.body>
+            <div
+              onClick={(e) => {
+                setPage(page === maxPage ? page : page + 1)
+              }}
+            >
+              <Arrow faded={page === maxPage ? true : false}>{'>'}</Arrow>
+            </div>
+          </PageButtons>
+        )}
       </ListWrapper>
     </Wrapper>
   )

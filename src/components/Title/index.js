@@ -52,7 +52,7 @@ export default function Title() {
           </UniIcon>
         </RowFixed>
         {below1080 && (
-          <RowFixed style={{ alignItems: 'flex-end' }}>
+          <RowFixed style={{ alignItems: 'center', textAlign: 'center' }}>
             <BasicLink to="/home">
               <Option activeText={history.location.pathname === '/home' ?? undefined}>Overview</Option>
             </BasicLink>
@@ -71,6 +71,18 @@ export default function Title() {
               >
                 Pairs
               </Option>
+            </BasicLink>
+
+            <BasicLink to="/volume-leaderboard">
+              <Option activeText={history.location.pathname.split('/')[1] === 'volume-leaderboard' ?? undefined}>VL</Option>
+            </BasicLink>
+
+            {/*<BasicLink to="/lp-leaderboard">*/}
+            {/*  <Option activeText={history.location.pathname.split('/')[1] === 'lp-leaderboard' ?? undefined}>LP Leaderboard</Option>*/}
+            {/*</BasicLink>*/}
+
+            <BasicLink to="/rewards">
+              <Option activeText={history.location.pathname.split('/')[1] === 'rewards' ?? undefined}>R</Option>
             </BasicLink>
           </RowFixed>
         )}

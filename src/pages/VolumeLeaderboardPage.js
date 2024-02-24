@@ -17,36 +17,36 @@ function VolumeLeaderboardPage() {
   }, [])
 
   // const leaderboardPositions = useAllVolumeLeaderboardPositions();
-  const leaderboardPositions = [
-    {
+  const leaderboardPositions = {
+    '0x030941ffa8874ea7c5c8c943fa50f9193d3748cc219b67fdda334b37be85955e': {
       address: '0x030941ffa8874ea7c5c8c943fa50f9193d3748cc219b67fdda334b37be85955e',
       tradesCount: 100,
       volumeUSD: 990177.97,
       score: 2100,
       rank: 2100,
     },
-    {
+    '0x02bf7f2ee7bb22583335feb6dd3aebd827030b82f57817783c6af1a6d99fc6f6': {
       address: '0x02bf7f2ee7bb22583335feb6dd3aebd827030b82f57817783c6af1a6d99fc6f6',
       tradesCount: 98,
       volumeUSD: 893809.41,
       score: 1580,
       rank: 1580,
     },
-    {
+    '0x02c2d509793bff9ffcdbebef4d556eb7c43f88a0cbb7225affdd5ac4ef62afac': {
       address: '0x02c2d509793bff9ffcdbebef4d556eb7c43f88a0cbb7225affdd5ac4ef62afac',
       tradesCount: 80,
       volumeUSD: 173809.41,
       score: 1580,
       rank: 1580,
     },
-    {
+    '0x06e6d6778d9eccd65773061f3e4d6d35b57269a01e30609b64a236339b96db54': {
       address: '0x06e6d6778d9eccd65773061f3e4d6d35b57269a01e30609b64a236339b96db54',
       tradesCount: 120,
       volumeUSD: 473809.41,
       score: 580,
       rank: 580,
     },
-  ]
+  }
 
   const handleOnWalletSearch = () => {
     if (!isStarknetAddress(searchAddressQuery, true)) {

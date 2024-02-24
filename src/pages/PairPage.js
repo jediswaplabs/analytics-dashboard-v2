@@ -210,9 +210,6 @@ function PairPage({ pairAddress, history }) {
   }
 
   return (
-    // <InnerPageLayout>
-    //
-    // </InnerPageLayout>
     <PageWrapper>
       <PageHeader>
         <RowBetween style={{ flexWrap: 'wrap', alingItems: 'start' }}>

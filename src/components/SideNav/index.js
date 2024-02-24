@@ -199,27 +199,20 @@ function SideNav({ history }) {
                     <OptionContent>Volume Leaderboard</OptionContent>
                   </Option>
                 </BasicLink>
-                {/*<BasicLink to="/accounts">*/}
-                {/*  <Option*/}
-                {/*    activeText={*/}
-                {/*      (history.location.pathname.split('/')[1] === 'lp-leaderboard' ||*/}
-                {/*        history.location.pathname.split('/')[1] === 'lp-leaderboard') ??*/}
-                {/*      undefined*/}
-                {/*    }*/}
-                {/*  >*/}
+
+                {/*<BasicLink to="/lp-leaderboard">*/}
+                {/*  <Option activeText={history.location.pathname.split('/')[1] === 'lp-leaderboard' ?? undefined}>*/}
                 {/*    <OptionContent>LP Leaderboard</OptionContent>*/}
                 {/*  </Option>*/}
                 {/*</BasicLink>*/}
-                {/*<Separator />*/}
-                {/*<BasicLink to="/rewards">*/}
-                {/*  <Option*/}
-                {/*    activeText={*/}
-                {/*      (history.location.pathname.split('/')[1] === 'rewards' || history.location.pathname.split('/')[1] === 'rewards') ?? undefined*/}
-                {/*    }*/}
-                {/*  >*/}
-                {/*    <OptionContent>Rewards</OptionContent>*/}
-                {/*  </Option>*/}
-                {/*</BasicLink>*/}
+
+                <Separator />
+
+                <BasicLink to="/rewards">
+                  <Option activeText={history.location.pathname.split('/')[1] === 'rewards' ?? undefined}>
+                    <OptionContent>Rewards</OptionContent>
+                  </Option>
+                </BasicLink>
               </AutoColumn>
             )}
           </AutoColumn>
