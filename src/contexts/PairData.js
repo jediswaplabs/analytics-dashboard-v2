@@ -127,7 +127,7 @@ async function getBulkPairData(pairList, tokenList) {
     let historicalData = await jediSwapClient.query({
       query: HISTORICAL_POOLS_DATA({
         poolIds: pairList,
-        tokenIds: poolList,
+        tokenIds: tokenList,
         periods: [apiTimeframeOptions.oneDay, apiTimeframeOptions.twoDays, apiTimeframeOptions.oneWeek],
       }),
       fetchPolicy: 'cache-first',
