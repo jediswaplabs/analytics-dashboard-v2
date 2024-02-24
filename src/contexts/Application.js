@@ -188,63 +188,6 @@ export default function Provider({ children }) {
   )
 }
 
-// export function useLatestBlocks() {
-//   const [state, { updateLatestBlock, updateHeadBlock }] = useApplicationContext()
-//
-//   const latestBlock = state?.[LATEST_BLOCK]
-//   const headBlock = state?.[HEAD_BLOCK]
-//
-//   useEffect(() => {
-//     async function fetchData() {
-//       const getLatestBlockPromise = jediSwapClient.query({
-//         query: GET_LATEST_BLOCK,
-//       })
-//
-//       const getLatestHeadBlockPromise = fetch(LATEST_STARKNET_BLOCK_URL, {
-//         method: 'POST',
-//         body: JSON.stringify({
-//           jsonrpc: '2.0',
-//           method: 'starknet_blockHashAndNumber',
-//           id: 0,
-//         }),
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//       })
-//
-//       Promise.all([getLatestBlockPromise, getLatestHeadBlockPromise])
-//         .then(async ([latestBlockRes, headBlockRes]) => {
-//           const parsedHeadBlockResult = await headBlockRes.json()
-//           const syncedBlockResult = latestBlockRes?.data?.blocks?.[0]
-//           const syncedBlock = syncedBlockResult
-//             ? {
-//                 ...syncedBlockResult,
-//                 timestamp: convertDateToUnixFormat(syncedBlockResult.timestamp),
-//               }
-//             : null
-//           const headBlock = parsedHeadBlockResult
-//             ? {
-//                 id: parsedHeadBlockResult?.result?.block_hash,
-//                 number: parsedHeadBlockResult?.result?.block_number,
-//                 // timestamp: parsedHeadBlockResult.timestamp,
-//               }
-//             : null
-//           if (syncedBlock && headBlock) {
-//             updateLatestBlock(syncedBlock)
-//             updateHeadBlock(headBlock)
-//           }
-//         })
-//         .catch((e) => {
-//           console.log(e)
-//         })
-//     }
-//     if (!latestBlock) {
-//       fetchData()
-//     }
-//   }, [latestBlock, updateHeadBlock, updateLatestBlock])
-//
-//   return [latestBlock, headBlock]
-// }
 
 export function useCurrentCurrency() {
   const [state, { update }] = useApplicationContext()
@@ -262,25 +205,6 @@ export function useTimeframe() {
   const [state, { updateTimeframe }] = useApplicationContext()
   const activeTimeframe = state?.[`TIME_KEY`]
   return [activeTimeframe, updateTimeframe]
-}
-
-export function useStartTimestamp() {
-  const [activeWindow] = useTimeframe()
-  const [startDateTimestamp, setStartDateTimestamp] = useState()
-
-  // monitor the old date fetched
-  useEffect(() => {
-    let startTime =
-      dayjs
-        .utc()
-        .subtract(1, activeWindow === timeframeOptions.week ? 'week' : activeWindow === timeframeOptions.ALL_TIME ? 'year' : 'year')
-        .startOf('day')
-        .unix() - 1
-    // if we find a new start time less than the current startrtime - update oldest pooint to fetch
-    setStartDateTimestamp(startTime)
-  }, [activeWindow, startDateTimestamp])
-
-  return startDateTimestamp
 }
 
 // keep track of session length for refresh ticker

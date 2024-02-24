@@ -19,13 +19,13 @@ import PageLayout from '../layouts/PageLayout'
 function AllTokensPage() {
   const allTokens = useAllTokenData()
   const [savedTokens] = useSavedTokens()
-  const savedTokensData = useTokenDataForList(Object.keys(savedTokens).filter((k) => !!savedTokens[k]))
+  const formattedSavedTokensData = useTokenDataForList(Object.keys(savedTokens).filter((k) => !!savedTokens[k]))
 
-  const formattedSavedTokensData =
-    savedTokensData?.reduce((acc, v) => {
-      acc[v.tokenAddress] = v
-      return acc
-    }, {}) ?? {}
+  // const formattedSavedTokensData =
+  //   savedTokensData?.reduce((acc, v) => {
+  //     acc[v.tokenAddress] = v
+  //     return acc
+  //   }, {}) ?? {}
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])

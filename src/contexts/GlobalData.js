@@ -5,7 +5,7 @@ import utc from 'dayjs/plugin/utc'
 import { jediSwapClient } from '../apollo/client'
 
 import { useTimeframe, useWhitelistedTokens } from './Application'
-import { getPercentChange, get2DayPercentChange, getTimeframe, convertDateToUnixFormat } from '../utils'
+import { getPercentChange, getTimeframe, convertDateToUnixFormat } from '../utils'
 
 import { GLOBAL_CHART } from '../apollo/queries'
 import { HISTORICAL_GLOBAL_DATA } from '../apollo/queries'

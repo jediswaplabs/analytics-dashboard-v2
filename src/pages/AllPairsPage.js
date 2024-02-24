@@ -13,12 +13,12 @@ import PageLayout from '../layouts/PageLayout'
 function AllPairsPage() {
   const allPoolData = useAllPairData()
   const [savedPools] = useSavedPairs()
-  const savedPairsData = usePairDataForList(Object.keys(savedPools).filter((k) => !!savedPools[k]))
-  const formattedSavedPoolsData =
-    savedPairsData?.reduce((acc, v) => {
-      acc[v.poolAddress] = v
-      return acc
-    }, {}) ?? {}
+  const formattedSavedPoolsData = usePairDataForList(Object.keys(savedPools).filter((k) => !!savedPools[k]))
+  // const formattedSavedPoolsData =
+  //   savedPairsData?.reduce((acc, v) => {
+  //     acc[v.poolAddress] = v
+  //     return acc
+  //   }, {}) ?? {}
 
   useEffect(() => {
     window.scrollTo(0, 0)

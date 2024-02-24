@@ -116,31 +116,25 @@ const SORT_FIELD = {
   APY: 5,
 }
 
-const FIELD_TO_VALUE = (field, useTracked) => {
+const FIELD_TO_VALUE = (field) => {
   switch (field) {
     case SORT_FIELD.LIQ:
-      return useTracked ? 'trackedReserveUSD' : 'reserveUSD'
+      return 'trackedReserveUSD'
     case SORT_FIELD.VOL:
-      return useTracked ? 'oneDayVolumeUSD' : 'oneDayVolumeUSD'
+      return 'oneDayVolumeUSD'
     case SORT_FIELD.VOL_7DAYS:
-      return useTracked ? 'oneWeekVolumeUSD' : 'oneWeekVolumeUSD'
+      return 'oneWeekVolumeUSD'
     case SORT_FIELD.FEES:
-      return useTracked ? 'oneDayFeesUSD' : 'oneDayFeesUSD'
+      return 'oneDayFeesUSD'
     default:
       return 'trackedReserveUSD'
   }
 }
 
 const formatDataText = (value, trackedValue, supressWarning = false, textAlign = 'right') => {
-  const showUntracked = value !== '$0' && !trackedValue & !supressWarning
   return (
-    // <AutoColumn gap="2px" style={{ opacity: showUntracked ? '0.7' : '1' }}>
     <AutoColumn gap="2px">
       <div style={{ textAlign }}>{value}</div>
-      <TYPE.light fontSize={'9px'} style={{ textAlign: 'right' }}>
-        {/* {showUntracked ? 'untracked' : '  '} */}
-        {showUntracked ? '' : '  '}
-      </TYPE.light>
     </AutoColumn>
   )
 }
@@ -303,7 +297,7 @@ function PairList({
           const apy1 = parseFloat(((1 + pairBFeeRation24H) ** 365 - 1) * 100)
           return apy0 > apy1 ? (sortDirection ? -1 : 1) * 1 : (sortDirection ? -1 : 1) * -1
         }
-        return parseFloat(pairA[FIELD_TO_VALUE(sortedColumn, useTracked)]) > parseFloat(pairB[FIELD_TO_VALUE(sortedColumn, useTracked)])
+        return parseFloat(pairA[FIELD_TO_VALUE(sortedColumn)]) > parseFloat(pairB[FIELD_TO_VALUE(sortedColumn)])
           ? (sortDirection ? -1 : 1) * 1
           : (sortDirection ? -1 : 1) * -1
       })

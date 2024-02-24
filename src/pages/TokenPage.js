@@ -13,11 +13,11 @@ import { AutoColumn } from '../components/Column'
 import { ButtonDark } from '../components/ButtonStyled'
 import { BasicLink } from '../components/Link'
 import { formattedNum, formattedPercent, getPoolLink, getSwapLink, localNumber, urls } from '../utils'
-import { useTokenData, useTokenPairs } from '../contexts/TokenData'
+import { useTokenData } from '../contexts/TokenData'
 import { TYPE } from '../Theme'
 import { useColor } from '../hooks'
 import { useMedia } from 'react-use'
-import { usePairDataForList } from '../contexts/PairData'
+import { usePairDataForToken } from '../contexts/PairData'
 import { useEffect } from 'react'
 import Warning from '../components/Warning'
 import { usePathDismissed, useSavedTokens } from '../contexts/LocalStorage'
@@ -122,18 +122,9 @@ function TokenPage({ address, history }) {
   // detect color from token
   const backgroundColor = useColor(tokenAddress, symbol)
 
-  const allPairs = useTokenPairs(address)
-
-  const allPairsIds = allPairs?.map((p) => p.poolAddress) ?? []
 
   // pairs to show in pair list
-  const fetchedPairsList = usePairDataForList(allPairsIds)
-  const formattedPairListData =
-    fetchedPairsList?.reduce((acc, v) => {
-      acc[v.poolAddress] = v
-      return acc
-    }, {}) ?? {}
-
+  const formattedPairListData = usePairDataForToken(address)
   // price
   const price = priceUSD ? formattedNum(priceUSD, true) : ''
   const priceChange = priceChangeUSD ? formattedPercent(priceChangeUSD) : ''

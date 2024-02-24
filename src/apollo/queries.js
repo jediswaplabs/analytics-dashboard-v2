@@ -95,34 +95,6 @@ export const HISTORICAL_TOKENS_DATA = ({ tokenIds = [], periods = [] }) => {
   return gql(queryString)
 }
 
-export const TOKEN_PAIRS_DATA = ({ tokenId, whitelistedTokenIds = [] }) => {
-  const tokenString = `[${whitelistedTokenIds.map((token) => `"${token}"`).join(',')}]`
-  const queryString = `
-    ${TokenFields}
-    query tokens {
-      tokens(
-        where: {
-          tokenAddress:"${tokenId}"
-        }) {
-        ...TokenFields
-      }
-      pairs: pools(
-        first: 50, 
-        orderBy: "totalValueLockedUSD", 
-        orderByDirection: "desc"
-        where: {
-          bothTokenAddressIn: ${tokenString}, 
-          eitherTokenAddress: "${tokenId}"
-        }){
-          poolAddress
-      }
-    }
-  `
-  return gql(queryString)
-}
-
-
-
 export const HISTORICAL_POOLS_DATA = ({ poolIds = [], tokenIds = [], periods = [] }) => {
   const poolsString = `[${poolIds.map((pool) => `"${pool}"`).join(',')}]`
   const tokensString = `[${tokenIds.map((token) => `"${token}",`)}]`
@@ -143,58 +115,6 @@ export const HISTORICAL_POOLS_DATA = ({ poolIds = [], tokenIds = [], periods = [
           ...PoolFields
         }
         period
-      }
-    }
-  `
-  return gql(queryString)
-}
-
-
-
-
-
-//don't use for now
-export const TOKENS_DATA = ({ tokenIds = [] }) => {
-  const tokenString = `[${tokenIds.map((token) => `"${token}"`).join(',')}]`
-  let queryString = `
-    ${TokenFields}
-    query tokens {
-      tokens(first: 500, where: {tokenAddressIn: ${tokenString}}) {
-        ...TokenFields
-      }
-    }
-  `
-  return gql(queryString)
-}
-
-
-//don't use for now
-export const GLOBAL_DATA = () => {
-  const queryString = ` query jediswapFactories {
-      factories {
-        totalFeesUSD
-        totalValueLockedUSD
-        totalVolumeUSD
-      }
-    }`
-  return gql(queryString)
-}
-
-//don't use for now
-export const POOLS_DATA = ({ poolIds = [], tokenIds = [] }) => {
-  const poolsString = `[${poolIds.map((pool) => `"${pool}"`).join(',')}]`
-  const tokensString = `[${tokenIds.map((token) => `"${token}",`)}]`
-  let queryString = `
-    ${PoolFields}
-    query pools {
-      pools(
-        first: 500
-        where: {
-          poolAddressIn: ${poolsString},
-          bothTokenAddressIn: ${tokensString},
-        }
-      ) {
-        ...PoolFields
       }
     }
   `
