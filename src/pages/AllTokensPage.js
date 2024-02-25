@@ -9,9 +9,7 @@ import { PageWrapper, FullWrapper, ContentWrapper, PageSection } from '../compon
 import { RowBetween } from '../components/Row'
 import Search from '../components/Search'
 import { useMedia } from 'react-use'
-import { useAllPairData, useDataForListV2 } from '../contexts/PairData'
-import { useSavedPairs, useSavedTokens } from '../contexts/LocalStorage'
-import PairList from '../components/PairList'
+import { useSavedTokens } from '../contexts/LocalStorage'
 import PageLayout from '../layouts/PageLayout'
 // import CheckBox from '../components/Checkbox'
 // import QuestionHelper from '../components/QuestionHelper'
@@ -21,11 +19,6 @@ function AllTokensPage() {
   const [savedTokens] = useSavedTokens()
   const formattedSavedTokensData = useTokenDataForList(Object.keys(savedTokens).filter((k) => !!savedTokens[k]))
 
-  // const formattedSavedTokensData =
-  //   savedTokensData?.reduce((acc, v) => {
-  //     acc[v.tokenAddress] = v
-  //     return acc
-  //   }, {}) ?? {}
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
