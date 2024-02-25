@@ -140,7 +140,7 @@ function TopTokenList({
   const whitelistedTokens = useWhitelistedTokens()
   // sorting
   const [sortDirection, setSortDirection] = useState(true)
-  const [sortedColumn, setSortedColumn] = useState(SORT_FIELD.VOL)
+  const [sortedColumn, setSortedColumn] = useState(SORT_FIELD.LIQ)
 
   const below1080 = useMedia('(max-width: 1080px)')
   const below680 = useMedia('(max-width: 680px)')
