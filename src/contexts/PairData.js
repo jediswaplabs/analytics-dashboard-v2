@@ -42,8 +42,11 @@ function reducer(state, { type, payload }) {
         return (added[pair.poolAddress] = pair)
       })
       return {
-        ...state,
-        ...added,
+        pools: {
+          ...state.pools,
+          ...added
+        },
+        loadingEnd: true
       }
     }
 
@@ -239,8 +242,10 @@ export function usePairDataForList(poolAddresses) {
  */
 export function usePairData(pairAddress) {
   const allPairsData = useAllPairData()
-  const pairData = allPairsData?.[pairAddress]
-  return pairData || {}
+  const [state] = usePairDataContext()
+  const pairData = allPairsData?.[pairAddress] || {}
+  pairData.loadingEnd = state.loadingEnd
+  return pairData
 }
 
 /**
@@ -248,5 +253,5 @@ export function usePairData(pairAddress) {
  */
 export function useAllPairData() {
   const [state] = usePairDataContext()
-  return state || {}
+  return state.pools || {}
 }
