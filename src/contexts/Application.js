@@ -232,34 +232,6 @@ export function useSessionStart() {
   return parseInt(seconds / 1000)
 }
 
-export function useListedTokens() {
-  const [state, { updateSupportedTokens }] = useApplicationContext()
-  const supportedTokens = state?.[SUPPORTED_TOKENS]
-
-  useEffect(() => {
-    async function fetchList() {
-      const allFetched = await SUPPORTED_LIST_URLS__NO_ENS.reduce(async (fetchedTokens, url) => {
-        const tokensSoFar = await fetchedTokens
-        const newTokens = await getTokenList(url)
-        if (newTokens?.tokens) {
-          return Promise.resolve([...(tokensSoFar ?? []), ...newTokens.tokens])
-        }
-      }, Promise.resolve([]))
-      let formatted = allFetched?.map((t) => starknetNumberModule.cleanHex(t.address.toLowerCase()))
-      updateSupportedTokens(formatted)
-    }
-    if (!supportedTokens) {
-      try {
-        fetchList()
-      } catch {
-        console.log('Error fetching')
-      }
-    }
-  }, [updateSupportedTokens, supportedTokens])
-
-  return supportedTokens
-}
-
 export function useWhitelistedTokens() {
   const [state, { updateWhitelistedTokens }] = useApplicationContext()
   const whitelistedTokens = state?.[WHITELISTED_TOKENS] ?? {}
