@@ -183,11 +183,11 @@ function parseData(data, oneDayData, twoDayData, oneWeekData) {
   const feesChangeUSD = get2DayPercentChangeNew(oneDayFeesUSD, twoDayFeesUSD)
 
 
-  const [oneDayVolumeUntracked, volumeChangeUntracked] = get2DayPercentChange(
-    data?.untrackedVolumeUSD,
-    oneDayData?.untrackedVolumeUSD ? parseFloat(oneDayData?.untrackedVolumeUSD) : 0,
-    twoDayData?.untrackedVolumeUSD ? twoDayData?.untrackedVolumeUSD : 0
-  )
+  // const [oneDayVolumeUntracked, volumeChangeUntracked] = get2DayPercentChange(
+  //   data?.untrackedVolumeUSD,
+  //   oneDayData?.untrackedVolumeUSD ? parseFloat(oneDayData?.untrackedVolumeUSD) : 0,
+  //   twoDayData?.untrackedVolumeUSD ? twoDayData?.untrackedVolumeUSD : 0
+  // )
 
   const oneWeekVolumeUSD = oneWeekData?.volumeUSD || 0
   // const oneWeekVolumeUntracked = parseFloat(
@@ -198,9 +198,9 @@ function parseData(data, oneDayData, twoDayData, oneWeekData) {
   data.oneDayVolumeUSD = parseFloat(oneDayVolumeUSD)
   data.oneWeekVolumeUSD = oneWeekVolumeUSD
   data.volumeChangeUSD = volumeChangeUSD
-  data.oneDayVolumeUntracked = oneDayVolumeUntracked
+  // data.oneDayVolumeUntracked = oneDayVolumeUntracked
   // data.oneWeekVolumeUntracked = oneWeekVolumeUntracked
-  data.volumeChangeUntracked = volumeChangeUntracked
+  // data.volumeChangeUntracked = volumeChangeUntracked
 
   data.oneDayFeesUSD = parseFloat(oneDayFeesUSD);
   data.feesChangeUSD = feesChangeUSD;
@@ -213,12 +213,12 @@ function parseData(data, oneDayData, twoDayData, oneWeekData) {
   // if (!oneDayData && data && data.createdAtBlockNumber > oneDayBlock) {
   //   data.oneDayVolumeUSD = parseFloat(data.volumeUSD)
   // }
-  if (!oneDayData && data) {
-    data.oneDayVolumeUSD = parseFloat(data.volumeUSD)
-  }
-  if (!oneWeekData && data) {
-    data.oneWeekVolumeUSD = parseFloat(data.volumeUSD)
-  }
+  // if (!oneDayData && data) {
+  //   data.oneDayVolumeUSD = parseFloat(data.volumeUSD)
+  // }
+  // if (!oneWeekData && data) {
+  //   data.oneWeekVolumeUSD = parseFloat(data.volumeUSD)
+  // }
 
   return data
 }
