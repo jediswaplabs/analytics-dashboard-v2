@@ -19,8 +19,7 @@ import { useColor } from '../hooks'
 import { useMedia } from 'react-use'
 import { usePairDataForToken } from '../contexts/PairData'
 import { useEffect } from 'react'
-import Warning from '../components/Warning'
-import { usePathDismissed, useSavedTokens } from '../contexts/LocalStorage'
+import { useSavedTokens } from '../contexts/LocalStorage'
 import { Hover, PageWrapper, ContentWrapper, StyledIcon, BlockedWrapper, BlockedMessageWrapper, PageSection, PageHeader } from '../components'
 import { AlertCircle, Star } from 'react-feather'
 import { useWhitelistedTokens } from '../contexts/Application'
@@ -87,18 +86,6 @@ const TokenDetailsLayout = styled.div`
   }
 `
 
-const WarningIcon = styled(AlertCircle)`
-  stroke: ${({ theme }) => theme.text1};
-  height: 16px;
-  width: 16px;
-  opacity: 0.6;
-`
-
-const WarningGrouping = styled.div`
-  opacity: ${({ disabled }) => disabled && '0.4'};
-  pointer-events: ${({ disabled }) => disabled && 'none'};
-`
-
 function TokenPage({ address, history }) {
   const {
     tokenAddress,
@@ -151,7 +138,6 @@ function TokenPage({ address, history }) {
   const LENGTH = below1024 ? 10 : 16
   const formattedSymbol = symbol?.length > LENGTH ? symbol.slice(0, LENGTH) + '...' : symbol
 
-  const [dismissed, markAsDismissed] = usePathDismissed(history.location.pathname)
   const [savedTokens, addToken, removeToken] = useSavedTokens()
 
   const whitelistedTokens = useWhitelistedTokens()
@@ -161,14 +147,6 @@ function TokenPage({ address, history }) {
       top: 0,
     })
   }, [])
-
-  if (!tokenAddress) {
-    return (
-      <LoaderWrapper>
-        <Loader />
-      </LoaderWrapper>
-    )
-  }
 
   if (!whitelistedTokens[address]) {
     return (
@@ -182,6 +160,14 @@ function TokenPage({ address, history }) {
           </AutoColumn>
         </BlockedMessageWrapper>
       </BlockedWrapper>
+    )
+  }
+
+  if (!tokenAddress) {
+    return (
+      <LoaderWrapper>
+        <Loader />
+      </LoaderWrapper>
     )
   }
 
