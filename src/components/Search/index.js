@@ -534,7 +534,7 @@ export const Search = ({ small = false }) => {
 
     const feePercent = (pairData.fee ? parseFloat(pairData.fee) / 10000 : 0) + '%'
     const feeTier = pairData.fee / 10 ** 6
-    const liquidity = formattedNum(!!pairData.trackedReserveUSD ? pairData.trackedReserveUSD : pairData.reserveUSD, true)
+    const liquidity = formattedNum(pairData.totalValueLockedUSD, true)
     const volume = formattedNum(pairData.oneDayVolumeUSD ? pairData.oneDayVolumeUSD : pairData.oneDayVolumeUntracked, true)
     const fees = formattedNum(pairData.oneDayVolumeUSD ? pairData.oneDayVolumeUSD * feeTier : pairData.oneDayVolumeUntracked * feeTier, true)
 

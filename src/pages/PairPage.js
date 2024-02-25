@@ -119,7 +119,7 @@ function PairPage({ pairAddress, history }) {
     volumeChangeUSD,
     oneDayVolumeUntracked,
     volumeChangeUntracked,
-    trackedReserveUSD,
+    totalValueLockedUSD,
     liquidityChangeUSD,
     oneDayFeesUSD,
     feesChangeUSD,
@@ -138,7 +138,7 @@ function PairPage({ pairAddress, history }) {
 
   const backgroundColor = useColor(pairAddress)
 
-  const formattedLiquidity = formattedNum(trackedReserveUSD, true)
+  const formattedLiquidity = formattedNum(totalValueLockedUSD, true)
   const liquidityChange = formattedPercent(liquidityChangeUSD)
 
   // volume

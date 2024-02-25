@@ -175,19 +175,12 @@ function parseData(data, oneDayData, twoDayData, oneWeekData) {
   data.oneWeekVolumeUSD = oneWeekVolumeUSD
   data.volumeChangeUSD = volumeChangeUSD
 
+  // set fees properties
   data.oneDayFeesUSD = parseFloat(oneDayFeesUSD);
   data.feesChangeUSD = feesChangeUSD;
 
   // set liquidity properties
-  data.trackedReserveUSD = data.totalValueLockedUSD
   data.liquidityChangeUSD = getPercentChange(oneDayData.totalValueLockedUSD, oneDayData.totalValueLockedUSDFirst)
-
-  // if (!oneDayData && data) {
-  //   data.oneDayVolumeUSD = parseFloat(data.volumeUSD)
-  // }
-  // if (!oneWeekData && data) {
-  //   data.oneWeekVolumeUSD = parseFloat(data.volumeUSD)
-  // }
 
   return data
 }
