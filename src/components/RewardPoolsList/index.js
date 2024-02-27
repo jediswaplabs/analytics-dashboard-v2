@@ -18,6 +18,7 @@ import FormattedName from '../FormattedName'
 import FeeBadge from '../FeeBadge'
 import { AutoColumn } from '../Column'
 import { Divider } from '../index'
+import { isEmpty } from 'lodash'
 
 const Wrapper = styled.div`
   display: grid;
@@ -201,7 +202,7 @@ function RewardsPoolList({ rewardsPositions, itemMax = 10 }) {
     )
   }
 
-  if (!filteredRewardsPositionAddresses) {
+  if (isEmpty(filteredRewardsPositionAddresses)) {
     return <LocalLoader />
   }
 
