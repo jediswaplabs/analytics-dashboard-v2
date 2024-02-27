@@ -6,9 +6,9 @@ import { useWhitelistedTokens } from './Application'
 
 import { jediSwapClient } from '../apollo/client'
 
-import { HISTORICAL_TOKENS_DATA, TOKEN_PAIRS_DATA, TOKENS_DATA } from '../apollo/queries'
+import { HISTORICAL_TOKENS_DATA } from '../apollo/queries'
 
-import { get2DayPercentChange, get2DayPercentChangeNew, getPercentChange, isStarknetAddress } from '../utils'
+import { get2DayPercentChange, getPercentChange, isStarknetAddress } from '../utils'
 import { apiTimeframeOptions } from '../constants'
 
 const UPDATE = 'UPDATE'
@@ -116,7 +116,7 @@ export default function Provider({ children }) {
   )
 }
 
-const getTopTokens = async (whitelistedIds = []) => {
+const getAllTokens = async (whitelistedIds = []) => {
   try {
     const bulkResults = await getBulkTokenData(whitelistedIds)
     return bulkResults
@@ -127,13 +127,6 @@ const getTopTokens = async (whitelistedIds = []) => {
 
 const getBulkTokenData = async (ids) => {
   try {
-    let current = await jediSwapClient.query({
-      query: TOKENS_DATA({
-        tokenIds: ids,
-      }),
-      fetchPolicy: 'cache-first',
-    })
-
     let historicalData = await jediSwapClient.query({
       query: HISTORICAL_TOKENS_DATA({
         tokenIds: ids,
@@ -149,27 +142,32 @@ const getBulkTokenData = async (ids) => {
     let twoDaysData = historicalData?.data?.tokensData.reduce((acc, currentValue, i) => {
       return { ...acc, [currentValue.token.tokenAddress]: currentValue?.period?.[apiTimeframeOptions.twoDays] }
     }, {})
+    let currentData = historicalData?.data?.tokensData.reduce((acc, currentValue, i) => {
+      return { ...acc, [currentValue.token.tokenAddress]: currentValue?.token }
+    }, {})
+
+    const tokenList = Object.keys(currentData)
 
     let bulkResults = await Promise.all(
-      current &&
+      tokenList &&
       oneDayData &&
       twoDaysData &&
-      current?.data?.tokens.map(async (token) => {
-        let data = token
-        let oneDayHistory = oneDayData?.[token.tokenAddress]
-        let twoDaysHistory = twoDaysData?.[token.tokenAddress]
+      tokenList.map(async (tokenAddress) => {
+        let data = currentData[tokenAddress]
+        // let data = token
+        let oneDayHistory = oneDayData?.[tokenAddress]
+        let twoDaysHistory = twoDaysData?.[tokenAddress]
 
         const oneDayVolumeUSD = oneDayHistory?.volumeUSD || 0
         const twoDayVolumeUSD = twoDaysHistory?.volumeUSD || 0
-        const volumeChangeUSD = get2DayPercentChangeNew(oneDayVolumeUSD, twoDayVolumeUSD)
+        const volumeChangeUSD = get2DayPercentChange(oneDayVolumeUSD, twoDayVolumeUSD)
 
-        // const [oneDayTxns, txnChange] = get2DayPercentChange(data.txCount, oneDayHistory?.txCount ?? 0, twoDaysHistory?.txCount ?? 0)
         // const [oneDayFees, feesChange] = get2DayPercentChange(data.feesUSD, oneDayHistory?.feesUSD ?? 0, twoDaysHistory?.feesUSD ?? 0)
         const oneDayFees = oneDayHistory?.feesUSD || 0
         const twoDayFees = twoDaysHistory?.feesUSD || 0
-        const feesChange = get2DayPercentChangeNew(oneDayFees, twoDayFees)
+        const feesChange = get2DayPercentChange(oneDayFees, twoDayFees)
 
-        const tvlUSD = oneDayHistory.totalValueLockedUSD
+        const tvlUSD = oneDayHistory.totalValueLockedUSD || 0
         const tvlUSDChange = getPercentChange(oneDayHistory.totalValueLockedUSD, oneDayHistory.totalValueLockedUSDFirst)
         const tvlToken = data?.totalValueLocked ? parseFloat(data.totalValueLocked) : 0
 
@@ -177,12 +175,6 @@ const getBulkTokenData = async (ids) => {
         // const priceUSDChange = priceUSDOneDay && priceUSDTwoDays ? getPercentChange(priceUSDOneDay.toString(), priceUSDTwoDays.toString()) : 0
         const priceUSDChange = getPercentChange(oneDayHistory?.close, oneDayHistory?.open)
 
-        const txCount =
-          data?.txCount && oneDayHistory?.txCount
-            ? parseFloat(data.txCount) - parseFloat(oneDayHistory.txCount)
-            : data
-              ? parseFloat(data.txCount)
-              : 0
         const feesUSD =
           data?.feesUSD && oneDayHistory?.feesUSD
             ? parseFloat(data.feesUSD) - parseFloat(oneDayHistory.feesUSD)
@@ -193,7 +185,7 @@ const getBulkTokenData = async (ids) => {
         data.priceUSD = priceUSD
         data.priceChangeUSD = priceUSDChange
 
-        data.totalLiquidityUSD = tvlUSD
+        data.totalLiquidityUSD = data.totalValueLockedUSD
         data.liquidityChangeUSD = tvlUSDChange
         // data.liquidityToken = tvlToken
 
@@ -222,22 +214,6 @@ const getBulkTokenData = async (ids) => {
   }
 }
 
-const getTokenPairs = async (address, whitelistedTokenIds = []) => {
-  try {
-    // fetch all current and historical data
-    let result = await jediSwapClient.query({
-      query: TOKEN_PAIRS_DATA({
-        tokenId: address,
-        whitelistedTokenIds: whitelistedTokenIds,
-      }),
-      fetchPolicy: 'cache-first',
-    })
-    return result.data?.pairs ?? []
-  } catch (e) {
-    console.log(e)
-  }
-}
-
 export function Updater() {
   const [, { updateTopTokens }] = useTokenDataContext()
   const whitelistedTokensRaw = useWhitelistedTokens() ?? {}
@@ -246,7 +222,10 @@ export function Updater() {
   useEffect(() => {
     async function getData() {
       // get top pairs for overview list
-      let topTokens = await getTopTokens(Object.keys(whitelistedTokens))
+      if (Object.keys(whitelistedTokens).length === 0) {
+        return
+      }
+      let topTokens = await getAllTokens(Object.keys(whitelistedTokens))
       topTokens && updateTopTokens(topTokens)
     }
     getData()
@@ -255,73 +234,21 @@ export function Updater() {
 }
 
 export function useTokenData(tokenAddress) {
-  const [state, { update }] = useTokenDataContext()
+  const [state] = useTokenDataContext()
   const tokenData = state?.[tokenAddress]
-
-  useEffect(() => {
-    if (!tokenData && isStarknetAddress(tokenAddress)) {
-      getBulkTokenData([tokenAddress]).then((data) => {
-        update(tokenAddress, data[0])
-      })
-    }
-  }, [tokenAddress, tokenData, update])
 
   return tokenData || {}
 }
 
 export function useTokenDataForList(addresses) {
-  const [state, { update }] = useTokenDataContext()
   const allTokensData = useAllTokenData()
-  const untrackedAddresses = addresses.reduce((accum, address) => {
-    if (!Object.keys(allTokensData).includes(address) && isStarknetAddress(address)) {
-      accum.push(address)
+  const tokens = {};
+  Object.keys(allTokensData).forEach(key => {
+    if (addresses.includes(key)) {
+      tokens[key] = allTokensData[key]
     }
-    return accum
-  }, [])
-
-  // filter for pools with data
-  const tokensWithData = addresses
-    .map((address) => {
-      const tokenData = allTokensData[address]
-      return tokenData ?? undefined
-    })
-    .filter((v) => !!v)
-
-  useEffect(() => {
-    async function fetchData() {
-      if (!untrackedAddresses.length) {
-        return
-      }
-      let data = await getBulkTokenData(untrackedAddresses)
-      data &&
-        data.forEach((p) => {
-          update(p.id, p)
-        })
-    }
-    if (untrackedAddresses.length) {
-      fetchData()
-    }
-  }, [untrackedAddresses, update])
-  return tokensWithData
-}
-
-export function useTokenPairs(tokenAddress) {
-  const [state, { updateAllPairs }] = useTokenDataContext()
-  const tokenPairs = state?.[TOKEN_PAIRS_KEY]?.[tokenAddress]
-  const whitelistedTokensRaw = useWhitelistedTokens() ?? {}
-  const whitelistedTokens = useMemo(() => whitelistedTokensRaw, [Object.keys(whitelistedTokensRaw).join(',')])
-
-  useEffect(() => {
-    async function fetchData() {
-      let allPairs = await getTokenPairs(tokenAddress, Object.keys(whitelistedTokens))
-      updateAllPairs(tokenAddress, allPairs)
-    }
-    if (!tokenPairs && isStarknetAddress(tokenAddress)) {
-      fetchData()
-    }
-  }, [tokenAddress, tokenPairs, updateAllPairs, whitelistedTokens])
-
-  return tokenPairs || []
+  })
+  return tokens
 }
 
 export function useAllTokenData() {

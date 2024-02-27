@@ -179,33 +179,6 @@ function PositionList({ positions }) {
             </AutoColumn>
           </AutoColumn>
         </DataText>
-        {/* {!below500 && (
-          <DataText area="return">
-            <AutoColumn gap="12px" justify="flex-end">
-              <TYPE.main color={'green'}>
-                <RowFixed>{formattedNum(position?.fees.sum, true, true)}</RowFixed>
-              </TYPE.main>
-              <AutoColumn gap="4px" justify="flex-end">
-                <RowFixed>
-                  <TYPE.small fontWeight={400}>
-                    {parseFloat(position.pair.token0.derivedETH)
-                      ? formattedNum(position?.fees.sum / (parseFloat(position.pair.token0.derivedETH) * ethPrice) / 2, false, true)
-                      : 0}{' '}
-                  </TYPE.small>
-                  <FormattedName text={position.pair.token0.symbol} maxCharacters={below740 ? 10 : 18} margin={true} fontSize={'11px'} />
-                </RowFixed>
-                <RowFixed>
-                  <TYPE.small fontWeight={400}>
-                    {parseFloat(position.pair.token1.derivedETH)
-                      ? formattedNum(position?.fees.sum / (parseFloat(position.pair.token1.derivedETH) * ethPrice) / 2, false, true)
-                      : 0}{' '}
-                  </TYPE.small>
-                  <FormattedName text={position.pair.token1.symbol} maxCharacters={below740 ? 10 : 18} margin={true} fontSize={'11px'} />
-                </RowFixed>
-              </AutoColumn>
-            </AutoColumn>
-          </DataText>
-        )} */}
       </DashGrid>
     )
   }

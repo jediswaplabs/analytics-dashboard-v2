@@ -116,31 +116,25 @@ const SORT_FIELD = {
   APY: 5,
 }
 
-const FIELD_TO_VALUE = (field, useTracked) => {
+const FIELD_TO_VALUE = (field) => {
   switch (field) {
     case SORT_FIELD.LIQ:
-      return useTracked ? 'trackedReserveUSD' : 'reserveUSD'
+      return 'totalValueLockedUSD'
     case SORT_FIELD.VOL:
-      return useTracked ? 'oneDayVolumeUSD' : 'oneDayVolumeUSD'
+      return 'oneDayVolumeUSD'
     case SORT_FIELD.VOL_7DAYS:
-      return useTracked ? 'oneWeekVolumeUSD' : 'oneWeekVolumeUSD'
+      return 'oneWeekVolumeUSD'
     case SORT_FIELD.FEES:
-      return useTracked ? 'oneDayFeesUSD' : 'oneDayFeesUSD'
+      return 'oneDayFeesUSD'
     default:
-      return 'trackedReserveUSD'
+      return 'totalValueLockedUSD'
   }
 }
 
 const formatDataText = (value, trackedValue, supressWarning = false, textAlign = 'right') => {
-  const showUntracked = value !== '$0' && !trackedValue & !supressWarning
   return (
-    // <AutoColumn gap="2px" style={{ opacity: showUntracked ? '0.7' : '1' }}>
     <AutoColumn gap="2px">
       <div style={{ textAlign }}>{value}</div>
-      <TYPE.light fontSize={'9px'} style={{ textAlign: 'right' }}>
-        {/* {showUntracked ? 'untracked' : '  '} */}
-        {showUntracked ? '' : '  '}
-      </TYPE.light>
     </AutoColumn>
   )
 }
@@ -199,13 +193,13 @@ function PairList({
 
     if (pairData && pairData.token0 && pairData.token1) {
       const feeTier = pairData.fee / 10 ** 6
-      const liquidity = formattedNum(!!pairData.trackedReserveUSD ? pairData.trackedReserveUSD : pairData.reserveUSD, true)
+      const liquidity = formattedNum(pairData.totalValueLockedUSD, true)
 
       const volume = formattedNum(pairData.oneDayVolumeUSD ? pairData.oneDayVolumeUSD : pairData.oneDayVolumeUntracked, true)
 
       const fees = formattedNum(pairData.oneDayFeesUSD, true)
 
-      const feeRatio24H = pairData.oneDayFeesUSD / pairData.trackedReserveUSD
+      const feeRatio24H = pairData.oneDayFeesUSD / pairData.totalValueLockedUSD
       const apy = ((1 + feeRatio24H) ** 365 - 1) * 100
       const cleanedApy = (isNaN(apy) || !isFinite(apy)) ? 0 : apy
       const displayApy = formattedPercent(cleanedApy, true)
@@ -239,7 +233,7 @@ function PairList({
             <div style={{ color: 'white', display: 'flex', columnGap: '30px', marginTop: '10px' }}>
               <div>
                 <div style={{ color: '#9B9B9B', fontSize: '12px' }}>Liquidity</div>
-                <div>{formatDataText(liquidity, pairData.trackedReserveUSD, false, 'left')}</div>
+                <div>{formatDataText(liquidity, pairData.totalValueLockedUSD, false, 'left')}</div>
               </div>
               <div>
                 <div style={{ color: '#9B9B9B', fontSize: '12px' }}>Volume (24H)</div>
@@ -277,7 +271,7 @@ function PairList({
               <FeeBadge>{feePercent}</FeeBadge>
             </AutoRow>
           </DataText>
-          <DataText area="liq">{formatDataText(liquidity, pairData.trackedReserveUSD)}</DataText>
+          <DataText area="liq">{formatDataText(liquidity, pairData.totalValueLockedUSD)}</DataText>
           <DataText area="vol">{formatDataText(volume, pairData.oneDayVolumeUSD)}</DataText>
           {!below1080 && <DataText area="volWeek">{formatDataText(weekVolume, pairData.oneWeekVolumeUSD)}</DataText>}
           {!below1080 && <DataText area="fees">{formatDataText(fees, pairData.oneDayVolumeUSD)}</DataText>}
@@ -292,18 +286,18 @@ function PairList({
   const pairList =
     filteredPairsAddresses &&
     filteredPairsAddresses
-      .filter((address) => (useTracked ? !!pairs[address].trackedReserveUSD : true))
+      .filter((address) => (useTracked ? !!pairs[address].totalValueLockedUSD : true))
       .sort((addressA, addressB) => {
         const pairA = pairs[addressA]
         const pairB = pairs[addressB]
         if (sortedColumn === SORT_FIELD.APY) {
-          const pairAFeeRation24H = pairA.oneDayFeesUSD / pairA.trackedReserveUSD
-          const pairBFeeRation24H = pairB.oneDayFeesUSD / pairB.trackedReserveUSD
+          const pairAFeeRation24H = pairA.oneDayFeesUSD / pairA.totalValueLockedUSD
+          const pairBFeeRation24H = pairB.oneDayFeesUSD / pairB.totalValueLockedUSD
           const apy0 = parseFloat(((1 + pairAFeeRation24H) ** 365 - 1) * 100)
           const apy1 = parseFloat(((1 + pairBFeeRation24H) ** 365 - 1) * 100)
           return apy0 > apy1 ? (sortDirection ? -1 : 1) * 1 : (sortDirection ? -1 : 1) * -1
         }
-        return parseFloat(pairA[FIELD_TO_VALUE(sortedColumn, useTracked)]) > parseFloat(pairB[FIELD_TO_VALUE(sortedColumn, useTracked)])
+        return parseFloat(pairA[FIELD_TO_VALUE(sortedColumn)]) > parseFloat(pairB[FIELD_TO_VALUE(sortedColumn)])
           ? (sortDirection ? -1 : 1) * 1
           : (sortDirection ? -1 : 1) * -1
       })

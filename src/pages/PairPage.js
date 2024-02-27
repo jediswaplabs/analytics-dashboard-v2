@@ -109,11 +109,6 @@ const HoverSpan = styled.span`
   }
 `
 
-const WarningGrouping = styled.div`
-  opacity: ${({ disabled }) => disabled && '0.4'};
-  pointer-events: ${({ disabled }) => disabled && 'none'};
-`
-
 function PairPage({ pairAddress, history }) {
   const {
     poolAddress,
@@ -124,7 +119,7 @@ function PairPage({ pairAddress, history }) {
     volumeChangeUSD,
     oneDayVolumeUntracked,
     volumeChangeUntracked,
-    trackedReserveUSD,
+    totalValueLockedUSD,
     liquidityChangeUSD,
     oneDayFeesUSD,
     feesChangeUSD,
@@ -132,6 +127,7 @@ function PairPage({ pairAddress, history }) {
     totalValueLockedToken1,
     token0Price,
     token1Price,
+    loadingEnd
   } = usePairData(pairAddress)
   useEffect(() => {
     document.querySelector('body').scrollTo(0, 0)
@@ -143,7 +139,7 @@ function PairPage({ pairAddress, history }) {
 
   const backgroundColor = useColor(pairAddress)
 
-  const formattedLiquidity = formattedNum(trackedReserveUSD, true)
+  const formattedLiquidity = formattedNum(totalValueLockedUSD, true)
   const liquidityChange = formattedPercent(liquidityChangeUSD)
 
   // volume
@@ -173,8 +169,7 @@ function PairPage({ pairAddress, history }) {
   const [savedPairs, addPair, removePair] = useSavedPairs()
 
   const whitelistedTokens = useWhitelistedTokens()
-  const isTokenWhitelisted = !!(whitelistedTokens[token0?.tokenAddress] && whitelistedTokens[token1?.tokenAddress])
-
+  const areTokensWhitelisted = !!(whitelistedTokens[token0?.tokenAddress] && whitelistedTokens[token1?.tokenAddress])
   const actionButtonsMarkup = (
     <RowFixed align="center" style={{ gap: '8px' }}>
       <Link external href={getPoolLink(token0?.tokenAddress, token1?.tokenAddress)}>
@@ -186,7 +181,8 @@ function PairPage({ pairAddress, history }) {
     </RowFixed>
   )
 
-  if (!poolAddress) {
+
+  if (!loadingEnd) {
     return (
       <LoaderWrapper>
         <Loader />
@@ -194,7 +190,7 @@ function PairPage({ pairAddress, history }) {
     )
   }
 
-  if (!isTokenWhitelisted) {
+  if (!areTokensWhitelisted) {
     return (
       <BlockedWrapper>
         <BlockedMessageWrapper>
@@ -209,10 +205,8 @@ function PairPage({ pairAddress, history }) {
     )
   }
 
+
   return (
-    // <InnerPageLayout>
-    //
-    // </InnerPageLayout>
     <PageWrapper>
       <PageHeader>
         <RowBetween style={{ flexWrap: 'wrap', alingItems: 'start' }}>
@@ -275,132 +269,130 @@ function PairPage({ pairAddress, history }) {
       <ContentWrapper>
         <Warning
           type={'pair'}
-          show={!dismissed && !isEmpty(whitelistedTokens) && !isTokenWhitelisted}
+          show={!dismissed && !isEmpty(whitelistedTokens) && !areTokensWhitelisted}
           setShow={markAsDismissed}
           address={pairAddress}
         />
-        <WarningGrouping disabled={!dismissed && !isEmpty(whitelistedTokens) && !isTokenWhitelisted}>
-          <DashboardWrapper>
-            <AutoColumn style={{ gap: '12px' }}>
-              <PanelWrapper>
-                <PanelTopLight>
-                  <AutoColumn gap="20px">
-                    <RowBetween>
-                      <TYPE.subHeader>Total Liquidity</TYPE.subHeader>
-                    </RowBetween>
-                    <RowBetween align="baseline">
-                      <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
-                        {formattedLiquidity}
-                      </TYPE.main>
-                      <TYPE.main fontSize="1rem">{liquidityChange}</TYPE.main>
-                    </RowBetween>
-                  </AutoColumn>
-                </PanelTopLight>
-                <PanelTopLight>
-                  <AutoColumn gap="20px">
-                    <RowBetween>
-                      <TYPE.subHeader>Volume (24hr)</TYPE.subHeader>
-                      <div />
-                    </RowBetween>
-                    <RowBetween align="baseline">
-                      <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
-                        {volume}
-                      </TYPE.main>
-                      <TYPE.main fontSize="1rem">{volumeChange}</TYPE.main>
-                    </RowBetween>
-                  </AutoColumn>
-                </PanelTopLight>
-                <PanelTopLight>
-                  <AutoColumn gap="20px">
-                    <RowBetween>
-                      <TYPE.subHeader>Total fees (24hr)</TYPE.subHeader>
-                    </RowBetween>
-                    <RowBetween align="baseline">
-                      <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
-                        {formattedNum(oneDayFeesUSD, true)}
-                      </TYPE.main>
-                      <TYPE.main fontSize="1rem">{feesChange}</TYPE.main>
-                    </RowBetween>
-                  </AutoColumn>
-                </PanelTopLight>
-              </PanelWrapper>
-
-              <PairDataPanelWrapper>
-                <AutoColumn gap="12px">
+        <DashboardWrapper>
+          <AutoColumn style={{ gap: '12px' }}>
+            <PanelWrapper>
+              <PanelTopLight>
+                <AutoColumn gap="20px">
                   <RowBetween>
-                    <TYPE.main fontSize="16px" fontWeight={500}>
-                      Total Tokens Locked:
-                    </TYPE.main>
+                    <TYPE.subHeader>Total Liquidity</TYPE.subHeader>
                   </RowBetween>
-                  <div style={{ display: 'flex', gap: '20px', flexDirection: below800 ? 'column' : 'row' }}>
+                  <RowBetween align="baseline">
+                    <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
+                      {formattedLiquidity}
+                    </TYPE.main>
+                    <TYPE.main fontSize="1rem">{liquidityChange}</TYPE.main>
+                  </RowBetween>
+                </AutoColumn>
+              </PanelTopLight>
+              <PanelTopLight>
+                <AutoColumn gap="20px">
+                  <RowBetween>
+                    <TYPE.subHeader>Volume (24hr)</TYPE.subHeader>
+                    <div />
+                  </RowBetween>
+                  <RowBetween align="baseline">
+                    <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
+                      {volume}
+                    </TYPE.main>
+                    <TYPE.main fontSize="1rem">{volumeChange}</TYPE.main>
+                  </RowBetween>
+                </AutoColumn>
+              </PanelTopLight>
+              <PanelTopLight>
+                <AutoColumn gap="20px">
+                  <RowBetween>
+                    <TYPE.subHeader>Total fees (24hr)</TYPE.subHeader>
+                  </RowBetween>
+                  <RowBetween align="baseline">
+                    <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
+                      {formattedNum(oneDayFeesUSD, true)}
+                    </TYPE.main>
+                    <TYPE.main fontSize="1rem">{feesChange}</TYPE.main>
+                  </RowBetween>
+                </AutoColumn>
+              </PanelTopLight>
+            </PanelWrapper>
+
+            <PairDataPanelWrapper>
+              <AutoColumn gap="12px">
+                <RowBetween>
+                  <TYPE.main fontSize="16px" fontWeight={500}>
+                    Total Tokens Locked:
+                  </TYPE.main>
+                </RowBetween>
+                <div style={{ display: 'flex', gap: '20px', flexDirection: below800 ? 'column' : 'row' }}>
+                  <FixedPanel onClick={() => history.push(`/token/${token0?.tokenAddress}`)} style={{ width: '100%' }}>
+                    <AutoRow gap={'4px'}>
+                      <TokenLogo address={token0?.tokenAddress} />
+                      <TYPE.main fontSize={20} lineHeight={1} fontWeight={500}>
+                        <RowFixed>
+                          {totalValueLockedToken0 ? formattedNum(totalValueLockedToken0) : ''}{' '}
+                          <FormattedName text={token0?.symbol ?? ''} maxCharacters={8} margin={true} />
+                        </RowFixed>
+                      </TYPE.main>
+                    </AutoRow>
+                  </FixedPanel>
+                  <FixedPanel onClick={() => history.push(`/token/${token1?.tokenAddress}`)} style={{ width: '100%' }}>
+                    <AutoRow gap={'4px'}>
+                      <TokenLogo address={token1?.tokenAddress} />
+                      <TYPE.main fontSize={20} lineHeight={1} fontWeight={500}>
+                        <RowFixed>
+                          {totalValueLockedToken1 ? formattedNum(totalValueLockedToken1) : ''}{' '}
+                          <FormattedName text={token1?.symbol ?? ''} maxCharacters={8} margin={true} />
+                        </RowFixed>
+                      </TYPE.main>
+                    </AutoRow>
+                  </FixedPanel>
+                </div>
+              </AutoColumn>
+              <span></span>
+              <AutoColumn gap="12px">
+                <RowBetween style={{ position: 'relative' }}>
+                  <TYPE.main fontSize="16px" fontWeight={500}>
+                    Current Price:
+                  </TYPE.main>
+
+                  <OptionButtonGroup style={{ position: 'absolute', right: 0 }}>
+                    <OptionButton active={currentPriceDisplayMode === 'token0'} onClick={() => setCurrentPriceDisplayMode('token0')}>
+                      {token0.symbol}
+                    </OptionButton>
+                    <OptionButton active={currentPriceDisplayMode === 'token1'} onClick={() => setCurrentPriceDisplayMode('token1')}>
+                      {token1.symbol}
+                    </OptionButton>
+                  </OptionButtonGroup>
+                </RowBetween>
+
+                <div style={{ display: 'flex', gap: '20px' }}>
+                  {currentPriceDisplayMode === 'token0' && (
                     <FixedPanel onClick={() => history.push(`/token/${token0?.tokenAddress}`)} style={{ width: '100%' }}>
                       <AutoRow gap={'4px'}>
                         <TokenLogo address={token0?.tokenAddress} />
                         <TYPE.main fontSize={20} lineHeight={1} fontWeight={500}>
-                          <RowFixed>
-                            {totalValueLockedToken0 ? formattedNum(totalValueLockedToken0) : ''}{' '}
-                            <FormattedName text={token0?.symbol ?? ''} maxCharacters={8} margin={true} />
-                          </RowFixed>
+                          <RowFixed>{token0 && token1 ? `1 ${formattedSymbol0} = ${formattedNum(token1Price)} ${formattedSymbol1}` : '-'}</RowFixed>
                         </TYPE.main>
                       </AutoRow>
                     </FixedPanel>
+                  )}
+                  {currentPriceDisplayMode === 'token1' && (
                     <FixedPanel onClick={() => history.push(`/token/${token1?.tokenAddress}`)} style={{ width: '100%' }}>
                       <AutoRow gap={'4px'}>
                         <TokenLogo address={token1?.tokenAddress} />
                         <TYPE.main fontSize={20} lineHeight={1} fontWeight={500}>
-                          <RowFixed>
-                            {totalValueLockedToken1 ? formattedNum(totalValueLockedToken1) : ''}{' '}
-                            <FormattedName text={token1?.symbol ?? ''} maxCharacters={8} margin={true} />
-                          </RowFixed>
+                          <RowFixed>{token0 && token1 ? `1 ${formattedSymbol1} = ${formattedNum(token0Price)} ${formattedSymbol0}` : '-'}</RowFixed>
                         </TYPE.main>
                       </AutoRow>
                     </FixedPanel>
-                  </div>
-                </AutoColumn>
-                <span></span>
-                <AutoColumn gap="12px">
-                  <RowBetween style={{ position: 'relative' }}>
-                    <TYPE.main fontSize="16px" fontWeight={500}>
-                      Current Price:
-                    </TYPE.main>
-
-                    <OptionButtonGroup style={{ position: 'absolute', right: 0 }}>
-                      <OptionButton active={currentPriceDisplayMode === 'token0'} onClick={() => setCurrentPriceDisplayMode('token0')}>
-                        {token0.symbol}
-                      </OptionButton>
-                      <OptionButton active={currentPriceDisplayMode === 'token1'} onClick={() => setCurrentPriceDisplayMode('token1')}>
-                        {token1.symbol}
-                      </OptionButton>
-                    </OptionButtonGroup>
-                  </RowBetween>
-
-                  <div style={{ display: 'flex', gap: '20px' }}>
-                    {currentPriceDisplayMode === 'token0' && (
-                      <FixedPanel onClick={() => history.push(`/token/${token0?.tokenAddress}`)} style={{ width: '100%' }}>
-                        <AutoRow gap={'4px'}>
-                          <TokenLogo address={token0?.tokenAddress} />
-                          <TYPE.main fontSize={20} lineHeight={1} fontWeight={500}>
-                            <RowFixed>{token0 && token1 ? `1 ${formattedSymbol0} = ${formattedNum(token1Price)} ${formattedSymbol1}` : '-'}</RowFixed>
-                          </TYPE.main>
-                        </AutoRow>
-                      </FixedPanel>
-                    )}
-                    {currentPriceDisplayMode === 'token1' && (
-                      <FixedPanel onClick={() => history.push(`/token/${token1?.tokenAddress}`)} style={{ width: '100%' }}>
-                        <AutoRow gap={'4px'}>
-                          <TokenLogo address={token1?.tokenAddress} />
-                          <TYPE.main fontSize={20} lineHeight={1} fontWeight={500}>
-                            <RowFixed>{token0 && token1 ? `1 ${formattedSymbol1} = ${formattedNum(token0Price)} ${formattedSymbol0}` : '-'}</RowFixed>
-                          </TYPE.main>
-                        </AutoRow>
-                      </FixedPanel>
-                    )}
-                  </div>
-                </AutoColumn>
-              </PairDataPanelWrapper>
-            </AutoColumn>
-          </DashboardWrapper>
-        </WarningGrouping>
+                  )}
+                </div>
+              </AutoColumn>
+            </PairDataPanelWrapper>
+          </AutoColumn>
+        </DashboardWrapper>
       </ContentWrapper>
     </PageWrapper>
   )

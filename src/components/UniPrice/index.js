@@ -30,7 +30,7 @@ export default function UniPrice() {
 
   const totalLiquidity = useMemo(() => {
     return daiPair && usdcPair && usdtPair
-      ? daiPair.trackedReserveUSD + usdcPair.trackedReserveUSD + usdtPair.trackedReserveUSD
+      ? daiPair.totalValueLockedUSD + usdcPair.totalValueLockedUSD + usdtPair.totalValueLockedUSD
       : 0
   }, [daiPair, usdcPair, usdtPair])
 
@@ -44,19 +44,19 @@ export default function UniPrice() {
         <RowFixed>
           <TYPE.main>DAI/ETH: {formattedNum(daiPerEth, true)}</TYPE.main>
           <TYPE.light style={{ marginLeft: '10px' }}>
-            {daiPair && totalLiquidity ? formatPercent(daiPair.trackedReserveUSD / totalLiquidity) : '-'}
+            {daiPair && totalLiquidity ? formatPercent(daiPair.totalValueLockedUSD / totalLiquidity) : '-'}
           </TYPE.light>
         </RowFixed>
         <RowFixed>
           <TYPE.main>USDC/ETH: {formattedNum(usdcPerEth, true)}</TYPE.main>
           <TYPE.light style={{ marginLeft: '10px' }}>
-            {usdcPair && totalLiquidity ? formatPercent(usdcPair.trackedReserveUSD / totalLiquidity) : '-'}
+            {usdcPair && totalLiquidity ? formatPercent(usdcPair.totalValueLockedUSD / totalLiquidity) : '-'}
           </TYPE.light>
         </RowFixed>
         <RowFixed>
           <TYPE.main>USDT/ETH: {formattedNum(usdtPerEth, true)}</TYPE.main>
           <TYPE.light style={{ marginLeft: '10px' }}>
-            {usdtPair && totalLiquidity ? formatPercent(usdtPair.trackedReserveUSD / totalLiquidity) : '-'}
+            {usdtPair && totalLiquidity ? formatPercent(usdtPair.totalValueLockedUSD / totalLiquidity) : '-'}
           </TYPE.light>
         </RowFixed>
       </AutoColumn>

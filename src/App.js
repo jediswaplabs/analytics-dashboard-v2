@@ -64,7 +64,7 @@ function App() {
                 strict
                 path="/token/:tokenAddress"
                 render={({ match }) => {
-                  if (isStarknetAddress(match.params.tokenAddress.toLowerCase()) && whitelistedTokens[match.params.tokenAddress.toLowerCase()]) {
+                  if (isStarknetAddress(match.params.tokenAddress.toLowerCase())) {
                     return (
                       <LayoutWrapper savedOpen={savedOpen} setSavedOpen={setSavedOpen}>
                         <TokenPage address={match.params.tokenAddress.toLowerCase()} />

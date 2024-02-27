@@ -93,8 +93,7 @@ export function getPoolLink(token0Address, token1Address = null, remove = false)
     return (
       `https://app.jediswap.xyz/#/` +
       (remove ? `remove` : `add`) +
-      `/${token0Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token0Address}/${
-        token1Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token1Address
+      `/${token0Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token0Address}/${token1Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token1Address
       }`
     )
   }
@@ -104,9 +103,8 @@ export function getSwapLink(token0Address, token1Address = null) {
   if (!token1Address) {
     return `https://app.jediswap.xyz/#/swap?inputCurrency=${token0Address}`
   } else {
-    return `https://app.jediswap.xyz/#/swap?inputCurrency=${
-      token0Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token0Address
-    }&outputCurrency=${token1Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token1Address}`
+    return `https://app.jediswap.xyz/#/swap?inputCurrency=${token0Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token0Address
+      }&outputCurrency=${token1Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token1Address}`
   }
 }
 
@@ -384,26 +382,7 @@ export function formattedPercent(percent, useAbs = false) {
   }
 }
 
-/**
- * gets the amoutn difference plus the % change in change itself (second order change)
- * @param {*} valueNow
- * @param {*} value24HoursAgo
- * @param {*} value48HoursAgo
- */
-export const get2DayPercentChange = (valueNow, value24HoursAgo, value48HoursAgo) => {
-  // get volume info for both 24 hour periods
-  let currentChange = parseFloat(valueNow) - parseFloat(value24HoursAgo)
-  let previousChange = parseFloat(value24HoursAgo) - parseFloat(value48HoursAgo)
-
-  const adjustedPercentChange = (parseFloat(currentChange - previousChange) / parseFloat(previousChange)) * 100
-
-  if (isNaN(adjustedPercentChange) || !isFinite(adjustedPercentChange)) {
-    return [currentChange, 0]
-  }
-  return [currentChange, adjustedPercentChange]
-}
-
-export const get2DayPercentChangeNew = (oneDayData, twoDaysData) => {
+export const get2DayPercentChange = (oneDayData, twoDaysData) => {
   // get volume info for both 24 hour periods
   let yesterdayData = twoDaysData - oneDayData
 

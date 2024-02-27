@@ -13,17 +13,16 @@ import { AutoColumn } from '../components/Column'
 import { ButtonDark } from '../components/ButtonStyled'
 import { BasicLink } from '../components/Link'
 import { formattedNum, formattedPercent, getPoolLink, getSwapLink, localNumber, urls } from '../utils'
-import { useTokenData, useTokenPairs } from '../contexts/TokenData'
+import { useTokenData } from '../contexts/TokenData'
 import { TYPE } from '../Theme'
 import { useColor } from '../hooks'
 import { useMedia } from 'react-use'
-import { usePairDataForList } from '../contexts/PairData'
+import { usePairDataForToken } from '../contexts/PairData'
 import { useEffect } from 'react'
-import Warning from '../components/Warning'
-import { usePathDismissed, useSavedTokens } from '../contexts/LocalStorage'
+import { useSavedTokens } from '../contexts/LocalStorage'
 import { Hover, PageWrapper, ContentWrapper, StyledIcon, BlockedWrapper, BlockedMessageWrapper, PageSection, PageHeader } from '../components'
 import { AlertCircle, Star } from 'react-feather'
-import { useListedTokens, useWhitelistedTokens } from '../contexts/Application'
+import { useWhitelistedTokens } from '../contexts/Application'
 import { BLOCKED_WARNINGS } from '../constants'
 import { shortenStraknetAddress } from '../utils'
 import backArrow from '../../src/assets/back_arrow.svg'
@@ -87,18 +86,6 @@ const TokenDetailsLayout = styled.div`
   }
 `
 
-const WarningIcon = styled(AlertCircle)`
-  stroke: ${({ theme }) => theme.text1};
-  height: 16px;
-  width: 16px;
-  opacity: 0.6;
-`
-
-const WarningGrouping = styled.div`
-  opacity: ${({ disabled }) => disabled && '0.4'};
-  pointer-events: ${({ disabled }) => disabled && 'none'};
-`
-
 function TokenPage({ address, history }) {
   const {
     tokenAddress,
@@ -122,18 +109,9 @@ function TokenPage({ address, history }) {
   // detect color from token
   const backgroundColor = useColor(tokenAddress, symbol)
 
-  const allPairs = useTokenPairs(address)
-
-  const allPairsIds = allPairs?.map((p) => p.poolAddress) ?? []
 
   // pairs to show in pair list
-  const fetchedPairsList = usePairDataForList(allPairsIds)
-  const formattedPairListData =
-    fetchedPairsList?.reduce((acc, v) => {
-      acc[v.poolAddress] = v
-      return acc
-    }, {}) ?? {}
-
+  const formattedPairListData = usePairDataForToken(address)
   // price
   const price = priceUSD ? formattedNum(priceUSD, true) : ''
   const priceChange = priceChangeUSD ? formattedPercent(priceChangeUSD) : ''
@@ -160,10 +138,8 @@ function TokenPage({ address, history }) {
   const LENGTH = below1024 ? 10 : 16
   const formattedSymbol = symbol?.length > LENGTH ? symbol.slice(0, LENGTH) + '...' : symbol
 
-  const [dismissed, markAsDismissed] = usePathDismissed(history.location.pathname)
   const [savedTokens, addToken, removeToken] = useSavedTokens()
 
-  const listedTokens = useListedTokens()
   const whitelistedTokens = useWhitelistedTokens()
   useEffect(() => {
     window.scrollTo({
@@ -171,14 +147,6 @@ function TokenPage({ address, history }) {
       top: 0,
     })
   }, [])
-
-  if (!tokenAddress) {
-    return (
-      <LoaderWrapper>
-        <Loader />
-      </LoaderWrapper>
-    )
-  }
 
   if (!whitelistedTokens[address]) {
     return (
@@ -192,6 +160,14 @@ function TokenPage({ address, history }) {
           </AutoColumn>
         </BlockedMessageWrapper>
       </BlockedWrapper>
+    )
+  }
+
+  if (!tokenAddress) {
+    return (
+      <LoaderWrapper>
+        <Loader />
+      </LoaderWrapper>
     )
   }
 
@@ -260,64 +236,61 @@ function TokenPage({ address, history }) {
       </PageHeader>
 
       <ContentWrapper>
-        <Warning type={'token'} show={!dismissed && listedTokens && !listedTokens.includes(address)} setShow={markAsDismissed} address={address} />
-        <WarningGrouping disabled={!dismissed && listedTokens && !listedTokens.includes(address)}>
-          <DashboardWrapper>
-            <AutoColumn style={{ gap: '32px' }}>
-              <PanelWrapper>
-                <PanelTopLight>
-                  <AutoColumn gap="20px">
-                    <RowBetween>
-                      <TYPE.subHeader>Total Liquidity</TYPE.subHeader>
-                    </RowBetween>
-                    <RowBetween align="baseline">
-                      <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
-                        {liquidity}
-                      </TYPE.main>
-                      <TYPE.main fontSize="1rem">{liquidityChange}</TYPE.main>
-                    </RowBetween>
-                  </AutoColumn>
-                </PanelTopLight>
-                <PanelTopLight>
-                  <AutoColumn gap="20px">
-                    <RowBetween>
-                      <TYPE.subHeader>Volume (24hr)</TYPE.subHeader>
-                      <div />
-                    </RowBetween>
-                    <RowBetween align="baseline">
-                      <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
-                        {volume}
-                      </TYPE.main>
-                      <TYPE.main fontSize="1rem">{volumeChange}</TYPE.main>
-                    </RowBetween>
-                  </AutoColumn>
-                </PanelTopLight>
-                <PanelTopLight>
-                  <AutoColumn gap="20px">
-                    <RowBetween>
-                      <TYPE.subHeader>Total fees (24hr)</TYPE.subHeader>
-                      <div />
-                    </RowBetween>
-                    <RowBetween align="baseline">
-                      <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
-                        {fees}
-                      </TYPE.main>
-                      <TYPE.main fontSize="1rem">{feesChange}</TYPE.main>
-                    </RowBetween>
-                  </AutoColumn>
-                </PanelTopLight>
-              </PanelWrapper>
-              <PageSection>
-                <TYPE.main fontSize={'1rem'} style={{ whiteSpace: 'nowrap' }}>
-                  Available Pools
-                </TYPE.main>
-                <Panel style={{ padding: '0' }}>
-                  <PairList color={backgroundColor} address={address} pairs={formattedPairListData} />
-                </Panel>
-              </PageSection>
-            </AutoColumn>
-          </DashboardWrapper>
-        </WarningGrouping>
+        <DashboardWrapper>
+          <AutoColumn style={{ gap: '32px' }}>
+            <PanelWrapper>
+              <PanelTopLight>
+                <AutoColumn gap="20px">
+                  <RowBetween>
+                    <TYPE.subHeader>Total Liquidity</TYPE.subHeader>
+                  </RowBetween>
+                  <RowBetween align="baseline">
+                    <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
+                      {liquidity}
+                    </TYPE.main>
+                    <TYPE.main fontSize="1rem">{liquidityChange}</TYPE.main>
+                  </RowBetween>
+                </AutoColumn>
+              </PanelTopLight>
+              <PanelTopLight>
+                <AutoColumn gap="20px">
+                  <RowBetween>
+                    <TYPE.subHeader>Volume (24hr)</TYPE.subHeader>
+                    <div />
+                  </RowBetween>
+                  <RowBetween align="baseline">
+                    <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
+                      {volume}
+                    </TYPE.main>
+                    <TYPE.main fontSize="1rem">{volumeChange}</TYPE.main>
+                  </RowBetween>
+                </AutoColumn>
+              </PanelTopLight>
+              <PanelTopLight>
+                <AutoColumn gap="20px">
+                  <RowBetween>
+                    <TYPE.subHeader>Total fees (24hr)</TYPE.subHeader>
+                    <div />
+                  </RowBetween>
+                  <RowBetween align="baseline">
+                    <TYPE.main fontSize={'1.5rem'} lineHeight={1} fontWeight={500}>
+                      {fees}
+                    </TYPE.main>
+                    <TYPE.main fontSize="1rem">{feesChange}</TYPE.main>
+                  </RowBetween>
+                </AutoColumn>
+              </PanelTopLight>
+            </PanelWrapper>
+            <PageSection>
+              <TYPE.main fontSize={'1rem'} style={{ whiteSpace: 'nowrap' }}>
+                Available Pools
+              </TYPE.main>
+              <Panel style={{ padding: '0' }}>
+                <PairList color={backgroundColor} address={address} pairs={formattedPairListData} />
+              </Panel>
+            </PageSection>
+          </AutoColumn>
+        </DashboardWrapper>
       </ContentWrapper>
     </PageWrapper>
   )

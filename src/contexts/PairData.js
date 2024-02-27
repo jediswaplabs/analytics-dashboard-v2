@@ -1,16 +1,12 @@
 import React, { createContext, useContext, useReducer, useMemo, useCallback, useEffect, useState } from 'react'
 
 import { jediSwapClient } from '../apollo/client'
-import { POOLS_DATA, HISTORICAL_POOLS_DATA, TOP_POOLS_DATA } from '../apollo/queries'
-
-// import { TOP_TOKENS_DATA, HISTORICAL_TOKENS_DATA, TOKEN_PAIRS_DATA, TOKENS_DATA } from '../apollo/queries'
-// import { PAIR_CHART, FILTERED_TRANSACTIONS } from '../apollo/queries'
-// import { PAIRS_CURRENT, PAIRS_BULK, PAIR_DATA, PAIRS_HISTORICAL_BULK } from '../apollo/queries'
+import { HISTORICAL_POOLS_DATA } from '../apollo/queries'
 
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 
-import { getPercentChange, get2DayPercentChange, get2DayPercentChangeNew, isAddress, isStarknetAddress } from '../utils'
+import { getPercentChange, get2DayPercentChange, isAddress, isStarknetAddress } from '../utils'
 import { apiTimeframeOptions } from '../constants'
 import { useWhitelistedTokens } from './Application'
 
@@ -19,12 +15,6 @@ const UPDATE_TOP_PAIRS = 'UPDATE_TOP_PAIRS'
 const UPDATE_HOURLY_DATA = 'UPDATE_HOURLY_DATA'
 
 dayjs.extend(utc)
-
-export function safeAccess(object, path) {
-  return object
-    ? path.reduce((accumulator, currentValue) => (accumulator && accumulator[currentValue] ? accumulator[currentValue] : null), object)
-    : null
-}
 
 const PairDataContext = createContext()
 
@@ -52,8 +42,11 @@ function reducer(state, { type, payload }) {
         return (added[pair.poolAddress] = pair)
       })
       return {
-        ...state,
-        ...added,
+        pools: {
+          ...state.pools,
+          ...added
+        },
+        loadingEnd: true
       }
     }
 
@@ -126,19 +119,10 @@ export default function Provider({ children }) {
   )
 }
 
-async function getBulkPairData(pairList, tokenList) {
+async function getBulkPairData(tokenList) {
   try {
-    let current = await jediSwapClient.query({
-      query: POOLS_DATA({
-        poolIds: pairList,
-        tokenIds: tokenList
-      }),
-      fetchPolicy: 'cache-first',
-    })
-
     let historicalData = await jediSwapClient.query({
       query: HISTORICAL_POOLS_DATA({
-        poolIds: pairList,
         tokenIds: tokenList,
         periods: [apiTimeframeOptions.oneDay, apiTimeframeOptions.twoDays, apiTimeframeOptions.oneWeek],
       }),
@@ -155,18 +139,23 @@ async function getBulkPairData(pairList, tokenList) {
     let oneWeekData = historicalData?.data?.poolsData.reduce((obj, cur, i) => {
       return { ...obj, [cur.pool.poolAddress]: cur?.period?.[apiTimeframeOptions.oneWeek] }
     }, {})
+    let currentData = historicalData?.data?.poolsData.reduce((obj, cur, i) => {
+      return { ...obj, [cur.pool.poolAddress]: cur?.pool }
+    }, {})
 
-    let pairData = await Promise.all(
-      current &&
-      current.data.pools.map(async (pair) => {
-        let data = pair
+
+    const poolList = Object.keys(currentData)
+
+    let pairData =
+      poolList.map((poolAddress) => {
+        let pair = currentData[poolAddress]
         let oneDayHistory = oneDayData?.[pair.poolAddress]
         let twoDayHistory = twoDayData?.[pair.poolAddress]
         let oneWeekHistory = oneWeekData?.[pair.poolAddress]
-        data = parseData(data, oneDayHistory, twoDayHistory, oneWeekHistory)
+        const data = parseData(pair, oneDayHistory, twoDayHistory, oneWeekHistory)
         return data
       })
-    )
+
     return pairData
   } catch (e) {
     console.log(e)
@@ -176,56 +165,32 @@ async function getBulkPairData(pairList, tokenList) {
 function parseData(data, oneDayData, twoDayData, oneWeekData) {
   const oneDayVolumeUSD = oneDayData?.volumeUSD || 0
   const twoDayVolumeUSD = twoDayData?.volumeUSD || 0
-  const volumeChangeUSD = get2DayPercentChangeNew(oneDayVolumeUSD, twoDayVolumeUSD)
+  const volumeChangeUSD = get2DayPercentChange(oneDayVolumeUSD, twoDayVolumeUSD)
 
   const oneDayFeesUSD = oneDayData?.feesUSD || 0
   const twoDayFeesUSD = twoDayData?.feesUSD || 0
-  const feesChangeUSD = get2DayPercentChangeNew(oneDayFeesUSD, twoDayFeesUSD)
-
-
-  // const [oneDayVolumeUntracked, volumeChangeUntracked] = get2DayPercentChange(
-  //   data?.untrackedVolumeUSD,
-  //   oneDayData?.untrackedVolumeUSD ? parseFloat(oneDayData?.untrackedVolumeUSD) : 0,
-  //   twoDayData?.untrackedVolumeUSD ? twoDayData?.untrackedVolumeUSD : 0
-  // )
+  const feesChangeUSD = get2DayPercentChange(oneDayFeesUSD, twoDayFeesUSD)
 
   const oneWeekVolumeUSD = oneWeekData?.volumeUSD || 0
-  // const oneWeekVolumeUntracked = parseFloat(
-  //   oneWeekData?.untrackedVolumeUSD ? data?.untrackedVolumeUSD - oneWeekData?.untrackedVolumeUSD : data.untrackedVolumeUSD
-  // )
 
   // set volume properties
   data.oneDayVolumeUSD = parseFloat(oneDayVolumeUSD)
   data.oneWeekVolumeUSD = oneWeekVolumeUSD
   data.volumeChangeUSD = volumeChangeUSD
-  // data.oneDayVolumeUntracked = oneDayVolumeUntracked
-  // data.oneWeekVolumeUntracked = oneWeekVolumeUntracked
-  // data.volumeChangeUntracked = volumeChangeUntracked
 
+  // set fees properties
   data.oneDayFeesUSD = parseFloat(oneDayFeesUSD);
   data.feesChangeUSD = feesChangeUSD;
 
   // set liquidity properties
-  data.trackedReserveUSD = data.totalValueLockedUSD
   data.liquidityChangeUSD = getPercentChange(oneDayData.totalValueLockedUSD, oneDayData.totalValueLockedUSDFirst)
-
-  // format if pair hasnt existed for a day or a week
-  // if (!oneDayData && data && data.createdAtBlockNumber > oneDayBlock) {
-  //   data.oneDayVolumeUSD = parseFloat(data.volumeUSD)
-  // }
-  // if (!oneDayData && data) {
-  //   data.oneDayVolumeUSD = parseFloat(data.volumeUSD)
-  // }
-  // if (!oneWeekData && data) {
-  //   data.oneWeekVolumeUSD = parseFloat(data.volumeUSD)
-  // }
 
   return data
 }
 
-const getTopPools = async (whitelistedIds = []) => {
+const getAllPools = async (whitelistedIds = []) => {
   try {
-    const bulkResults = getBulkPairData([], whitelistedIds)
+    const bulkResults = getBulkPairData(whitelistedIds)
     return bulkResults
   } catch (e) {
     console.log(e)
@@ -239,7 +204,10 @@ export function Updater() {
   useEffect(() => {
     async function getData() {
       // get top pairs for overview list
-      let topPairs = await getTopPools(Object.keys(whitelistedTokens))
+      if (Object.keys(whitelistedTokens).length === 0) {
+        return
+      }
+      let topPairs = await getAllPools(Object.keys(whitelistedTokens))
       topPairs && updateTopPairs(topPairs)
     }
     getData()
@@ -247,65 +215,37 @@ export function Updater() {
   return null
 }
 
-export function usePairDataForList(poolAddresses) {
-  const [state, { update }] = usePairDataContext()
+export function usePairDataForToken(tokenAddress) {
   const allPoolData = useAllPairData()
-
-  const untrackedAddresses = poolAddresses.reduce((accum, address) => {
-    if (!Object.keys(allPoolData).includes(address) && isStarknetAddress(address)) {
-      accum.push(address)
+  const tokenPools = {};
+  Object.values(allPoolData).forEach(pool => {
+    if (pool.token0.tokenAddress === tokenAddress || pool.token1.tokenAddress === tokenAddress) {
+      tokenPools[pool.poolAddress] = pool
     }
-    return accum
-  }, [])
+  })
+  return tokenPools
+}
 
-  // filter for pools with data
-  const poolsWithData = poolAddresses
-    .map((address) => {
-      const poolData = allPoolData[address]
-      return poolData ?? undefined
-    })
-    .filter((v) => !!v)
-
-  useEffect(() => {
-    async function fetchData(addresses = []) {
-      if (!addresses.length) {
-        return
-      }
-      let data = await getBulkPairData(addresses)
-      data &&
-        data.forEach((p) => {
-          update(p.poolAddress, p)
-        })
+export function usePairDataForList(poolAddresses) {
+  const allPoolData = useAllPairData()
+  const pools = {};
+  Object.keys(allPoolData).forEach(key => {
+    if (poolAddresses.includes(key)) {
+      pools[key] = allPoolData[key]
     }
-    if (untrackedAddresses.length) {
-      fetchData(untrackedAddresses)
-    }
-  }, [untrackedAddresses, update])
-
-  return poolsWithData
+  })
+  return pools
 }
 
 /**
  * Get all the current and 24hr changes for a pair
  */
 export function usePairData(pairAddress) {
-  const [state, { update }] = usePairDataContext()
-  const pairData = state?.[pairAddress]
-
-  useEffect(() => {
-    async function fetchData() {
-      if (!pairData && pairAddress) {
-        getBulkPairData([pairAddress]).then((data) => {
-          update(pairAddress, data[0])
-        })
-      }
-    }
-    if (!pairData && pairAddress && isAddress(pairAddress)) {
-      fetchData()
-    }
-  }, [pairAddress, pairData, update])
-
-  return pairData || {}
+  const allPairsData = useAllPairData()
+  const [state] = usePairDataContext()
+  const pairData = allPairsData?.[pairAddress] || {}
+  pairData.loadingEnd = state.loadingEnd
+  return pairData
 }
 
 /**
@@ -313,5 +253,5 @@ export function usePairData(pairAddress) {
  */
 export function useAllPairData() {
   const [state] = usePairDataContext()
-  return state || {}
+  return state.pools || {}
 }
