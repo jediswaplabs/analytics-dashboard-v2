@@ -13,6 +13,7 @@ import { formattedNum, formattedPercent } from '../../utils'
 import DoubleTokenLogo from '../DoubleLogo'
 import { AutoRow } from '../Row'
 import { CustomLink } from '../Link'
+import Link from '../Link'
 import FormattedName from '../FormattedName'
 import FeeBadge from '../FeeBadge'
 import { AutoColumn } from '../Column'
@@ -132,21 +133,20 @@ function RewardsPoolList({ rewardsPositions, itemMax = 10 }) {
     if (!(pairData && pairData.token0 && pairData.token1)) {
       return null
     }
-    const feePercent = (pairData ? parseFloat(pairData.fee) / 10000 : 0) + '%'
-    const liquidity = formattedNum(!!pairData.trackedReserveUSD ? pairData.trackedReserveUSD : pairData.reserveUSD, true)
+    // const feePercent = (pairData ? parseFloat(pairData.fee) / 10000 : 0) + '%'
+    const feePercent = '0.3%'
+    const liquidity = formattedNum(pairData.reserveUSD, true)
 
-    const feeRatio24H = pairData.oneDayFeesUSD / pairData.trackedReserveUSD ?? 0
-    const apyFee = ((1 + feeRatio24H) ** 365 - 1) * 100
-    const cleanedApyFee = isNaN(apyFee) || !isFinite(apyFee) ? 0 : apyFee
-    const displayApyFee = formattedPercent(cleanedApyFee, true, false)
+    const aprFee = pairData.dailyVolumeUSD * 0.003 / pairData.reserveUSD * 365 * 100
+    const cleanedAprFee = isNaN(aprFee) || !isFinite(aprFee) ? 0 : aprFee
+    const displayAprFee = formattedPercent(cleanedAprFee, true, false)
 
-    const starknetRation24H = pairData.starknetAllocation / pairData.trackedReserveUSD ?? 0
-    const apyStarknet = ((1 + starknetRation24H) ** 365 - 1) * 100
-    const cleanedApyStarknet = isNaN(apyStarknet) || !isFinite(apyStarknet) ? 0 : apyStarknet
-    const displayApyStarknet = formattedPercent(cleanedApyStarknet, true, false)
+    const aprStarknet = pairData.starknetAllocation / pairData.reserveUSD * 365 * 100
+    const cleanedAprStarknet = isNaN(aprStarknet) || !isFinite(aprStarknet) ? 0 : aprStarknet
+    const displayAprStarknet = formattedPercent(cleanedAprStarknet, true, false)
 
-    const cleanedApyCommon = cleanedApyFee + cleanedApyStarknet
-    const displayApyCommon = formattedPercent(cleanedApyCommon, true, false)
+    const cleanedAprCommon = cleanedAprFee + cleanedAprStarknet
+    const displayAprCommon = formattedPercent(cleanedAprCommon, true, false)
 
     const getTooltipMarkup = () => {
       return (
@@ -156,10 +156,10 @@ function RewardsPoolList({ rewardsPositions, itemMax = 10 }) {
           </TYPE.main>
           <StyledDivider />
           <TYPE.main fontSize={below600 ? 14 : 16}>
-            <Flex style={{ gap: '4px' }}>Fee Rewards: {displayApyFee}</Flex>
+            <Flex style={{ gap: '4px' }}>Fee Rewards: {displayAprFee}</Flex>
           </TYPE.main>
           <TYPE.main fontSize={below600 ? 14 : 16}>
-            <Flex style={{ gap: '4px' }}>Starknet Rewards: {displayApyStarknet}</Flex>
+            <Flex style={{ gap: '4px' }}>Starknet Rewards: {displayAprStarknet}</Flex>
           </TYPE.main>
         </AutoColumn>
       )
@@ -177,15 +177,15 @@ function RewardsPoolList({ rewardsPositions, itemMax = 10 }) {
             margin
           />
           <AutoRow gap={'4px'} style={{ whiteSpace: 'nowrap', flexWrap: 'nowrap' }}>
-            <CustomLink to={'/pool/' + pairData.poolAddress}>
+            <Link external href={'https://info.jediswap.xyz/pair/' + pairData.poolAddress}>
               <FormattedName
                 text={pairData.token0.symbol + '-' + pairData.token1.symbol}
                 maxCharacters={below600 ? 8 : 16}
                 adjustSize={true}
                 link={true}
               />
-            </CustomLink>
-            <FeeBadge>{feePercent}</FeeBadge>
+            </Link>
+            {/* <FeeBadge>{feePercent}</FeeBadge> */}
           </AutoRow>
           {/*</div>*/}
         </DataText>
@@ -194,7 +194,7 @@ function RewardsPoolList({ rewardsPositions, itemMax = 10 }) {
         </DataText>
         <DataText area="apr" justifyContent={'flex-end'}>
           <AprWrapper className="apr-wrapper" data-tooltip-html={renderToStaticMarkup(getTooltipMarkup())} data-tooltip-place="left">
-            {displayApyCommon}
+            {displayAprCommon}
           </AprWrapper>
         </DataText>
       </DashGrid>

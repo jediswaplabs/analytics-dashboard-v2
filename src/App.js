@@ -39,7 +39,7 @@ const BLOCK_DIFFERENCE_THRESHOLD = 2
 function App() {
   const [savedOpen, setSavedOpen] = useState(false)
 
-  const globalData = useGlobalData()
+  // const globalData = useGlobalData()
   // const globalChartData = useGlobalChartData()
   const whitelistedTokens = useWhitelistedTokens()
   // const [latestBlock, headBlock] = useLatestBlocks()
@@ -58,7 +58,7 @@ function App() {
         {/*globalChartData &&*/}
         {/*Object.keys(globalChartData).length > 0 &&*/}
         {/*!isEmpty(whitelistedTokens) ? (*/}
-        {globalData && Object.keys(globalData).length > 0 && !isEmpty(whitelistedTokens) ? (
+        {!isEmpty(whitelistedTokens) ? (
           <BrowserRouter>
             <Switch>
               <Route

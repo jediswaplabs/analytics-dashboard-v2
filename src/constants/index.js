@@ -16,10 +16,11 @@ const getDefaultTokensListUrl = () => {
 
 export const getApiUrl = () => {
   if (isTestnetEnvironment()) {
-    return 'https://api.v2.goerli.jediswap.xyz/graphql'
+    return 'https://api.goerli.jediswap.xyz/graphql'
   }
-  return 'https://api.v2.jediswap.xyz/graphql'
+  return 'https://api.jediswap.xyz/graphql'
 }
+export const STARKNET_REWARDS_API_URL = 'https://kx58j6x5me.execute-api.us-east-1.amazonaws.com//starknet/fetchFile?file=qa_strk_grant.json'
 
 export const apiTimeframeOptions = {
   oneDay: 'one_day',

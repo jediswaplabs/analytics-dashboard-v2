@@ -34,7 +34,7 @@ function Updaters() {
 
 ReactDOM.render(
   <ContextProviders>
-    <Updaters />
+    {/* <Updaters /> */}
     <ThemeProvider>
       <>
         <GlobalStyle />
