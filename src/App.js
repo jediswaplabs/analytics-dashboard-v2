@@ -61,7 +61,7 @@ function App() {
         {!isEmpty(whitelistedTokens) ? (
           <BrowserRouter>
             <Switch>
-              <Route
+              {/* <Route
                 exacts
                 strict
                 path="/token/:tokenAddress"
@@ -116,15 +116,15 @@ function App() {
                 <LayoutWrapper savedOpen={savedOpen} setSavedOpen={setSavedOpen}>
                   <VolumeLeaderboardPage />
                 </LayoutWrapper>
-              </Route>
+              </Route> */}
 
-              <Route path="/rewards">
+              <Route exact path="/">
                 <LayoutWrapper savedOpen={savedOpen} setSavedOpen={setSavedOpen}>
                   <RewardsPage />
                 </LayoutWrapper>
               </Route>
 
-              <Redirect to="/home" />
+              <Redirect to="/" />
             </Switch>
           </BrowserRouter>
         ) : (
