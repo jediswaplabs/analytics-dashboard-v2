@@ -121,13 +121,10 @@ const pairs = [
   },
 ]
 function RewardsPage() {
-  const [pairsData, setPairsData] = useState({})
+  const [pairsData, setPairsData] = useState([])
   useEffect(() => {
-    // const pairIds = Object.values(pairs)
     const pairIds = pairs.map(pair => pair.poolAddress);
 
-    // const pairNames = Object.keys(pairs)
-    const pairNames = pairs.map(pair => pair.rewardName);
     async function getPairsData() {
       const requests = [
         jediSwapClient.query({
@@ -141,23 +138,31 @@ function RewardsPage() {
       const [pairsResp, starknetResp] = await Promise.all(requests);
       const rewardsResp = await starknetResp.json();
       const jediRewards = rewardsResp.Jediswap_v1;
-      // console.log('jediRewards', jediRewards)
-      const rewardsPositions = {}
+      const rewardsPositions = []
       for (const pair of pairs) {
         const rewardsData = jediRewards[pair.rewardName].pop();
         const recentDate = rewardsData.date;
         const pairDayData = pairsResp.data.pairDayDatas.find(dayData => dayData.pairId === pair.poolAddress && dayData.date === recentDate + 'T00:00:00')
-        console.log('pairDayData', pairDayData)
-        rewardsPositions[pair.poolAddress] = {
+        // console.log('pairDayData', pairDayData)
+        const aprFee = pairDayData.dailyVolumeUSD * 0.003 / pairDayData.reserveUSD * 365 * 100
+        const aprStarknet = rewardsData.allocation / pairDayData.reserveUSD * 365 * 100
+        rewardsPositions.push({
           ...pair,
-          starknetAllocation: rewardsData.allocation,
           reserveUSD: pairDayData.reserveUSD,
-          dailyVolumeUSD: pairDayData.dailyVolumeUSD
-        }
+          aprFee,
+          aprStarknet
+        })
       }
-      console.log('rewardsPositions', rewardsPositions)
+      const sortedRewardsPositions = rewardsPositions.sort((a, b) => {
+        if (a.aprFee + a.aprStarknet > b.aprFee + b.aprStarknet) {
+          return -1
+        }
+        if (a.aprFee + a.aprStarknet < b.aprFee + b.aprStarknet) {
+          return 1
+        }
+      })
 
-      setPairsData(rewardsPositions)
+      setPairsData(sortedRewardsPositions)
     }
     if (isEmpty(rewardsPositions)) {
       getPairsData()
@@ -165,86 +170,6 @@ function RewardsPage() {
   }, [])
   const rewardsPositions = pairsData
   // const rewardsPositions = useAllRewardPoolsData();
-  const rewardsPositions1 = {
-    '0x7015a6822f109a2e41d25dd6878fe161ae9bb13eeb87e62de42a3158a64db28': {
-      poolAddress: '0x7015a6822f109a2e41d25dd6878fe161ae9bb13eeb87e62de42a3158a64db28',
-      trackedReserveUSD: 400000,
-      oneDayFeesUSD: 150,
-      starknetAllocation: 150,
-      fee: 1000,
-      token0: {
-        tokenAddress: '0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7',
-        symbol: 'ETH',
-        name: 'Ether',
-        totalValueLocked: '15.594914939885742714',
-        derivedETH: '1',
-      },
-      token1: {
-        tokenAddress: '0x53c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8',
-        symbol: 'USDC',
-        name: 'USD Coin',
-        totalValueLocked: '43431.917155',
-        derivedETH: '0.0003472512071008262356184729812',
-      },
-      volumeToken0: '1.671645228155984486',
-      volumeToken1: '4697.267604',
-      totalValueLockedUSD: '7706.260625308784392935415902',
-      totalValueLockedETH: '2.676008304372043377694329871',
-      volumeUSD: '4690.55557376365459729534682751319',
-    },
-    '0x4d65490cc7d4c459742acad11a63e2ec991c330f64c8738bfe972533dbf902c': {
-      poolAddress: '0x4d65490cc7d4c459742acad11a63e2ec991c330f64c8738bfe972533dbf902c',
-      trackedReserveUSD: 400000,
-      oneDayFeesUSD: 150,
-      starknetAllocation: 150,
-      fee: 10000,
-      token0: {
-        tokenAddress: '0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7',
-        symbol: 'ETH',
-        name: 'Ether',
-        totalValueLocked: '15.594914939885742714',
-        derivedETH: '1',
-      },
-      token1: {
-        tokenAddress: '0x53c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8',
-        symbol: 'USDC',
-        name: 'USD Coin',
-        totalValueLocked: '43431.917155',
-        derivedETH: '0.0003472512071008262356184729812',
-      },
-      volumeToken0: '1.671645228155984486',
-      volumeToken1: '4697.267604',
-      totalValueLockedUSD: '7706.260625308784392935415902',
-      totalValueLockedETH: '2.676008304372043377694329871',
-      volumeUSD: '4690.55557376365459729534682751319',
-    },
-    '0x3896df6f0727238c3328ce47724988d872f79c73826a3bcb1c36ca4eb10fd77': {
-      poolAddress: '0x3896df6f0727238c3328ce47724988d872f79c73826a3bcb1c36ca4eb10fd77',
-      trackedReserveUSD: 400000,
-      oneDayFeesUSD: 150,
-      starknetAllocation: 180,
-      fee: 10000,
-      token0: {
-        tokenAddress: '0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7',
-        symbol: 'ETH',
-        name: 'Ether',
-        totalValueLocked: '15.594914939885742714',
-        derivedETH: '1',
-      },
-      token1: {
-        tokenAddress: '0x53c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8',
-        symbol: 'USDC',
-        name: 'USD Coin',
-        totalValueLocked: '43431.917155',
-        derivedETH: '0.0003472512071008262356184729812',
-      },
-      volumeToken0: '1.671645228155984486',
-      volumeToken1: '4697.267604',
-      totalValueLockedUSD: '7706.260625308784392935415902',
-      totalValueLockedETH: '2.676008304372043377694329871',
-      volumeUSD: '4690.55557376365459729534682751319',
-    },
-  }
 
   return (
     <PageWrapper>

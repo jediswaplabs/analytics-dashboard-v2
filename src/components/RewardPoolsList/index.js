@@ -97,14 +97,6 @@ function RewardsPoolList({ rewardsPositions, itemMax = 10 }) {
   const [page, setPage] = useState(1)
   const [maxPage, setMaxPage] = useState(1)
 
-  const filteredRewardsPositionAddresses = useMemo(() => {
-    return Object.keys(rewardsPositions)
-  }, [rewardsPositions])
-
-  const formattedLeaderboardPositions = useMemo(() => {
-    return rewardsPositions //TODO add normalization if necessary
-  }, [rewardsPositions])
-
   const below1200 = useMedia('(max-width: 1200px)')
   const below600 = useMedia('(max-width: 600px)')
 
@@ -114,21 +106,21 @@ function RewardsPoolList({ rewardsPositions, itemMax = 10 }) {
   }, [rewardsPositions])
 
   useEffect(() => {
-    if (filteredRewardsPositionAddresses) {
+    if (rewardsPositions) {
       let extraPages = 1
-      if (filteredRewardsPositionAddresses.length % itemMax === 0) {
+      if (rewardsPositions.length % itemMax === 0) {
         extraPages = 0
       }
-      setMaxPage(Math.floor(filteredRewardsPositionAddresses.length / itemMax) + extraPages)
+      setMaxPage(Math.floor(rewardsPositions.length / itemMax) + extraPages)
     }
-  }, [filteredRewardsPositionAddresses, itemMax])
+  }, [rewardsPositions, itemMax])
 
   const filteredRewardsPositions = useMemo(() => {
     return (
-      filteredRewardsPositionAddresses &&
-      filteredRewardsPositionAddresses.slice(itemMax * (page - 1), page * itemMax).map((address) => formattedLeaderboardPositions[address])
+      rewardsPositions &&
+      rewardsPositions.slice(itemMax * (page - 1), page * itemMax)
     )
-  }, [formattedLeaderboardPositions, itemMax, page])
+  }, [rewardsPositions, itemMax, page])
 
   const ListItem = ({ pairData, index }) => {
     if (!(pairData && pairData.token0 && pairData.token1)) {
@@ -138,12 +130,10 @@ function RewardsPoolList({ rewardsPositions, itemMax = 10 }) {
     const feePercent = '0.3%'
     const liquidity = formattedNum(pairData.reserveUSD, true)
 
-    const aprFee = pairData.dailyVolumeUSD * 0.003 / pairData.reserveUSD * 365 * 100
-    const cleanedAprFee = isNaN(aprFee) || !isFinite(aprFee) ? 0 : aprFee
+    const cleanedAprFee = isNaN(pairData.aprFee) || !isFinite(pairData.aprFee) ? 0 : pairData.aprFee
     const displayAprFee = formattedPercent(cleanedAprFee, true, false)
 
-    const aprStarknet = pairData.starknetAllocation / pairData.reserveUSD * 365 * 100
-    const cleanedAprStarknet = isNaN(aprStarknet) || !isFinite(aprStarknet) ? 0 : aprStarknet
+    const cleanedAprStarknet = isNaN(pairData.aprStarknet) || !isFinite(pairData.aprStarknet) ? 0 : pairData.aprStarknet
     const displayAprStarknet = formattedPercent(cleanedAprStarknet, true, false)
 
     const cleanedAprCommon = cleanedAprFee + cleanedAprStarknet
@@ -202,7 +192,7 @@ function RewardsPoolList({ rewardsPositions, itemMax = 10 }) {
     )
   }
 
-  if (isEmpty(filteredRewardsPositionAddresses)) {
+  if (isEmpty(rewardsPositions)) {
     return <LocalLoader />
   }
 
