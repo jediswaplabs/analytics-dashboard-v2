@@ -305,7 +305,7 @@ export const PAIRS_DATA_FOR_REWARDS = ({ pairIds = [] }) => {
         }
         orderBy: "date"
         orderByDirection: "desc"
-        first: ${2 * pairIds.length}
+        first: ${10 * pairIds.length}
       ) {
         pairId
         date
