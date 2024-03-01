@@ -11,7 +11,7 @@ import RewardPoolsList from '../components/RewardPoolsList'
 import { PAIRS_DATA_FOR_REWARDS, POOLS_DATA } from '../apollo/queries.js'
 import { jediSwapClient } from '../apollo/client.js'
 import { isEmpty } from 'lodash'
-import { STARKNET_REWARDS_API_URL } from '../constants/index.js'
+import { STARKNET_REWARDS_API_URL, STRK_PRICE_API_URL } from '../constants/index.js'
 
 const BaseStar = styled.img`
   position: absolute;
@@ -133,10 +133,13 @@ function RewardsPage() {
           }),
           fetchPolicy: 'cache-first',
         }),
-        fetch(STARKNET_REWARDS_API_URL)
+        fetch(STARKNET_REWARDS_API_URL),
+        fetch(STRK_PRICE_API_URL)
       ];
-      const [pairsResp, starknetResp] = await Promise.all(requests);
+      const [pairsResp, starknetResp, strkPriceResp] = await Promise.all(requests);
       const rewardsResp = await starknetResp.json();
+      const priceResp = await strkPriceResp.json();
+      const strkPrice = parseFloat(priceResp.price)
       const jediRewards = rewardsResp.Jediswap_v1;
       const rewardsPositions = []
       for (const pair of pairs) {
@@ -145,7 +148,7 @@ function RewardsPage() {
         const pairDayData = pairsResp.data.pairDayDatas.find(dayData => dayData.pairId === pair.poolAddress && dayData.date === recentDate + 'T00:00:00')
         // console.log('pairDayData', pairDayData)
         const aprFee = pairDayData.dailyVolumeUSD * 0.003 / pairDayData.reserveUSD * 365 * 100
-        const aprStarknet = rewardsData.allocation / pairDayData.reserveUSD * 365 * 100
+        const aprStarknet = rewardsData.allocation / pairDayData.reserveUSD * 365 * 100 * strkPrice
         rewardsPositions.push({
           ...pair,
           reserveUSD: pairDayData.reserveUSD,

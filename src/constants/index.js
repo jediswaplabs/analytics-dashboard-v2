@@ -21,6 +21,7 @@ export const getApiUrl = () => {
   return 'https://api.jediswap.xyz/graphql'
 }
 export const STARKNET_REWARDS_API_URL = 'https://kx58j6x5me.execute-api.us-east-1.amazonaws.com//starknet/fetchFile?file=qa_strk_grant.json'
+export const STRK_PRICE_API_URL = 'https://api.binance.com/api/v3/ticker/price?symbol=STRKUSDT'
 
 export const apiTimeframeOptions = {
   oneDay: 'one_day',
