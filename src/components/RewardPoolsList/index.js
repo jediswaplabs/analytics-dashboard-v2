@@ -147,10 +147,10 @@ function RewardsPoolList({ rewardsPositions, itemMax = 10 }) {
           </TYPE.main>
           <StyledDivider />
           <TYPE.main fontSize={below600 ? 14 : 16}>
-            <Flex style={{ gap: '4px' }}>Fee Rewards: {displayAprFee}</Flex>
+            <Flex style={{ gap: '4px' }}>fee APR: {displayAprFee}</Flex>
           </TYPE.main>
           <TYPE.main fontSize={below600 ? 14 : 16}>
-            <Flex style={{ gap: '4px' }}>Starknet Rewards: {displayAprStarknet}</Flex>
+            <Flex style={{ gap: '4px' }}>STRK APR: {displayAprStarknet}</Flex>
           </TYPE.main>
         </AutoColumn>
       )
