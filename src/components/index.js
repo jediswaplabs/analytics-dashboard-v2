@@ -128,6 +128,7 @@ export const ContentWrapper = styled.div`
   }
   @media screen and (max-width: 1080px) {
     grid-gap: 16px;
+    padding-bottom: 50px;
   }
 `
 

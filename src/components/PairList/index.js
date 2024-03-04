@@ -29,7 +29,7 @@ const PageButtons = styled.div`
 `
 
 const Arrow = styled.div`
-  color: ${({ theme, faded }) => faded ? theme.jediGrey : theme.paginationTest};
+  color: ${({ theme, faded }) => (faded ? theme.jediGrey : theme.paginationTest)};
   padding: 0 20px;
   user-select: none;
   font-size: 30px;
@@ -201,7 +201,7 @@ function PairList({
 
       const feeRatio24H = pairData.oneDayFeesUSD / pairData.totalValueLockedUSD
       const apy = ((1 + feeRatio24H) ** 365 - 1) * 100
-      const cleanedApy = (isNaN(apy) || !isFinite(apy)) ? 0 : apy
+      const cleanedApy = isNaN(apy) || !isFinite(apy) ? 0 : apy
       const displayApy = formattedPercent(cleanedApy, true)
 
       const weekVolume = formattedNum(pairData.oneWeekVolumeUSD ? pairData.oneWeekVolumeUSD : pairData.oneWeekVolumeUntracked, true)
