@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import { apiTimeframeOptions } from '../constants/index.js'
 
 const TokenFields = `
   fragment TokenFields on Token {
@@ -44,14 +45,11 @@ const PoolFields = `
 
 export const HISTORICAL_GLOBAL_DATA = () => {
   const queryString = ` query jediswapFactories {
-      factoriesDayData(first: 2, orderBy: "dayId", orderByDirection: "desc") {
-        totalValueLockedUSD
-        volumeUSD
-        feesUSD
-        dayId
-        id
-      }
-    }`
+    factoriesData {
+      ${apiTimeframeOptions.oneDay}
+      ${apiTimeframeOptions.twoDays}
+    }
+  }`
   return gql(queryString)
 }
 

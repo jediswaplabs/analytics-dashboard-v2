@@ -34,7 +34,7 @@ export const isTestnetEnvironment = () => {
     return false
   }
   const host = new URL(String(window.location))?.host || ''
-  return host === 'info.v2.goerli.jediswap.xyz' || host === 'info.v2.testnet.jediswap.xyz'
+  return host === 'info.v2.sepolia.jediswap.xyz' || host === 'info.sepolia.jediswap.xyz'
 }
 
 export const isStagingEnvironment = () => {

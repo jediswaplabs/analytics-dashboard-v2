@@ -16,7 +16,7 @@ const getDefaultTokensListUrl = () => {
 
 export const getApiUrl = () => {
   if (isTestnetEnvironment()) {
-    return 'https://api.v2.goerli.jediswap.xyz/graphql'
+    return 'https://api.v2.sepolia.jediswap.xyz/graphql'
   }
   return 'https://api.v2.jediswap.xyz/graphql'
 }
