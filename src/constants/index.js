@@ -58,6 +58,10 @@ export const DEFAULT_TOKENS_WHITELIST = {
       symbol: 'WBTC',
       logoURI: require('../assets/tokens/0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599.png'),
     },
+    '0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7': {
+      symbol: 'ETH',
+      logoURI: require('../assets/tokens/0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7.png'),
+    },
   }),
   ...(!isTestnetEnvironment() && {
     '0xda114221cb83fa859dbdb4c44beeaa0bb37c7537ad5ae66fe5e0efd20e6eb3': {
