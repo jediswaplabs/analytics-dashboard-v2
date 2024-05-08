@@ -5,7 +5,7 @@ import utc from 'dayjs/plugin/utc'
 import { jediSwapClient } from '../apollo/client'
 
 import { useTimeframe, useWhitelistedTokens } from './Application'
-import { getPercentChange, getTimeframe, convertDateToUnixFormat } from '../utils'
+import { getPercentChange, getTimeframe, convertDateToUnixFormat, get2DayPercentChange } from '../utils'
 
 import { GLOBAL_CHART } from '../apollo/queries'
 import { HISTORICAL_GLOBAL_DATA } from '../apollo/queries'
@@ -13,6 +13,7 @@ import { HISTORICAL_GLOBAL_DATA } from '../apollo/queries'
 import weekOfYear from 'dayjs/plugin/weekOfYear'
 import { useAllPairData } from './PairData.js'
 import { useAllTokenData } from './TokenData.js'
+import { apiTimeframeOptions } from '../constants/index.js'
 
 const UPDATE = 'UPDATE'
 const UPDATE_TXNS = 'UPDATE_TXNS'
@@ -193,25 +194,40 @@ export default function Provider({ children }) {
  * 24 hour USD changes.
  */
 async function getGlobalData() {
-  const dataFinal = {}
+  let dataFinal = {}
   try {
     // data for each day , historic data used for % changes
-    let historyResult = await jediSwapClient.query({
+    // let historyResult = await jediSwapClient.query({
+    //   query: HISTORICAL_GLOBAL_DATA(),
+    //   fetchPolicy: 'cache-first',
+    // })
+    // console.log('historyResult', historyResult)
+    // const todayData = historyResult?.data?.factoriesDayData?.[0]
+    // const yesterdayData = historyResult?.data?.factoriesDayData?.[1]
+
+    // if (todayData && yesterdayData) {
+    //   dataFinal.totalValueLockedUSD = todayData.totalValueLockedUSD
+    //   dataFinal.liquidityChangeUSD = getPercentChange(todayData.totalValueLockedUSD, yesterdayData.totalValueLockedUSD)
+
+    //   dataFinal.totalVolumeUSD = todayData.volumeUSD
+    //   dataFinal.volumeChangeUSD = getPercentChange(todayData.volumeUSD, yesterdayData.volumeUSD)
+
+    //   dataFinal.totalFeesUSD = todayData.feesUSD
+    //   dataFinal.feesChangeUSD = getPercentChange(todayData.feesUSD, yesterdayData.feesUSD)
+    // }
+    const historicalData = await jediSwapClient.query({
       query: HISTORICAL_GLOBAL_DATA(),
       fetchPolicy: 'cache-first',
     })
-    const todayData = historyResult?.data?.factoriesDayData?.[0]
-    const yesterdayData = historyResult?.data?.factoriesDayData?.[1]
-
-    if (todayData && yesterdayData) {
-      dataFinal.totalValueLockedUSD = todayData.totalValueLockedUSD
-      dataFinal.liquidityChangeUSD = getPercentChange(todayData.totalValueLockedUSD, yesterdayData.totalValueLockedUSD)
-
-      dataFinal.totalVolumeUSD = todayData.volumeUSD
-      dataFinal.volumeChangeUSD = getPercentChange(todayData.volumeUSD, yesterdayData.volumeUSD)
-
-      dataFinal.totalFeesUSD = todayData.feesUSD
-      dataFinal.feesChangeUSD = getPercentChange(todayData.feesUSD, yesterdayData.feesUSD)
+    const oneDayData = historicalData.data.factoriesData[0][apiTimeframeOptions.oneDay]
+    const twoDaysData = historicalData.data.factoriesData[0][apiTimeframeOptions.twoDays]
+    dataFinal = {
+      totalValueLockedUSD: oneDayData.totalValueLockedUSD,
+      liquidityChangeUSD: getPercentChange(oneDayData.totalValueLockedUSD, oneDayData.totalValueLockedUSDFirst),
+      totalVolumeUSD: oneDayData.volumeUSD,
+      volumeChangeUSD: get2DayPercentChange(oneDayData.volumeUSD, twoDaysData.volumeUSD),
+      totalFeesUSD: oneDayData.feesUSD,
+      feesChangeUSD: get2DayPercentChange(oneDayData.feesUSD, twoDaysData.feesUSD),
     }
   } catch (e) {
     console.log(e)
