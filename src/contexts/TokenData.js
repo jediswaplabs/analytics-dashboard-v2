@@ -8,7 +8,7 @@ import { jediSwapClient } from '../apollo/client'
 
 import { HISTORICAL_TOKENS_DATA } from '../apollo/queries'
 
-import { get2DayPercentChange, getPercentChange, isStarknetAddress } from '../utils'
+import findClosestPrice, { get2DayPercentChange, getPercentChange, isStarknetAddress } from '../utils'
 import { apiTimeframeOptions } from '../constants'
 
 const UPDATE = 'UPDATE'
@@ -130,7 +130,7 @@ const getBulkTokenData = async (ids) => {
     let historicalData = await jediSwapClient.query({
       query: HISTORICAL_TOKENS_DATA({
         tokenIds: ids,
-        periods: [apiTimeframeOptions.oneDay, apiTimeframeOptions.twoDays, apiTimeframeOptions.oneWeek],
+        periods: [apiTimeframeOptions.oneDay, apiTimeframeOptions.twoDays, apiTimeframeOptions.oneWeek, apiTimeframeOptions.oneMonth],
       }),
       fetchPolicy: 'cache-first',
     })
@@ -145,6 +145,9 @@ const getBulkTokenData = async (ids) => {
     let currentData = historicalData?.data?.tokensData.reduce((acc, currentValue, i) => {
       return { ...acc, [currentValue.token.tokenAddress]: currentValue?.token }
     }, {})
+    let periodData = historicalData?.data?.tokensData.reduce((acc, currentValue, i) => {
+      return { ...acc, [currentValue.token.tokenAddress]: currentValue?.period }
+    }, {})
 
     const tokenList = Object.keys(currentData)
 
@@ -157,6 +160,7 @@ const getBulkTokenData = async (ids) => {
         // let data = token
         let oneDayHistory = oneDayData?.[tokenAddress]
         let twoDaysHistory = twoDaysData?.[tokenAddress]
+        let periodHistory = periodData?.[tokenAddress]
 
         const oneDayVolumeUSD = oneDayHistory?.volumeUSD || 0
         const twoDayVolumeUSD = twoDaysHistory?.volumeUSD || 0
@@ -171,8 +175,9 @@ const getBulkTokenData = async (ids) => {
         const tvlUSDChange = getPercentChange(oneDayHistory.totalValueLockedUSD, oneDayHistory.totalValueLockedUSDFirst)
         const tvlToken = data?.totalValueLocked ? parseFloat(data.totalValueLocked) : 0
 
-        const priceUSD = oneDayHistory?.close ? parseFloat(oneDayHistory.close) : 0
-        // const priceUSDChange = priceUSDOneDay && priceUSDTwoDays ? getPercentChange(priceUSDOneDay.toString(), priceUSDTwoDays.toString()) : 0
+        console.log('periodHistory', periodHistory)
+        // const priceUSD = oneDayHistory?.close ? parseFloat(oneDayHistory.close) : 0
+        const priceUSD = findClosestPrice(periodHistory) || 0
         const priceUSDChange = getPercentChange(oneDayHistory?.close, oneDayHistory?.open)
 
         const feesUSD =
