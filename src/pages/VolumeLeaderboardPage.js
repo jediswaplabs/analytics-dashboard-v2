@@ -14,6 +14,7 @@ import { VOLUME_LEADERBOARD_DATA } from '../apollo/queries'
 function VolumeLeaderboardPage() {
   const [searchAddressQuery, setSearchAddressQuery] = useState('')
   const [detailedPosition, setDetailedPosition] = useState(null)
+  const [searchError, setSearchError] = useState(false)
   const [leaderboardPositions, setLeaderboardPositions] = useState([])
 
   useEffect(() => {
@@ -76,6 +77,7 @@ function VolumeLeaderboardPage() {
       return
     }
     setDetailedPosition(null)
+    setSearchError(false)
     const dataResp = await jediSwapClient.query({
       query: VOLUME_LEADERBOARD_DATA({
         userId: searchAddressQuery
@@ -84,6 +86,7 @@ function VolumeLeaderboardPage() {
     })
     const foundUser = dataResp?.data?.volumeLeaderboard?.[0]
     if (!foundUser) {
+      setSearchError(true)
       return
     }
     const position = {
@@ -105,6 +108,7 @@ function VolumeLeaderboardPage() {
   const handleOnClearSearch = () => {
     setSearchAddressQuery('')
     setDetailedPosition(null)
+    setSearchError(false)
   }
 
   return (
@@ -113,9 +117,9 @@ function VolumeLeaderboardPage() {
         <SearchWallet onSearch={handleOnWalletSearch} onChange={handleOnWalletChange} address={searchAddressQuery} />
       </PageSection>
 
-      {detailedPosition && (
+      {(detailedPosition || searchError) && (
         <PageSection>
-          <VolumeLeaderboardPosition position={detailedPosition} onClearSearch={handleOnClearSearch} />
+          <VolumeLeaderboardPosition position={detailedPosition} searchError={searchError} onClearSearch={handleOnClearSearch} />
         </PageSection>
       )}
 
