@@ -312,9 +312,11 @@ function SideNav({ history }) {
           </HeaderText>
         </AutoColumn>
       </SideMenuWrapper>
-      <MobileMenuWrapper>
-        <Title />
-      </MobileMenuWrapper>
+      {below1080 &&
+        <MobileMenuWrapper>
+          <Title />
+        </MobileMenuWrapper>
+      }
     </Wrapper>
   )
 }
