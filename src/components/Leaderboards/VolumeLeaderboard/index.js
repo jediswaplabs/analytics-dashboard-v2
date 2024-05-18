@@ -2,109 +2,14 @@ import React, { useState, useEffect, useMemo } from 'react'
 import { withRouter } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { Box, Flex } from 'rebass'
-import { Star } from 'react-feather'
 import { useMedia } from 'react-use'
 
-import { TYPE } from '../../Theme'
-import { formattedNum, shortenStraknetAddress } from '../../utils'
-import LocalLoader from '../LocalLoader'
+import { TYPE } from '../../../Theme'
+import { formattedNum, shortenStraknetAddress } from '../../../utils'
+import LocalLoader from '../../LocalLoader'
+import { Wrapper, PageButtons, Arrow, TabsContainer, TabItem, ListWrapper, List, DashGrid, DataText } from '../styled.js'
+import { getStarIconByPosition } from '../icon.jsx'
 
-const Wrapper = styled.div`
-  display: grid;
-  gap: 30px;
-
-  @media screen and (max-width: 1080px) {
-    gap: 16px;
-  }
-`
-
-const PageButtons = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  margin-top: 2em;
-  margin-bottom: 0.5em;
-`
-
-const Arrow = styled.div`
-  color: ${({ theme, faded }) => (faded ? theme.jediGrey : theme.paginationTest)};
-  padding: 0 20px;
-  user-select: none;
-  font-size: 30px;
-  :hover {
-    cursor: pointer;
-  }
-`
-
-const TabsContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  gap: 16px;
-`
-const TabItem = styled.button`
-  font-size: 16px;
-  font-weight: 500;
-  border-radius: 4px;
-  border: none;
-  color: #50d5ff;
-  background: none;
-  cursor: pointer;
-  min-width: 140px;
-  padding: 0 12px;
-  height: 32px;
-  ${(props) =>
-    props.isActive &&
-    css`
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
-    `}
-`
-
-const ListWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-`
-
-const List = styled(Box)`
-  -webkit-overflow-scrolling: touch;
-
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-`
-
-const DashGrid = styled.div`
-  display: grid;
-  grid-gap: 1em;
-  grid-template-columns: 20px 20px 6fr 0.6fr 1fr 0.6fr;
-  grid-template-areas: 'number star address trades volume score';
-  padding: 14px 20px 14px 10px;
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.05);
-
-  @media screen and (max-width: 1200px) {
-    grid-template-columns: 20px 20px 4fr 0.6fr 1fr 0.6fr;
-  }
-
-  @media screen and (max-width: 600px) {
-    grid-template-columns: 20px 20px 6fr 1fr;
-    grid-template-areas: 'number star address score';
-  }
-`
-
-const DataText = styled(Flex)`
-  align-items: center;
-  text-align: center;
-  color: ${({ theme }) => theme.text1} !important;
-
-  font-size: 13px;
-  font-weight: 500;
-
-  @media screen and (max-width: 600px) {
-    font-size: 12px;
-  }
-`
 
 const tabsLookup = {
   allTime: 'allTime',
@@ -151,22 +56,6 @@ function VolumeLeaderboard({ leaderboardPositions, itemMax = 10 }) {
     )
   }, [formattedLeaderboardPositions, page, itemMax, activeTab])
 
-  const getStarIconByPosition = (position) => {
-    switch (position) {
-      case 1: {
-        return <Star fill={'#F7E886'} color={'transparent'} />
-      }
-      case 2: {
-        return <Star fill={'#c9c9c9'} color={'transparent'} />
-      }
-      case 3: {
-        return <Star fill={'#FFDAB4'} color={'transparent'} />
-      }
-      default: {
-        return null
-      }
-    }
-  }
   const ListItem = ({ item, index }) => {
     if (!item) {
       return null
