@@ -59,8 +59,11 @@ const PositionPanel = styled(Panel)`
 `
 const PositionDataWrapper = styled.div`
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  grid-template-areas: 'address rank score trades volume';
+  // grid-template-columns: repeat(5, 1fr);
+  // grid-template-areas: 'address rank score trades volume';
+
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-areas: 'address score';
 
   @media screen and (max-width: 600px) {
     grid-template-columns: 1.5fr 1fr 1fr;
@@ -130,15 +133,15 @@ function VolumeLeaderboardPosition({ position, onClearSearch }) {
             <DataItemTitle>Address</DataItemTitle>
             <DataItemValue>{shortenStraknetAddress(position.address, 4)}</DataItemValue>
           </DataItem>
-          <DataItem area={'rank'}>
+          {/* <DataItem area={'rank'}>
             <DataItemTitle>Rank</DataItemTitle>
             <DataItemValue>{position.rank}</DataItemValue>
-          </DataItem>
+          </DataItem> */}
           <DataItem area={'score'}>
-            <DataItemTitle>Score</DataItemTitle>
+            <DataItemTitle>Points</DataItemTitle>
             <DataItemValue>{position.score}</DataItemValue>
           </DataItem>
-          {!below600 && (
+          {/* {!below600 && (
             <>
               <DataItem area={'trades'}>
                 <DataItemTitle>Trades</DataItemTitle>
@@ -149,7 +152,7 @@ function VolumeLeaderboardPosition({ position, onClearSearch }) {
                 <DataItemValue>{formattedNum(position.volumeUSD, true)}</DataItemValue>
               </DataItem>
             </>
-          )}
+          )} */}
         </PositionDataWrapper>
         <Decoration src={cupImage} srcSet={cupImage + ' 1x,' + cupImage_x2 + ' 2x'} alt={''} draggable={false} />
       </PositionPanel>

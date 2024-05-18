@@ -7,17 +7,40 @@ import SearchWallet from '../components/SearchWallet'
 import VolumeLeaderboard from '../components/VolumeLeaderboard'
 import VolumeLeaderboardPosition from '../components/VolumeLeaderboardPosition'
 import { isStarknetAddress } from '../utils'
+import { jediSwapClient } from '../apollo/client'
+import { VOLUME_LEADERBOARD_DATA } from '../apollo/queries'
+
 
 function VolumeLeaderboardPage() {
   const [searchAddressQuery, setSearchAddressQuery] = useState('')
   const [detailedPosition, setDetailedPosition] = useState(null)
+  const [leaderboardPositions, setLeaderboardPositions] = useState([])
 
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
 
+  useEffect(() => {
+    const getData = async () => {
+      const dataResp = await jediSwapClient.query({
+        query: VOLUME_LEADERBOARD_DATA({
+        }),
+        fetchPolicy: 'cache-first',
+      })
+      const leaders = dataResp?.data?.volumeLeaderboard
+      const leaderboardPositions = {}
+      leaders.forEach((leader) => {
+        leader.address = leader.userAddress
+        leader.score = Math.round(parseFloat(leader.points))
+        leaderboardPositions[leader.userAddress] = leader
+      })
+      setLeaderboardPositions(leaderboardPositions)
+    }
+    getData()
+  }, [])
+
   // const leaderboardPositions = useAllVolumeLeaderboardPositions();
-  const leaderboardPositions = {
+  const leaderboardPositions2 = {
     '0x030941ffa8874ea7c5c8c943fa50f9193d3748cc219b67fdda334b37be85955e': {
       address: '0x030941ffa8874ea7c5c8c943fa50f9193d3748cc219b67fdda334b37be85955e',
       tradesCount: 100,
@@ -48,18 +71,32 @@ function VolumeLeaderboardPage() {
     },
   }
 
-  const handleOnWalletSearch = () => {
-    if (!isStarknetAddress(searchAddressQuery, true)) {
+  const handleOnWalletSearch = async () => {
+    if (!isStarknetAddress(searchAddressQuery, false)) {
       return
     }
-    // const position = useVolumeLeaderboardPosition(searchAddressQuery);
-    const position = {
-      address: '0x030941ffa8874ea7c5c8c943fa50f9193d3748cc219b67fdda334b37be85955e',
-      tradesCount: 100,
-      volumeUSD: 990177.97,
-      score: 2100,
-      rank: 2100,
+    setDetailedPosition(null)
+    const dataResp = await jediSwapClient.query({
+      query: VOLUME_LEADERBOARD_DATA({
+        userId: searchAddressQuery
+      }),
+      fetchPolicy: 'cache-first',
+    })
+    const foundUser = dataResp?.data?.volumeLeaderboard?.[0]
+    if (!foundUser) {
+      return
     }
+    const position = {
+      address: foundUser.userAddress,
+      score: Math.round(parseFloat(foundUser.points))
+    }
+    // const position = {
+    //   address: '0x030941ffa8874ea7c5c8c943fa50f9193d3748cc219b67fdda334b37be85955e',
+    //   tradesCount: 100,
+    //   volumeUSD: 990177.97,
+    //   score: 2100,
+    //   rank: 2100,
+    // }
     setDetailedPosition(position)
   }
   const handleOnWalletChange = (address) => {

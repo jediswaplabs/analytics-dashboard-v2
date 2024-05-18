@@ -175,7 +175,6 @@ const getBulkTokenData = async (ids) => {
         const tvlUSDChange = getPercentChange(oneDayHistory.totalValueLockedUSD, oneDayHistory.totalValueLockedUSDFirst)
         const tvlToken = data?.totalValueLocked ? parseFloat(data.totalValueLocked) : 0
 
-        console.log('periodHistory', periodHistory)
         // const priceUSD = oneDayHistory?.close ? parseFloat(oneDayHistory.close) : 0
         const priceUSD = findClosestPrice(periodHistory) || 0
         const priceUSDChange = getPercentChange(oneDayHistory?.close, oneDayHistory?.open)

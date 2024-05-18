@@ -129,7 +129,8 @@ function SearchWalletPanel({ onSearch, onChange, address }) {
       setIsCheckAccountAddressValid(false)
       return
     }
-    setIsCheckAccountAddressValid(isStarknetAddress(address, true))
+    // setIsCheckAccountAddressValid(isStarknetAddress(address, true))
+    setIsCheckAccountAddressValid(isStarknetAddress(address, false)) //don't validate address length for now
   }, [address])
 
   const handleInputChange = useCallback((e) => {

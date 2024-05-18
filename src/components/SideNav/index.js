@@ -176,7 +176,7 @@ function SideNav({ history }) {
   const isMobile = !!below1080
 
   useEffect(() => {
-    console.dir(emmiter)
+    // console.dir(emmiter)
     emmiter.on('toggle-mobile-menu', () => {
       setIsMobileMenuOpen((s) => !s)
     })

@@ -183,7 +183,7 @@ function VolumeLeaderboard({ leaderboardPositions, itemMax = 10 }) {
         <DataText area="address" justifyContent={'flex-start'}>
           {below600 ? shortenStraknetAddress(item.address, 8) : below1200 ? shortenStraknetAddress(item.address, 16) : item.address}
         </DataText>
-        {!below600 && (
+        {/* {!below600 && (
           <>
             <DataText area="trades" justifyContent={'flex-end'}>
               {item.tradesCount}
@@ -192,7 +192,7 @@ function VolumeLeaderboard({ leaderboardPositions, itemMax = 10 }) {
               {formattedNum(item.volumeUSD, true)}
             </DataText>
           </>
-        )}
+        )} */}
         <DataText area="score" justifyContent={'flex-end'}>
           {item.score}
         </DataText>
@@ -206,14 +206,14 @@ function VolumeLeaderboard({ leaderboardPositions, itemMax = 10 }) {
 
   return (
     <Wrapper>
-      <TabsContainer>
+      {/* <TabsContainer>
         <TabItem isActive={activeTab === tabsLookup.allTime} onClick={() => setActiveTab(tabsLookup.allTime)}>
           All time
         </TabItem>
         <TabItem isActive={activeTab === tabsLookup.monthly} onClick={() => setActiveTab(tabsLookup.monthly)}>
           Monthly
         </TabItem>
-      </TabsContainer>
+      </TabsContainer> */}
 
       <ListWrapper>
         <DashGrid>
@@ -225,7 +225,7 @@ function VolumeLeaderboard({ leaderboardPositions, itemMax = 10 }) {
             </TYPE.main>
           </Flex>
 
-          {!below600 && (
+          {/* {!below600 && (
             <>
               <Flex justifyContent="flex-end">
                 <TYPE.main color={'#959595'} fontWeight={700}>
@@ -238,11 +238,11 @@ function VolumeLeaderboard({ leaderboardPositions, itemMax = 10 }) {
                 </TYPE.main>
               </Flex>
             </>
-          )}
+          )} */}
 
           <Flex justifyContent="flex-end">
             <TYPE.main color={'#959595'} fontWeight={700}>
-              Score
+              Points
             </TYPE.main>
           </Flex>
         </DashGrid>
