@@ -277,11 +277,11 @@ function SideNav({ history }) {
 
             <Separator />
 
-            <BasicLink to="/rewards">
+            {/* <BasicLink to="/rewards">
               <Option activeText={history.location.pathname.split('/')[1] === 'rewards' ?? undefined}>
                 <OptionContent>Rewards</OptionContent>
               </Option>
-            </BasicLink>
+            </BasicLink> */}
           </AutoColumn>
         </AutoColumn>
         <AutoColumn gap="1.5rem">

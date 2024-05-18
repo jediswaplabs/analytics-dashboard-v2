@@ -118,11 +118,11 @@ function App() {
                 </LayoutWrapper>
               </Route>
 
-              <Route path="/rewards">
+              {/* <Route path="/rewards">
                 <LayoutWrapper savedOpen={savedOpen} setSavedOpen={setSavedOpen}>
                   <RewardsPage />
                 </LayoutWrapper>
-              </Route>
+              </Route> */}
 
               <Redirect to="/home" />
             </Switch>
