@@ -4,12 +4,11 @@ import 'feather-icons'
 import { PageSection } from '../components'
 import PageLayout from '../layouts/PageLayout'
 import SearchWallet from '../components/SearchWallet'
-import VolumeLeaderboard from '../components/Leaderboards/VolumeLeaderboard'
-import VolumeLeaderboardPosition from '../components/VolumeLeaderboardPosition'
 import { isStarknetAddress } from '../utils'
 import { jediSwapClient } from '../apollo/client'
 import { LP_LEADERBOARD_DATA } from '../apollo/queries'
 import LpLeaderboard from '../components/Leaderboards/LpLeaderboard/index.js'
+import LpLeaderboardPosition from '../components/LeaderBoardPosition/LpLeaderboardPosition/index.js'
 
 
 function LpLeaderboardPage() {
@@ -82,7 +81,7 @@ function LpLeaderboardPage() {
 
       {(detailedPosition || searchError) && (
         <PageSection>
-          <VolumeLeaderboardPosition position={detailedPosition} searchError={searchError} onClearSearch={handleOnClearSearch} />
+          <LpLeaderboardPosition position={detailedPosition} searchError={searchError} onClearSearch={handleOnClearSearch} />
         </PageSection>
       )}
 
