@@ -88,8 +88,8 @@ export default function Title() {
         </RowFixed>
         {below1080 && (
           <BlackBottomMenu>
-            <BasicLink to="/home">
-              {history.location.pathname === '/home' ? <ActiveOption>Overview</ActiveOption> : <Option>Overview</Option>}
+            <BasicLink to="/">
+              {history.location.pathname === '/' ? <ActiveOption>Overview</ActiveOption> : <Option>Overview</Option>}
             </BasicLink>
             <BasicLink to="/tokens">
               {history.location.pathname.split('/')[1] === 'tokens' || history.location.pathname.split('/')[1] === 'token' ? (

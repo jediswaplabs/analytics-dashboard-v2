@@ -228,8 +228,8 @@ function SideNav({ history }) {
         <AutoColumn gap="3.375rem">
           {!below1080 && <Title />}
           <AutoColumn gap="1.5rem">
-            <BasicLink to="/home">
-              <Option activeText={history.location.pathname === '/home' ?? undefined}>
+            <BasicLink to="/">
+              <Option activeText={history.location.pathname === '/' ?? undefined}>
                 <OptionContent>
                   <TrendingUp size={20} style={{ marginRight: '.5rem' }} />
                   Overview
