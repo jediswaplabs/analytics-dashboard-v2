@@ -207,6 +207,9 @@ export const isStarknetAddress = (value, validateLength = false) => {
     if (!processedValue.startsWith('0x')) {
       return false
     }
+    if (processedValue === '0x') {
+      return false
+    }
     if (validateLength && processedValue.length !== zeroStarknetAddress.length) {
       return false
     }
