@@ -63,7 +63,7 @@ function App() {
           <BrowserRouter>
             <Switch>
               <Route
-                exacts
+                exact
                 strict
                 path="/token/:tokenAddress"
                 render={({ match }) => {
@@ -74,12 +74,12 @@ function App() {
                       </LayoutWrapper>
                     )
                   } else {
-                    return <Redirect to="/home" />
+                    return <Redirect to="/" />
                   }
                 }}
               />
               <Route
-                exacts
+                exact
                 strict
                 path="/pool/:pairAddress"
                 render={({ match }) => {
@@ -90,12 +90,12 @@ function App() {
                       </LayoutWrapper>
                     )
                   } else {
-                    return <Redirect to="/home" />
+                    return <Redirect to="/" />
                   }
                 }}
               />
 
-              <Route path="/home">
+              <Route path="/" exact>
                 <LayoutWrapper savedOpen={savedOpen} setSavedOpen={setSavedOpen}>
                   <GlobalPage />
                 </LayoutWrapper>
@@ -130,7 +130,7 @@ function App() {
                 </LayoutWrapper>
               </Route> */}
 
-              <Redirect to="/home" />
+              <Redirect to="/" />
             </Switch>
           </BrowserRouter>
         ) : (
