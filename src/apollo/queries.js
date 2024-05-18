@@ -108,11 +108,24 @@ export const HISTORICAL_POOLS_DATA = ({ tokenIds = [], periods = [] }) => {
   return gql(queryString)
 }
 
-export const VOLUME_LEADERBOARD_DATA = ({ userId }) => {
-  const whereString = userId ? ` where: {userAddress: "${userId}"}` : ''
+export const VOLUME_LEADERBOARD_DATA = ({ userAddress }) => {
+  const whereString = userAddress ? ` where: {userAddress: "${userAddress}"}` : ''
   let queryString = `
     query volumeLeaderboard {
       volumeLeaderboard(first: 100 ${whereString}) {
+        points
+        userAddress
+      }
+    }
+  `
+  return gql(queryString)
+}
+
+export const LP_LEADERBOARD_DATA = ({ userAddress }) => {
+  const whereString = userAddress ? ` where: {userAddress: "${userAddress}"}` : ''
+  let queryString = `
+    query lpLeaderboard {
+      lpLeaderboard(first: 100 ${whereString}) {
         points
         userAddress
       }

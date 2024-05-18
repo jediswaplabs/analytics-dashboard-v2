@@ -269,11 +269,11 @@ function SideNav({ history }) {
               </Option>
             </BasicLink>
 
-            {/*<BasicLink to="/lp-leaderboard">*/}
-            {/*  <Option activeText={history.location.pathname.split('/')[1] === 'lp-leaderboard' ?? undefined}>*/}
-            {/*    <OptionContent>LP Leaderboard</OptionContent>*/}
-            {/*  </Option>*/}
-            {/*</BasicLink>*/}
+            <BasicLink to="/lp-leaderboard">
+              <Option activeText={history.location.pathname.split('/')[1] === 'lp-leaderboard' ?? undefined}>
+                <OptionContent>LP Leaderboard</OptionContent>
+              </Option>
+            </BasicLink>
 
             <Separator />
 

@@ -17,6 +17,7 @@ import { useWhitelistedTokens } from './contexts/Application'
 import LayoutWrapper from './layouts/LayoutWrapper'
 import VolumeLeaderboardPage from './pages/VolumeLeaderboardPage'
 import RewardsPage from './pages/RewardsPage'
+import LpLeaderboardPage from './pages/LpLeaderboardPage.js'
 
 const AppWrapper = styled.div`
   position: relative;
@@ -115,6 +116,11 @@ function App() {
               <Route path="/volume-leaderboard">
                 <LayoutWrapper savedOpen={savedOpen} setSavedOpen={setSavedOpen}>
                   <VolumeLeaderboardPage />
+                </LayoutWrapper>
+              </Route>
+              <Route path="/lp-leaderboard">
+                <LayoutWrapper savedOpen={savedOpen} setSavedOpen={setSavedOpen}>
+                  <LpLeaderboardPage />
                 </LayoutWrapper>
               </Route>
 
