@@ -94,7 +94,7 @@ const DataItem = styled(Flex)`
 `
 
 const DataItemTitle = styled(TYPE.main)`
-  font-size: 20px !important;
+  font-size: 18px !important;
   white-space: nowrap;
 
   @media screen and (max-width: 880px) {
@@ -102,7 +102,7 @@ const DataItemTitle = styled(TYPE.main)`
   }
 `
 const DataItemValue = styled(TYPE.main)`
-  font-size: 18px !important;
+  font-size: 20px !important;
   white-space: nowrap;
 
   @media screen and (max-width: 880px) {
@@ -147,7 +147,7 @@ function VolumeLeaderboardPosition({ position, searchError, onClearSearch }) {
           <PositionDataWrapper>
             <DataItem area={'address'}>
               <DataItemTitle>Address</DataItemTitle>
-              <DataItemValue>{shortenStraknetAddress(position.address, 4)}</DataItemValue>
+              <DataItemValue style={{ fontWeight: 700 }}>{shortenStraknetAddress(position.address, 4)}</DataItemValue>
             </DataItem>
             {/* <DataItem area={'rank'}>
             <DataItemTitle>Rank</DataItemTitle>
