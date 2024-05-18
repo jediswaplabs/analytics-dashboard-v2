@@ -62,7 +62,7 @@ const PositionDataWrapper = styled.div`
   // grid-template-columns: repeat(5, 1fr);
   // grid-template-areas: 'address rank score trades volume';
 
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, 0.2fr);
   grid-template-areas: 'address score';
 
   @media screen and (max-width: 600px) {
