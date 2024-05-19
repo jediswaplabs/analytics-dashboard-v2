@@ -82,29 +82,34 @@ export function getTimeframe(timeWindow) {
   return utcStartTime
 }
 
-export function getPoolLink(token0Address, token1Address = null, remove = false) {
+function isEthAddress(address) {
+  return address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' || address === '0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7'
+}
+
+export function getPoolLink(token0Address, token1Address = null, feeTier = null, remove = false) {
   if (!token1Address) {
     return (
-      `https://app.jediswap.xyz/#/` +
-      (remove ? `remove` : `add`) +
-      `/${token0Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token0Address}/${'ETH'}`
+      'https://app.jediswap.xyz/#/' +
+      (remove ? 'remove' : 'add') +
+      (isEthAddress(token0Address) ? '/ETH' : `/${token0Address}/ETH`)
     )
   } else {
     return (
-      `https://app.jediswap.xyz/#/` +
-      (remove ? `remove` : `add`) +
-      `/${token0Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token0Address}/${token1Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token1Address
-      }`
+      'https://app.jediswap.xyz/#/' +
+      (remove ? 'remove' : 'add') +
+      `/${isEthAddress(token0Address) ? 'ETH' : token0Address}/${isEthAddress(token1Address) ? 'ETH' : token1Address}` +
+      (feeTier ? `/${feeTier}` : '')
+
     )
   }
 }
 
 export function getSwapLink(token0Address, token1Address = null) {
   if (!token1Address) {
-    return `https://app.jediswap.xyz/#/swap?inputCurrency=${token0Address}`
+    return `https://app.jediswap.xyz/#/swap?inputCurrency=${isEthAddress(token0Address) ? 'ETH' : token0Address}`
   } else {
-    return `https://app.jediswap.xyz/#/swap?inputCurrency=${token0Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token0Address
-      }&outputCurrency=${token1Address === '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7' ? 'ETH' : token1Address}`
+    return `https://app.jediswap.xyz/#/swap?inputCurrency=${isEthAddress(token0Address) ? 'ETH' : token0Address
+      }&outputCurrency=${isEthAddress(token1Address) ? 'ETH' : token1Address}`
   }
 }
 

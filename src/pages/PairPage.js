@@ -172,7 +172,7 @@ function PairPage({ pairAddress, history }) {
   const areTokensWhitelisted = !!(whitelistedTokens[token0?.tokenAddress] && whitelistedTokens[token1?.tokenAddress])
   const actionButtonsMarkup = (
     <RowFixed align="center" style={{ gap: '8px' }}>
-      <Link external href={getPoolLink(token0?.tokenAddress, token1?.tokenAddress)}>
+      <Link external href={getPoolLink(token0?.tokenAddress, token1?.tokenAddress, fee)}>
         <ButtonDark color={backgroundColor}>+ Add Liquidity</ButtonDark>
       </Link>
       <Link external href={getSwapLink(token0?.tokenAddress, token1?.tokenAddress)}>
