@@ -114,4 +114,5 @@ export const ErrorHeader = styled.div`
 export const ErrorText = styled.div`
   font-size: 16px;
   font-weight: 500;
+  padding-top: 5px;
 `
