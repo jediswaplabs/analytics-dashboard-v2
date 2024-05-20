@@ -15,6 +15,9 @@ import { isStarknetAddress } from './utils'
 import LocalLoader from './components/LocalLoader'
 import { useWhitelistedTokens } from './contexts/Application'
 import LayoutWrapper from './layouts/LayoutWrapper'
+import VolumeLeaderboardPage from './pages/VolumeLeaderboardPage'
+import RewardsPage from './pages/RewardsPage'
+import LpLeaderboardPage from './pages/LpLeaderboardPage.js'
 
 const AppWrapper = styled.div`
   position: relative;
@@ -60,7 +63,7 @@ function App() {
           <BrowserRouter>
             <Switch>
               <Route
-                exacts
+                exact
                 strict
                 path="/token/:tokenAddress"
                 render={({ match }) => {
@@ -71,12 +74,12 @@ function App() {
                       </LayoutWrapper>
                     )
                   } else {
-                    return <Redirect to="/home" />
+                    return <Redirect to="/" />
                   }
                 }}
               />
               <Route
-                exacts
+                exact
                 strict
                 path="/pool/:pairAddress"
                 render={({ match }) => {
@@ -87,12 +90,12 @@ function App() {
                       </LayoutWrapper>
                     )
                   } else {
-                    return <Redirect to="/home" />
+                    return <Redirect to="/" />
                   }
                 }}
               />
 
-              <Route path="/home">
+              <Route path="/" exact>
                 <LayoutWrapper savedOpen={savedOpen} setSavedOpen={setSavedOpen}>
                   <GlobalPage />
                 </LayoutWrapper>
@@ -110,7 +113,24 @@ function App() {
                 </LayoutWrapper>
               </Route>
 
-              <Redirect to="/home" />
+              <Route path="/volume-leaderboard">
+                <LayoutWrapper savedOpen={savedOpen} setSavedOpen={setSavedOpen}>
+                  <VolumeLeaderboardPage />
+                </LayoutWrapper>
+              </Route>
+              <Route path="/lp-leaderboard">
+                <LayoutWrapper savedOpen={savedOpen} setSavedOpen={setSavedOpen}>
+                  <LpLeaderboardPage />
+                </LayoutWrapper>
+              </Route>
+
+              {/* <Route path="/rewards">
+                <LayoutWrapper savedOpen={savedOpen} setSavedOpen={setSavedOpen}>
+                  <RewardsPage />
+                </LayoutWrapper>
+              </Route> */}
+
+              <Redirect to="/" />
             </Switch>
           </BrowserRouter>
         ) : (

@@ -113,15 +113,6 @@ export function getSwapLink(token0Address, token1Address = null) {
   }
 }
 
-export function getUniswapAppLink(linkVariable) {
-  let baseUniswapUrl = 'https://app.uniswap.org/#/uni'
-  if (!linkVariable) {
-    return baseUniswapUrl
-  }
-
-  return `${baseUniswapUrl}/ETH/${linkVariable}`
-}
-
 export function localNumber(val) {
   return Numeral(val).format('0,0')
 }
@@ -219,6 +210,9 @@ export const isStarknetAddress = (value, validateLength = false) => {
   try {
     const processedValue = value?.toLowerCase()
     if (!processedValue.startsWith('0x')) {
+      return false
+    }
+    if (processedValue === '0x') {
       return false
     }
     if (validateLength && processedValue.length !== zeroStarknetAddress.length) {
@@ -340,9 +334,9 @@ export function rawPercent(percentRaw) {
   return percent.toFixed(0) + '%'
 }
 
-export function formattedPercent(percent, useAbs = false) {
-  const green = '#21E70F'
-  const red = '#FC4D4D'
+export function formattedPercent(percent, useAbs = false, useColors = true) {
+  const positiveColor = useColors ? '#21E70F' : ''
+  const negativeColor = useColors ? '#FC4D4D' : ''
   percent = parseFloat(percent)
   if (!percent || percent === 0) {
     return <Text fontWeight={500}>0%</Text>
@@ -350,7 +344,7 @@ export function formattedPercent(percent, useAbs = false) {
 
   if (percent < 0.0001 && percent > 0) {
     return (
-      <Text fontWeight={500} color={green}>
+      <Text fontWeight={500} color={positiveColor}>
         {'< 0.0001%'}
       </Text>
     )
@@ -358,7 +352,7 @@ export function formattedPercent(percent, useAbs = false) {
 
   if (percent < 0 && percent > -0.0001) {
     return (
-      <Text fontWeight={500} color={red}>
+      <Text fontWeight={500} color={negativeColor}>
         {'< 0.0001%'}
       </Text>
     )
@@ -366,7 +360,7 @@ export function formattedPercent(percent, useAbs = false) {
 
   if (percent > 999999) {
     return (
-      <Text fontWeight={500} color={green}>
+      <Text fontWeight={500} color={positiveColor}>
         {'> 999999%'}
       </Text>
     )
@@ -378,12 +372,12 @@ export function formattedPercent(percent, useAbs = false) {
   }
   if (fixedPercent > 0) {
     if (fixedPercent > 100) {
-      return <Text fontWeight={500} color={green}>{`${useAbs ? '' : '+'}${percent?.toFixed(0).toLocaleString()}%`}</Text>
+      return <Text fontWeight={500} color={positiveColor}>{`${useAbs ? '' : '+'}${percent?.toFixed(0).toLocaleString()}%`}</Text>
     } else {
-      return <Text fontWeight={500} color={green}>{`${useAbs ? '' : '+'}${fixedPercent}%`}</Text>
+      return <Text fontWeight={500} color={positiveColor}>{`${useAbs ? '' : '+'}${fixedPercent}%`}</Text>
     }
   } else {
-    return <Text fontWeight={500} color={red}>{`${fixedPercent}%`}</Text>
+    return <Text fontWeight={500} color={negativeColor}>{`${fixedPercent}%`}</Text>
   }
 }
 

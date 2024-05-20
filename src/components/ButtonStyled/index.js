@@ -102,7 +102,7 @@ export const ButtonDark = styled(Base)`
   padding: 9px 21px;
   flex-shrink: 0;
   border-radius: 8px;
-  background: linear-gradient(151deg, #29aafd 0%, #ff00e9 100%);
+  background: linear-gradient(95.64deg, #29aafd 8.08%, #ff00e9 105.91%);
   text-align: center;
   font-size: 18px;
   font-style: normal;
@@ -112,20 +112,25 @@ export const ButtonDark = styled(Base)`
   cursor: pointer;
   font-family: 'Avenir LT Std';
 
-  ${(props) =>
-    !props.disabled &&
-    `
-          :hover {
-            background-color: ${({ color, theme }) => (color ? darken(0.1, color) : darken(0.1, theme.primary1))};
-          }
-    `}
+  &:focus {
+    background: linear-gradient(95.64deg, #ff00e9 8.08%, #29aafd 105.91%);
+  }
+  &:hover {
+    background: linear-gradient(95.64deg, #ff00e9 8.08%, #29aafd 105.91%);
+  }
+  &:active {
+    background: linear-gradient(95.64deg, #ff00e9 8.08%, #29aafd 105.91%);
+  }
+  &:disabled {
+    cursor: default;
+    opacity: 100%;
+    background: #141451;
+    color: #9b9b9b;
+    box-shadow: 0px 0.76977px 30.79088px 0px rgba(227, 222, 255, 0.2) inset,
+      0px 3.07909px 13.8559px 0px rgba(154, 146, 210, 0.3) inset,
+      0px 75.43767px 76.9772px -36.94907px rgba(202, 172, 255, 0.3) inset;
+  }
 
-  ${(props) =>
-    props.disabled &&
-    `
-        opacity: 0.5;
-        cursor: default;
-    `}
 `
 
 export const ButtonFaded = styled(Base)`
