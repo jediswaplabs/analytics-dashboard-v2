@@ -200,9 +200,10 @@ function PairList({
       const fees = formattedNum(pairData.oneDayFeesUSD, true)
 
       const feeRatio24H = pairData.oneDayFeesUSD / pairData.totalValueLockedUSD
-      const apy = ((1 + feeRatio24H) ** 365 - 1) * 100
-      const cleanedApy = isNaN(apy) || !isFinite(apy) ? 0 : apy
-      const displayApy = formattedPercent(cleanedApy, true)
+      // const apy = ((1 + feeRatio24H) ** 365 - 1) * 100
+      const apr = feeRatio24H * 365 * 100
+      const cleanedApr = isNaN(apr) || !isFinite(apr) ? 0 : apr
+      const displayApr = formattedPercent(cleanedApr, true)
 
       const weekVolume = formattedNum(pairData.oneWeekVolumeUSD ? pairData.oneWeekVolumeUSD : pairData.oneWeekVolumeUntracked, true)
       // const weekVolume = Math.round(pairData.oneWeekVolumeUSD)
@@ -275,7 +276,7 @@ function PairList({
           <DataText area="vol">{formatDataText(volume, pairData.oneDayVolumeUSD)}</DataText>
           {!below1080 && <DataText area="volWeek">{formatDataText(weekVolume, pairData.oneWeekVolumeUSD)}</DataText>}
           {!below1080 && <DataText area="fees">{formatDataText(fees, pairData.oneDayVolumeUSD)}</DataText>}
-          {!below1080 && <DataText area="apy">{formatDataText(displayApy, pairData.oneDayVolumeUSD, pairData.oneDayVolumeUSD === 0)}</DataText>}
+          {!below1080 && <DataText area="apy">{formatDataText(displayApr, pairData.oneDayVolumeUSD, pairData.oneDayVolumeUSD === 0)}</DataText>}
         </DashGrid>
       )
     } else {
