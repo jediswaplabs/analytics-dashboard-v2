@@ -186,9 +186,9 @@ function TokenPage({ address, history }) {
       <Link href={getPoolLink(address)} target="_blank">
         <ButtonDark color={backgroundColor}>+ Add Liquidity</ButtonDark>
       </Link>
-      <Link href={getSwapLink(address)} target="_blank">
+      {/* <Link href={getSwapLink(address)} target="_blank">
         <ButtonDark color={backgroundColor}>Trade</ButtonDark>
-      </Link>
+      </Link> */}
     </RowFixed>
   )
   return (
