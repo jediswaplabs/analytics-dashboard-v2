@@ -112,7 +112,7 @@ export const VOLUME_LEADERBOARD_DATA = ({ userAddress }) => {
   const whereString = userAddress ? ` where: {userAddress: "${userAddress}"}` : ''
   let queryString = `
     query volumeLeaderboard {
-      volumeLeaderboard(first: 100 ${whereString}) {
+      volumeLeaderboard(first: 100 orderBy: "points" orderByDirection: "desc" ${whereString}) {
         points
         userAddress
       }
@@ -125,7 +125,7 @@ export const LP_LEADERBOARD_DATA = ({ userAddress }) => {
   const whereString = userAddress ? ` where: {userAddress: "${userAddress}"}` : ''
   let queryString = `
     query lpLeaderboard {
-      lpLeaderboard(first: 100 ${whereString}) {
+      lpLeaderboard(first: 100 orderBy: "points" orderByDirection: "desc" ${whereString}) {
         points
         userAddress
       }
