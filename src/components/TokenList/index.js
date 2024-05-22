@@ -2,10 +2,10 @@ import React, { useState, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
+import { Link as RouterLink } from 'react-router-dom'
 
 import { Box, Flex, Text } from 'rebass'
 import TokenLogo from '../TokenLogo'
-import { CustomLink } from '../Link'
 import Row from '../Row'
 import { Divider } from '..'
 
@@ -48,6 +48,9 @@ const DashGrid = styled.div`
   grid-template-columns: 100px 1fr 1fr;
   grid-template-areas: 'name liq vol';
   padding: 0 1.125rem;
+  :hover {
+    background: rgba(255, 255, 255, 0.10);
+  }
 
   > * {
     justify-content: flex-end;
@@ -188,30 +191,25 @@ function TopTokenList({
 
   const ListItem = ({ item, index }) => {
     return (
-      <DashGrid style={{ height: '48px' }} focus={true}>
-        <DataText area="name" fontWeight="500">
-          <Row>
-            {!below680 && <div style={{ marginRight: '1rem', width: '10px' }}>{index}</div>}
-            <TokenLogo address={item.tokenAddress} symbol={item.symbol} />
-            <CustomLink style={{ marginLeft: '16px', whiteSpace: 'nowrap' }} to={'/token/' + item.tokenAddress}>
-              <FormattedName text={item.symbol} maxCharacters={below600 ? 8 : 16} adjustSize={true} link={true} />
-            </CustomLink>
-          </Row>
-        </DataText>
-        {/* {!below680 && (
-          <DataText area="symbol" color="text" fontWeight="500">
-            <FormattedName text={item.symbol} maxCharacters={8} />
+      <RouterLink to={'/token/' + item.tokenAddress}>
+        <DashGrid style={{ height: '48px' }} focus={true}>
+          <DataText area="name" fontWeight="500">
+            <Row>
+              {!below680 && <div style={{ marginRight: '1rem', width: '10px' }}>{index}</div>}
+              <TokenLogo address={item.tokenAddress} symbol={item.symbol} />
+              <FormattedName text={item.symbol} maxCharacters={below600 ? 8 : 16} adjustSize={true} link={true} style={{ marginLeft: '16px' }} />
+            </Row>
           </DataText>
-        )} */}
-        <DataText area="liq">{formattedNum(item.totalLiquidityUSD, true)}</DataText>
-        <DataText area="vol">{formattedNum(item.oneDayVolumeUSD, true)}</DataText>
-        {!below1080 && (
-          <DataText area="price" color="text" fontWeight="500">
-            {formattedNum(item.priceUSD, true)}
-          </DataText>
-        )}
-        {!below1080 && <DataText area="change">{formattedPercent(item.priceChangeUSD)}</DataText>}
-      </DashGrid>
+          <DataText area="liq">{formattedNum(item.totalLiquidityUSD, true)}</DataText>
+          <DataText area="vol">{formattedNum(item.oneDayVolumeUSD, true)}</DataText>
+          {!below1080 && (
+            <DataText area="price" color="text" fontWeight="500">
+              {formattedNum(item.priceUSD, true)}
+            </DataText>
+          )}
+          {!below1080 && <DataText area="change">{formattedPercent(item.priceChangeUSD)}</DataText>}
+        </DashGrid>
+      </RouterLink>
     )
   }
 

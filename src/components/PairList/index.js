@@ -5,8 +5,8 @@ import LocalLoader from '../LocalLoader'
 import utc from 'dayjs/plugin/utc'
 import { Box, Flex, Text } from 'rebass'
 import styled from 'styled-components'
+import { Link as RouterLink } from 'react-router-dom'
 
-import { CustomLink } from '../Link'
 import { Divider } from '../../components'
 import { withRouter } from 'react-router-dom'
 import { formattedNum, formattedPercent } from '../../utils'
@@ -53,6 +53,10 @@ const DashGrid = styled.div`
   padding: 0 1.125rem;
 
   opacity: ${({ fade }) => (fade ? '0.6' : '1')};
+
+  :hover {
+    background: rgba(255, 255, 255, 0.10);
+  }
 
   > * {
     justify-content: flex-end;
@@ -209,8 +213,50 @@ function PairList({
       // const weekVolume = Math.round(pairData.oneWeekVolumeUSD)
       if (below1080) {
         return (
-          <div style={{ margin: '10px 0', padding: '20px', borderRadius: '8px', border: '1px solid #959595' }}>
-            <div style={{ display: 'flex' }}>
+          <RouterLink to={'/pool/' + pairAddress} color={color}>
+            <div style={{ margin: '10px 0', padding: '20px', borderRadius: '8px', border: '1px solid #959595' }}>
+              <div style={{ display: 'flex' }}>
+                <DoubleTokenLogo
+                  size={below600 ? 16 : 20}
+                  a0={pairData.token0.tokenAddress}
+                  a1={pairData.token1.tokenAddress}
+                  s0={pairData.token0.symbol}
+                  s1={pairData.token1.symbol}
+                  margin
+                />
+                <AutoRow gap={'4px'} style={{ whiteSpace: 'nowrap', flexWrap: 'nowrap' }}>
+                  <FormattedName
+                    text={pairData.token0.symbol + '-' + pairData.token1.symbol}
+                    maxCharacters={below600 ? 8 : 16}
+                    adjustSize={true}
+                    link={true}
+                  />
+                  <FeeBadge>{feePercent}</FeeBadge>
+                </AutoRow>
+              </div>
+              <div style={{ color: 'white', display: 'flex', columnGap: '30px', marginTop: '10px' }}>
+                <div>
+                  <div style={{ color: '#9B9B9B', fontSize: '12px' }}>Liquidity</div>
+                  <div>{formatDataText(liquidity, pairData.totalValueLockedUSD, false, 'left')}</div>
+                </div>
+                <div>
+                  <div style={{ color: '#9B9B9B', fontSize: '12px' }}>Volume (24H)</div>
+                  <div>{formatDataText(volume, pairData.oneDayVolumeUSD, false, 'left')}</div>
+                </div>
+                <div>
+                  <div style={{ color: '#9B9B9B', fontSize: '12px' }}>Fees (24H)</div>
+                  <div>{formatDataText(fees, pairData.oneDayVolumeUSD, false, 'left')}</div>
+                </div>
+              </div>
+            </div>
+          </RouterLink>
+        )
+      }
+      return (
+        <RouterLink to={'/pool/' + pairAddress} color={color}>
+          <DashGrid style={{ height: '48px' }} disbaleLinks={disbaleLinks} focus={true}>
+            <DataText area="name" fontWeight="500">
+              {!below600 && <div style={{ marginRight: '20px', width: '10px' }}>{index}</div>}
               <DoubleTokenLogo
                 size={below600 ? 16 : 20}
                 a0={pairData.token0.tokenAddress}
@@ -220,64 +266,22 @@ function PairList({
                 margin
               />
               <AutoRow gap={'4px'} style={{ whiteSpace: 'nowrap', flexWrap: 'nowrap' }}>
-                <CustomLink to={'/pool/' + pairAddress} color={color}>
-                  <FormattedName
-                    text={pairData.token0.symbol + '-' + pairData.token1.symbol}
-                    maxCharacters={below600 ? 8 : 16}
-                    adjustSize={true}
-                    link={true}
-                  />
-                </CustomLink>
-                <FeeBadge>{feePercent}</FeeBadge>
-              </AutoRow>
-            </div>
-            <div style={{ color: 'white', display: 'flex', columnGap: '30px', marginTop: '10px' }}>
-              <div>
-                <div style={{ color: '#9B9B9B', fontSize: '12px' }}>Liquidity</div>
-                <div>{formatDataText(liquidity, pairData.totalValueLockedUSD, false, 'left')}</div>
-              </div>
-              <div>
-                <div style={{ color: '#9B9B9B', fontSize: '12px' }}>Volume (24H)</div>
-                <div>{formatDataText(volume, pairData.oneDayVolumeUSD, false, 'left')}</div>
-              </div>
-              <div>
-                <div style={{ color: '#9B9B9B', fontSize: '12px' }}>Fees (24H)</div>
-                <div>{formatDataText(fees, pairData.oneDayVolumeUSD, false, 'left')}</div>
-              </div>
-            </div>
-          </div>
-        )
-      }
-      return (
-        <DashGrid style={{ height: '48px' }} disbaleLinks={disbaleLinks} focus={true}>
-          <DataText area="name" fontWeight="500">
-            {!below600 && <div style={{ marginRight: '20px', width: '10px' }}>{index}</div>}
-            <DoubleTokenLogo
-              size={below600 ? 16 : 20}
-              a0={pairData.token0.tokenAddress}
-              a1={pairData.token1.tokenAddress}
-              s0={pairData.token0.symbol}
-              s1={pairData.token1.symbol}
-              margin
-            />
-            <AutoRow gap={'4px'} style={{ whiteSpace: 'nowrap', flexWrap: 'nowrap' }}>
-              <CustomLink to={'/pool/' + pairAddress} color={color}>
                 <FormattedName
                   text={pairData.token0.symbol + '-' + pairData.token1.symbol}
                   maxCharacters={below600 ? 8 : 16}
                   adjustSize={true}
                   link={true}
                 />
-              </CustomLink>
-              <FeeBadge>{feePercent}</FeeBadge>
-            </AutoRow>
-          </DataText>
-          <DataText area="liq">{formatDataText(liquidity, pairData.totalValueLockedUSD)}</DataText>
-          <DataText area="vol">{formatDataText(volume, pairData.oneDayVolumeUSD)}</DataText>
-          {!below1080 && <DataText area="volWeek">{formatDataText(weekVolume, pairData.oneWeekVolumeUSD)}</DataText>}
-          {!below1080 && <DataText area="fees">{formatDataText(fees, pairData.oneDayVolumeUSD)}</DataText>}
-          {!below1080 && <DataText area="apy">{formatDataText(displayApr, pairData.oneDayVolumeUSD, pairData.oneDayVolumeUSD === 0)}</DataText>}
-        </DashGrid>
+                <FeeBadge>{feePercent}</FeeBadge>
+              </AutoRow>
+            </DataText>
+            <DataText area="liq">{formatDataText(liquidity, pairData.totalValueLockedUSD)}</DataText>
+            <DataText area="vol">{formatDataText(volume, pairData.oneDayVolumeUSD)}</DataText>
+            {!below1080 && <DataText area="volWeek">{formatDataText(weekVolume, pairData.oneWeekVolumeUSD)}</DataText>}
+            {!below1080 && <DataText area="fees">{formatDataText(fees, pairData.oneDayVolumeUSD)}</DataText>}
+            {!below1080 && <DataText area="apy">{formatDataText(displayApr, pairData.oneDayVolumeUSD, pairData.oneDayVolumeUSD === 0)}</DataText>}
+          </DashGrid>
+        </RouterLink>
       )
     } else {
       return ''
