@@ -198,7 +198,8 @@ function TokenPage({ address, history }) {
           <AutoRow align="flex-end" style={{ width: 'fit-content' }}>
             {!below1024 && (
               <TYPE.breadCrumbs fontSize={'16px'} fontWeight={'500'} lineHeight={1} style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-                <BasicLink to="/tokens">{'Home > Tokens '}</BasicLink>
+                <BasicLink to="/">{'Home '}</BasicLink>
+                <BasicLink to="/tokens">{'> Tokens '}</BasicLink>
                 <span style={{ color: 'white' }}>{'>'}</span>
                 <span style={{ color: 'white' }}>{symbol}</span>
               </TYPE.breadCrumbs>

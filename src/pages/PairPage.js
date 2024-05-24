@@ -213,7 +213,8 @@ function PairPage({ pairAddress, history }) {
           <AutoRow align="flex-end" style={{ width: 'fit-content' }}>
             {!below1024 && (
               <TYPE.breadCrumbs fontSize={'16px'} fontWeight={'500'} lineHeight={1} style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-                <BasicLink to="/pools">{'Home > Pools '}</BasicLink>
+                <BasicLink to="/">{'Home '}</BasicLink>
+                <BasicLink to="/pools">{'> Pools '}</BasicLink>
                 <span style={{ color: 'white' }}>{'>'}</span>
                 <span style={{ color: 'white' }}>
                   {token0?.symbol}-{token1?.symbol}
