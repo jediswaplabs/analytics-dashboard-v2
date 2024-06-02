@@ -203,8 +203,8 @@ function PairList({
 
       const fees = formattedNum(pairData.oneDayFeesUSD, true)
 
-      const feeRatio24H = pairData.oneDayFeesUSD / pairData.totalValueLockedUSD
-      // const apy = ((1 + feeRatio24H) ** 365 - 1) * 100
+      // const feeRatio24H = pairData.oneDayFeesUSD / pairData.totalValueLockedUSD
+      const feeRatio24H = pairData.oneWeekFeesUSD / 7 / pairData.totalValueLockedUSD
       const apr = feeRatio24H * 365 * 100
       const cleanedApr = isNaN(apr) || !isFinite(apr) ? 0 : apr
       const displayApr = formattedPercent(cleanedApr, true)

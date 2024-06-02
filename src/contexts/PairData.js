@@ -181,6 +181,7 @@ function parseData(data, oneDayData, twoDayData, oneWeekData) {
   // set fees properties
   data.oneDayFeesUSD = parseFloat(oneDayFeesUSD);
   data.feesChangeUSD = feesChangeUSD;
+  data.oneWeekFeesUSD = parseFloat(oneWeekData?.feesUSD) || 0
 
   // set liquidity properties
   data.liquidityChangeUSD = getPercentChange(oneDayData.totalValueLockedUSD, oneDayData.totalValueLockedUSDFirst)
